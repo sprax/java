@@ -164,6 +164,7 @@ public class BitsAlgo
     {
         String testName =  BitsAlgo.class.getName() + ".unit_test";
         Sx.format("BEGIN %s\n", testName);
+
         int numWrong = 0;
         numWrong += test_firstUniqueLetter("aababcabcdabcdeabcdefabcdefzabcdefga");
         numWrong += test_firstUniqueLetter("ZYXWV !@#$%^&*() UTU VWXYZ");
