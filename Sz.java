@@ -36,5 +36,18 @@ public class Sz
         return 0;
     }
 
+    public static void begin(String testName) {
+        Sx.format("BEGIN %s\n", testName);  
+    }
+
+    public static void end(String testName, int numWrong) {
+        Sx.format("END   %s,  wrong %d, %s\n", testName, numWrong, Sz.passFail(numWrong));  
+    }
+
+    public static void ender(String testName, int numCases, int numWrong) {
+        Sx.format("END   %s,  right %d, wrong %d, %s\n"
+                , testName, numCases - numWrong, numWrong, Sz.passFail(numWrong));  
+    }
+
     public static void main(String args[]) { unit_test(); }
 }

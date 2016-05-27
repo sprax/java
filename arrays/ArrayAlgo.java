@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import sprax.Sx;
+import sprax.Sz;
 import std.StdStats;
 
 
@@ -323,33 +324,34 @@ public class ArrayAlgo
 
 	public static int unit_test(int level) 
 	{
-		String  testName = ArrayAlgo.class.getName() + ".unit_test";  
-		Sx.puts(testName + " BEGIN");  
+		String   testName = ArrayAlgo.class.getName() + ".unit_test";  
+		Sz.begin(testName);;  
 
-		int stat = 0;
+		int numWrong = 0;
 
 		Integer[] foo = { 1, 2, 3};
-		ArrayList<Integer> dork = new ArrayList<Integer>();
-		dork.addAll(Arrays.asList(foo));        
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		list.addAll(Arrays.asList(foo));        
 		HashSet<Integer> set = new HashSet<Integer>();
 		set.add(1);
-		HashSet<Integer> hmm = new HashSet<Integer>(set); 
-		assert(hmm.size() == set.size());
+		HashSet<Integer> one = new HashSet<Integer>(set); 
+		numWrong += Sz.showWrong(one.size(), set.size());
 
-		ArrayList<Integer> duh = new ArrayList<Integer>(5);
-		duh.add(15);
-		duh.add(32);
-		Integer d1 = duh.get(1);
+
+		ArrayList<Integer> two = new ArrayList<Integer>(5);
+		two.add(15);
+		two.add(32);
+		Integer d1 = two.get(1);
 		d1 = 2;
-		Integer d0 = duh.get(0);
-		duh.set(0,  -64);
-		Sx.puts("duh.get(1) and d1: " + duh.get(1) + "  " + d1);
-		Sx.puts("duh.get(0) before and after: " + d0 + "  " + duh.get(0));
+		Integer d0 = two.get(0);
+		two.set(0,  -64);
+		Sx.puts("duh.get(1) and d1: " + two.get(1) + "  " + d1);
+		Sx.puts("duh.get(0) before and after: " + d0 + "  " + two.get(0));
 
-		test_productArray();
+		numWrong += test_productArray();
 
-		Sx.puts(testName + " END");  
-		return stat;
+		Sz.end(testName, numWrong);
+		return numWrong;
 	}
 
 	public static void main(String[] args)
