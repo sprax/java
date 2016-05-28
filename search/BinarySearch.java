@@ -9,15 +9,15 @@ import sprax.sorts.SortUtil;
 
 public class BinarySearch<T extends Comparable<T>>
 {  
-	/** 
-	 * binary search for an index for the value v in a sorted array A,
-	 * that is, find k s.t. v == A[k].  Obviously, v must be the value
-	 * of an actual element in A.
-	 * 
-	 * @param A     sorted array of int
-	 * @param val   value to be search for in A
-	 * @return      an index k s.t. v == A[k], or -1 (invalid index)
-	 */
+    /** 
+     * binary search for an index for the value v in a sorted array A,
+     * that is, find k s.t. v == A[k].  Obviously, v must be the value
+     * of an actual element in A.
+     * 
+     * @param A     sorted array of int
+     * @param val   value to be search for in A
+     * @return      an index k s.t. v == A[k], or -1 (invalid index)
+     */
     public static int binarySearchEquals(int A[], int val)
     {
         for (int md, lo = 0, hi = A.length - 1; lo <= hi;)
@@ -33,14 +33,14 @@ public class BinarySearch<T extends Comparable<T>>
         return -1;
     }
 
-	/**
-	 * return index of largest element v in A s.t v <= specified value
-	 * @param A   sorted array of int
-	 * @param val search value
-	 * @return    last index m s.t. A[m] <= val
-	 */
-	public static int binarySearchLowerBound(int A[], int val)
-	{
+    /**
+     * return index of largest element v in A s.t v <= specified value
+     * @param A   sorted array of int
+     * @param val search value
+     * @return    last index m s.t. A[m] <= val
+     */
+    public static int binarySearchLowerBound(int A[], int val)
+    {
         int md = 0;
         for (int lo = 0, hi = A.length - 1; lo <= hi;)
         {
@@ -52,24 +52,24 @@ public class BinarySearch<T extends Comparable<T>>
             else
                 lo = md + 1;
         }
-		// we may have overshot by one, so 
-		// check whether A[md] or A[md-1] is the actual 
-		// infimum (greatest lower bound).
-		// To avoid this overshoot, we'd have to check intervals
-		// by doing two comparisons inside the loop, which is generally worse.
-		if (A[md] <= val)
-			return md;
-		if (--md >= 0 && A[md] <= val)
-			return md;
-		return -1;
-	}
+        // we may have overshot by one, so 
+        // check whether A[md] or A[md-1] is the actual 
+        // infimum (greatest lower bound).
+        // To avoid this overshoot, we'd have to check intervals
+        // by doing two comparisons inside the loop, which is generally worse.
+        if (A[md] <= val)
+            return md;
+        if (--md >= 0 && A[md] <= val)
+            return md;
+        return -1;
+    }
 
-	/**
-	 * return index of largest element v in A s.t v <= specified value
-	 * @param A   sorted array of int
-	 * @param val search value
-	 * @return    last index m s.t. A[m] <= val
-	 */
+    /**
+     * return index of largest element v in A s.t v <= specified value
+     * @param A   sorted array of int
+     * @param val search value
+     * @return    last index m s.t. A[m] <= val
+     */
     public static int binarySearchLowerBoundDbl(double A[], double val)
     {
         int md = 0;
@@ -95,12 +95,12 @@ public class BinarySearch<T extends Comparable<T>>
         return -1;
     }
 
-	/**
-	 * return index of largest element v in A s.t v < specified value
-	 * @param A   sorted array of int
-	 * @param val search value
-	 * @return    last index m s.t. A[m] <= val
-	 */
+    /**
+     * return index of largest element v in A s.t v < specified value
+     * @param A   sorted array of int
+     * @param val search value
+     * @return    last index m s.t. A[m] <= val
+     */
     public static int binarySearchStrictLowerBound(int A[], int val)
     {
         int lo, hi, md = 0;
@@ -124,12 +124,12 @@ public class BinarySearch<T extends Comparable<T>>
         return -1;
     }
 
-	/**
-	 * return index of smallest element v in A s.t v >= specified value
-	 * @param A   sorted array of int
-	 * @param val search value
-	 * @return    first index m s.t. A[m] >= val
-	 */
+    /**
+     * return index of smallest element v in A s.t v >= specified value
+     * @param A   sorted array of int
+     * @param val search value
+     * @return    first index m s.t. A[m] >= val
+     */
     public static int binarySearchUpperBound(int A[], int val)
     {
         int md = 0;
@@ -150,15 +150,15 @@ public class BinarySearch<T extends Comparable<T>>
         return -1;
     }
 
-	/** 
-	 * binary search for an index for the value v in a sorted array A,
-	 * that is, find k s.t. v == A[k].  Obviously, v must be the value
-	 * of an actual element in A.
-	 * 
-	 * @param A     sorted array of int
-	 * @param val   value to be search for in A
-	 * @return      an index k s.t. v == A[k], or -1 (invalid index)
-	 */
+    /** 
+     * binary search for an index for the value v in a sorted array A,
+     * that is, find k s.t. v == A[k].  Obviously, v must be the value
+     * of an actual element in A.
+     * 
+     * @param A     sorted array of int
+     * @param val   value to be search for in A
+     * @return      an index k s.t. v == A[k], or -1 (invalid index)
+     */
     public static int interpolationSearchEquals(int A[], int val)
     {
         // Must do error checking before allowing interpolation
@@ -200,8 +200,8 @@ public class BinarySearch<T extends Comparable<T>>
         }
         return -1;
     }
-	
-	/**********************************
+    
+    /**********************************
 #include <cstdio>
 #include <algorithm>
 
@@ -218,8 +218,8 @@ int main () {
     return 0;
 }
 
-	 */
-	
+     */
+    
     static int sCalls = 0;
     
     public static int getFirstIndexInRange(int value, int[] iA, int leftIndex, int rightIndex)
@@ -228,7 +228,7 @@ int main () {
         
         if (leftIndex > rightIndex)
         {
-            return Integer.MAX_VALUE;	// Not found
+            return Integer.MAX_VALUE;    // Not found
         }
         
         int mid = (rightIndex - leftIndex) / 2 + leftIndex;
