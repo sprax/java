@@ -6,6 +6,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import sprax.Sx;
+import sprax.Sz;
 
 public class SelectorArray implements Selector
 {
@@ -258,10 +259,10 @@ public class SelectorArray implements Selector
     
     
     //////// UNIT TESTING ////////
-    public static int unit_test(int lvl) 
+    public static int unit_test() 
     {
-        String  testName = SelectorArray.class.getName() + ".unit_test";
-        Sx.puts(testName + " BEGIN");    
+        String   testName = SelectorArray.class.getName() + ".unit_test";
+        Sz.begin(testName);  
         
         SelectorArray sss = new SelectorArray(0, 9);
         sss.select(1);
@@ -327,9 +328,9 @@ public class SelectorArray implements Selector
         prev = sss.nextSmaller(less);
         Sx.putsArray(sss.allSelected(), " has nextSmaller(from==" + less + ") as " + prev);
         
-        Sx.puts(testName + " END");    
+        Sz.end(testName, 0);    
         return 0;
     }
     
-    public static void main(String[] args) { unit_test(1); }
+    public static void main(String[] args) { unit_test(); }
 }

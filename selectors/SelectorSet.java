@@ -5,26 +5,29 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import sprax.Sx;
+import sprax.Sz;
 
 public class SelectorSet implements Selector
 {
-    private final SortedSet<Integer>  mSet;
-    final int       mMin;
-    final int       mMax;
-    final int       mLen;
-    private Integer mCurrentIndex;
-    private boolean mIsAllSelected;                 // private for lazy evaluation
-    private boolean mIsNoneSelected = true;
+    private final SortedSet<Integer> mSet;
+    final int                        mMin;
+    final int                        mMax;
+    final int                        mLen;
+    private Integer                  mCurrentIndex;
+    private boolean                  mIsAllSelected;        // private for lazy evaluation
+    private boolean                  mIsNoneSelected = true;
     
     SelectorSet(int min, int max)
     {
         if (max < min)
             throw new IllegalArgumentException("max < min: " + max + " < " + min);
-        mMin = min; mMax = max; mLen = max - min + 1; 
+        mMin = min;
+        mMax = max;
+        mLen = max - min + 1;
         mSet = new TreeSet<Integer>();
     }
     
-    /**
+    /*
      * Call this constructor with a synchronized sorted set to get
      * basic concurrent access safety in multi-threaded usage.
      * For example:
@@ -40,22 +43,22 @@ public class SelectorSet implements Selector
     {
         if (max < min)
             throw new IllegalArgumentException("max < min: " + max + " < " + min);
-        mMin = min; mMax = max; mLen = max - min + 1; 
+        mMin = min;
+        mMax = max;
+        mLen = max - min + 1;
         sortedSet.clear();
         mSet = sortedSet;
     }
-    
     
     //////// setters ////////
     
     @Override
     public boolean select(int index) {
-        if (mMin <= index && index <= mMax && ! mSet.contains(index)) {
+        if (mMin <= index && index <= mMax && !mSet.contains(index)) {
             mIsNoneSelected = false;
             mSet.add(index);
             return true;
         }
-        
         
         return false;
     }
@@ -70,8 +73,9 @@ public class SelectorSet implements Selector
         return false;
     }
     
-    /** Select every index in the range and return true, 
-     *  or return false if all was already selected. 
+    /**
+     * Select every index in the range and return true,
+     * or return false if all was already selected.
      */
     @Override
     public boolean selectAll()
@@ -84,8 +88,9 @@ public class SelectorSet implements Selector
         return mIsAllSelected = true;
     }
     
-    /** Empty the selection set and return true, 
-     *  or return false if none was already selected. 
+    /**
+     * Empty the selection set and return true,
+     * or return false if none was already selected.
      */
     @Override
     public boolean deselectAll()
@@ -97,7 +102,6 @@ public class SelectorSet implements Selector
         return mIsNoneSelected = true;
     }
     
-    
     public boolean setCurrent(int index)
     {
         if (mMin <= index && index <= mMax) {
@@ -108,11 +112,11 @@ public class SelectorSet implements Selector
         return false;
     }
     
-    /** 
+    /**
      * Un-sets the current or "active" index, leaving none.
      * Following this with an immediate call to getCurrent will get null.
      * This does not imply a deselectAll operation; in face, it does
-     * not change the number of selected items; it just makes none 
+     * not change the number of selected items; it just makes none
      * of them active.
      */
     public boolean setNoCurrent()
@@ -126,10 +130,12 @@ public class SelectorSet implements Selector
     //////// getters ////////
     
     @Override
-    public Integer getCurrent() { return mCurrentIndex; }
+    public Integer getCurrent() {
+        return mCurrentIndex;
+    }
     
     @Override
-    public int[] allSelected() 
+    public int[] allSelected()
     {
         int idx = 0, selected[] = new int[mSet.size()];
         for (Integer sel : mSet)
@@ -138,11 +144,11 @@ public class SelectorSet implements Selector
     }
     
     @Override
-    public int[] nonSelected() 
+    public int[] nonSelected()
     {
         int idx = 0, selected[] = new int[mLen - mSet.size()];
         for (int j = mMin; j <= mMax; j++)
-            if ( ! mSet.contains(j))
+            if (!mSet.contains(j))
                 selected[idx++] = j;
         return selected;
     }
@@ -164,7 +170,7 @@ public class SelectorSet implements Selector
     }
     
     @Override
-    public Integer nextGreater() 
+    public Integer nextGreater()
     {
         if (mCurrentIndex == null)
             return smallest();
@@ -179,9 +185,8 @@ public class SelectorSet implements Selector
         return null;
     }
     
-    
     @Override
-    public Integer nextGreater(int from) 
+    public Integer nextGreater(int from)
     {
         if (from < mMin)
             return smallest();
@@ -198,27 +203,27 @@ public class SelectorSet implements Selector
     }
     
     @Override
-    public Integer nextSmaller() 
+    public Integer nextSmaller()
     {
         if (mCurrentIndex == null)
             return greatest();
         // If mCurrentIndex == smallest == set.first, this headSet will be empty;
         // otherwise, its last element will be strictly < mCurrentIndex.
         SortedSet<Integer> head = mSet.headSet(mCurrentIndex);
-        if (  !  head.isEmpty())
+        if (!head.isEmpty())
             return head.last();
         return null;
     }
     
     @Override
-    public Integer nextSmaller(int from) 
+    public Integer nextSmaller(int from)
     {
         if (from > mMax)
             return greatest();
         // If mCurrentIndex == smallest == set.first, this headSet will be empty;
         // otherwise, its last element will be strictly < mCurrentIndex.
         SortedSet<Integer> head = mSet.headSet(from);
-        if (  !  head.isEmpty())
+        if (!head.isEmpty())
             return head.last();
         return null;
     }
@@ -249,33 +254,31 @@ public class SelectorSet implements Selector
         return size;
     }
     
-    
     //////// convenience ////////
     
-    public boolean isAllSelected() 
+    public boolean isAllSelected()
     {
         if (mIsAllSelected)
             return true;
-        if (mSet.size() == mLen)            
+        if (mSet.size() == mLen)
             return mIsAllSelected = true;
         return mIsAllSelected = false;
     }
     
-    public boolean isNoneSelected() 
+    public boolean isNoneSelected()
     {
         if (mIsNoneSelected)
             return true;
-        if (mSet.size() == 0)           
+        if (mSet.size() == 0)
             return mIsNoneSelected = true;
         return mIsNoneSelected = false;
     }
     
-    
     //////// UNIT TESTING ////////
-    public static int unit_test(int lvl) 
+    public static int unit_test()
     {
-        String  testName = SelectorSet.class.getName() + ".unit_test";
-        Sx.puts(testName + " BEGIN");    
+        String testName = SelectorSet.class.getName() + ".unit_test";
+        Sz.begin(testName);
         
         SelectorSet sss = new SelectorSet(0, 9);
         sss.mSet.add(1);
@@ -285,25 +288,25 @@ public class SelectorSet implements Selector
         sss.mSet.add(8);
         sss.setCurrent(4);
         
-        int key  = 4;
+        int key = 4;
         int rank = sss.numSmaller(key);
         int down = sss.numGreater(key);
         Sx.putsIterable(sss.mSet, " has numSmaller(" + key + ") == " + rank);
         Sx.putsIterable(sss.mSet, " has numGreater(" + key + ") == " + down);
         
-        key  = 0;
+        key = 0;
         rank = sss.numSmaller(key);
         down = sss.numGreater(key);
         Sx.putsIterable(sss.mSet, " has numSmaller(" + key + ") == " + rank);
         Sx.putsIterable(sss.mSet, " has numGreater(" + key + ") == " + down);
         
-        key  = 7;
+        key = 7;
         rank = sss.numSmaller(key);
         down = sss.numGreater(key);
         Sx.putsIterable(sss.mSet, " has numSmaller(" + key + ") == " + rank);
         Sx.putsIterable(sss.mSet, " has numGreater(" + key + ") == " + down);
         
-        key  = 10;
+        key = 10;
         rank = sss.numSmaller(key);
         down = sss.numGreater(key);
         Sx.putsIterable(sss.mSet, " has numSmaller(" + key + ") == " + rank);
@@ -334,16 +337,18 @@ public class SelectorSet implements Selector
         Sx.putsIterable(sss.mSet, " has nextSmaller(from==" + first + ") as " + prev);
         
         sss.setCurrent(first);
-        prev =  sss.nextSmaller();
+        prev = sss.nextSmaller();
         Sx.putsIterable(sss.mSet, " has nextSmaller from " + sss.getCurrent() + " as " + prev);
         
         int less = first - 1;
         prev = sss.nextSmaller(less);
         Sx.putsIterable(sss.mSet, " has nextSmaller(from==" + less + ") as " + prev);
         
-        Sx.puts(testName + " END");    
+        Sz.end(testName, 0);
         return 0;
     }
     
-    public static void main(String[] args) { unit_test(1); }
+    public static void main(String[] args) {
+        unit_test();
+    }
 }
