@@ -4,9 +4,9 @@
 
 package sprax.maths;
 
-import sprax.Sx;
-import sprax.Sz;
 import org.apache.commons.lang3.math.NumberUtils;
+
+import sprax.Sz;
 
 /** random collection of basic math operations */
 public abstract class Maths
@@ -65,28 +65,34 @@ public abstract class Maths
     
     public static int unit_test() {
         String testName = Maths.class.getName() + ".unit_test";
-        Sx.format("BEGIN %s\n", testName);
-        int numWrong = 0;
+        Sz.begin(testName);
+        int ans, numCases = 0, numWrong = 0;
         
-        int ans = max3Math(1, -2, 3);
+        numCases++;
+        ans = max3Math(1, -2, 3);
         numWrong += Sz.oneWrong(ans, 3);
         
+        numCases++;
         ans = max3Apache(1, -2, 3);
         numWrong += Sz.oneWrong(ans, 3);
         
+        numCases++;
         ans = max3Compare(1, -2, 3);
         numWrong += Sz.oneWrong(ans, 3);
         
+        numCases++;
         ans = min3Math(1, -2, 3);
         numWrong += Sz.oneWrong(ans, -2);
         
+        numCases++;
         ans = min3Apache(1, -2, 3);
         numWrong += Sz.oneWrong(ans, -2);
         
+        numCases++;
         ans = min3Compare(1, -2, 3);
         numWrong += Sz.oneWrong(ans, -2);
-        Sx.format("\nEND %s:  %d wrong, %s\n", testName, numWrong,
-                (numWrong == 0 ? "PASS" : "FAIL"));
+        
+        Sz.ender(testName, numCases, numWrong);;
         return numWrong;
     }
     
