@@ -1,14 +1,9 @@
 // ArrayAlgo.java       Author: Sprax LInes   2011.11
 package sprax.arrays;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
 
-import sprax.Sx;
 import sprax.Sz;
-import std.StdStats;
 
 public class ArrayDiffs
 {
@@ -17,7 +12,7 @@ public class ArrayDiffs
      * such number. Expected time O(NlogN) from dual-pivot Quicksort, no extra space. This version
      * was optimized for readability.
      */
-    int minimalAbsDifference(int array[])
+    public static int minimalAbsDifference(int array[])
     {
         if (array == null || array.length < 2)
             return -1;
@@ -38,7 +33,7 @@ public class ArrayDiffs
      * such number. Expected time O(NlogN) from dual-pivot Quicksort, no extra space. This version
      * was optimized for speed.
      */
-    int minimalAbsDifferenceOptimized(int array[])
+    public static int minimalAbsDifferenceOptimized(int array[])
     {
         if (array == null || array.length < 2)
             return -1;
@@ -51,7 +46,7 @@ public class ArrayDiffs
             if (min > diff)
                 min = diff;
             prev = curr;
-        } while (j < array.length);
+        } while (++j < array.length);
         return min;
     }
     
@@ -172,23 +167,34 @@ public class ArrayDiffs
     {
         String testName = ArrayDiffs.class.getName() + ".unit_test";
         Sz.begin(testName);
-        int numCases = 0, numWrong = 0;
+        int result, altern, numCases = 0, numWrong = 0;
         
         numCases++;
-        int absDiff = absDiff(AA, BB);
-        numWrong += Sz.showWrong(absDiff, 66);
+        result = minimalAbsDifference(BB);
+        numWrong += Sz.showWrong(result, 1);
         
         numCases++;
-        int sumSqrs = sumOfSquaredDifferences(AA, BB);
-        numWrong += Sz.showWrong(sumSqrs, 674);
+        altern = minimalAbsDifferenceOptimized(BB);
+        numWrong += Sz.showWrong(altern, 1);
+        
+        numCases++;
+        numWrong += Sz.showWrong(altern, result);
+        
+        numCases++;
+        result = absDiff(AA, BB);
+        numWrong += Sz.showWrong(result, 70);
+        
+        numCases++;
+        result = sumOfSquaredDifferences(AA, BB);
+        numWrong += Sz.showWrong(result, 586);
 
         numCases++;
-        int maxAbs = maxAbsPartitionDiff(AA);
-        numWrong += Sz.showWrong(maxAbs, 17);
+        result = maxAbsPartitionDiff(AA);
+        numWrong += Sz.showWrong(result, 17);
 
         numCases++;
-        int absMax = maxAbsDiffPartitionMaxes(AA);
-        numWrong += Sz.showWrong(absMax, 9);
+        result = maxAbsDiffPartitionMaxes(AA);
+        numWrong += Sz.showWrong(result, 9);
         
         Sz.ender(testName, numCases, numWrong);
         return numWrong;
