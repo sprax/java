@@ -8,12 +8,9 @@ import java.util.Random;
 
 import sprax.Sx;
 import sprax.Sz;
-import std.StdStats;
-
 
 public class ArrayAlgo
 {
-
     /**
      * Return sum of squares of elements.
      */
