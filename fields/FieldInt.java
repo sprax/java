@@ -28,8 +28,6 @@ public class FieldInt extends Field<Integer>
 		Random rng = new Random();
 		rng.nextDouble();
 		for (int j = 0; j < mNumPoints; j++) {
-			
-		    //double coords[] = new double[2];
 		    double coords[] = { rng.nextDouble(), rng.nextDouble() };
 			mPoints[j] = new PointInt( coords, j );
 		}

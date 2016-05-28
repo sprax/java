@@ -1,8 +1,3 @@
-/***************************************************************************
- * COPYRIGHT (C) 2012-2016, Rapid7 LLC, Boston, MA, USA.
- * All rights reserved. This material contains unpublished, copyrighted
- * work including confidential and proprietary information of Rapid7.
- **************************************************************************/
 package sprax.files;
 
 import java.io.IOException;
@@ -18,7 +13,8 @@ import java.util.stream.StreamSupport;
 import sprax.Sx;
 
 /**
- * 
+ * Cribbed from Holger's answer in:
+ * http://stackoverflow.com/questions/31148693/java-8-stream-of-sentences
  */
 public class SentenceStream extends Spliterators.AbstractSpliterator<String> implements Consumer<CharSequence> {
 
