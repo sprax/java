@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import sprax.Sx;
+import sprax.Sz;
+import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
 
 
@@ -107,17 +109,23 @@ public class String2WordsParser {
 
     public static int unit_test(String[] args)
     {
-        Sx.puts(String2WordsParser.class.getName() + ".unit_test");
+        
+        String testName = String2WordsParser.class.getName() + ".unit_test";
+        Sz.begin(testName);
 
         String2WordsParser parser = new String2WordsParser();
         if (args.length > 0) {
-            parser.mWords = TextFileReader.readFileIntoHashSet("WORD.LST.txt");
+            final String textFilePath = FileUtil.getTextFilePath("words.txt");
+            parser.mWords = TextFileReader.readFileIntoHashSet(textFilePath);
         } else {
             parser.mWords.add("one");
             parser.mWords.add("two");
             parser.mWords.add("three");
             parser.mWords.add("four");
             parser.mWords.add("five");
+            parser.mWords.add("fi");
+            parser.mWords.add("vet");
+            parser.mWords.add("wo");
             System.out.println("one : " + (parser.isWord("one") ? "yes" : "no") );
             System.out.println("six : " + (parser.isWord("six") ? "yes" : "no") );
         }
@@ -129,6 +137,13 @@ public class String2WordsParser {
 
         ArrayList<String> parsedToArrayList = parser.parseToArray(inputString);
         System.out.println("parsed to StringArray: " + parsedToArrayList);
+        
+        inputString = "onefivetwo";
+        parsedToArrayList = parser.parseToArray(inputString);
+        System.out.println("parsed to StringArray: " + parsedToArrayList);
+        
+        
+        Sz.end(testName, 0);
         return 0;
     }
 
