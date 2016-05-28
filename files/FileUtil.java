@@ -13,7 +13,7 @@ public abstract class FileUtil {
 
     public static String TEXT_DIR = "/Users/sprax/Text";
 
-    protected static String getTextFilePath(String fileName) {
+    public static String getTextFilePath(String fileName) {
         Path path = Paths.get(TEXT_DIR, fileName);
         return path.toString();
     }
