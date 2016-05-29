@@ -809,16 +809,16 @@ public class Sx
             putsArray(A);
     }
     
-    public static void debugArray(int nDbg, int A[][])
+    public static void debugArray(int nDbg, int AA[][])
     {
         if (nDbg > sDbg)
-            putsArray(A);
+            putsArray(AA);
     }
     
-    public static void debugArray(int nDbg, String preLabel, int A[][])
+    public static void debugArray(int nDbg, String preLabel, int AA[][])
     {
         if (nDbg > sDbg)
-            putsArray(preLabel, A);
+            putsArray(preLabel, AA);
     }
     
     public static void debugSubArray(int nDbg, String preLabel, int A[], int start, int end)
@@ -994,6 +994,9 @@ public class Sx
      */
     public static int unit_test(int level) throws IOException
     {
+        String testName = Sx.class.getName() + ".unit_test";
+        format("BEGIN %s\n", testName);
+
         String str = null;
         char[] chr = new char[0];
         System.out.println(str);
@@ -1023,11 +1026,12 @@ public class Sx
             test_getString();
             test_getCharray();
         }
+        format("END   %s,  PASS\n", testName);
         return 0;
     }
     
     public static void main(String[] args) throws IOException
     {
-        unit_test(2);
+        unit_test(1);
     }
 }
