@@ -1,13 +1,7 @@
 package sprax.strings;
 
-import java.util.HashMap;
-
-import com.google.common.base.Strings;
-
 import sprax.Sx;
 import sprax.Sz;
-import sprax.arrays.ArrayAlgo;
-
 
 /**
  * String reversals: words, sentence, or any string.
@@ -125,7 +119,6 @@ public class Reversals
     public static char[] reverseWordOrderCopyIndexed(char arr[])
     {
         if (arr != null && arr.length > 1) { 
-            char prevChar = ' ';
             int wordBegEnd[] = new int[arr.length + 1]; // word count <= (string length + 1)/2
             int begEndIndex = wordBegEndIndex(arr, wordBegEnd);
             char rev[] = new char[arr.length];
