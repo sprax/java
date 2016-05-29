@@ -3,10 +3,8 @@ package sprax;
 public class Spaces
 {   
     private static String mString =
-                                          "                                                                "; // 64
-                                                                                                              // spaces
-    
-    // 1234567890123456789012345678901234567890123456789012345678901234
+        "                                                                "; // 64 spaces
+    //   1234567890123456789012345678901234567890123456789012345678901234
     public static String get(int len)
     {
         if (len <= 0) {
@@ -22,8 +20,9 @@ public class Spaces
     
     public static void put(int len)
     {
-        if (len > 0)
+        if (len > 0) {
             Sx.print(get(len));
+        }
     }
     
     public static int unit_test()
