@@ -4,7 +4,7 @@ package sprax.files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import sprax.wordcounts.TextFilters;
+import sprax.files.TextFilters;
 
 /**
  * Profile for a speaker or writer based on word-tuples collected from their sentences.

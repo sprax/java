@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import sprax.Sx;
+import sprax.Sz;
 
 public class TextFilters 
 {
@@ -416,7 +417,7 @@ public class TextFilters
     }
     
 
-    public String[] toWordArray(String text) {
+    public static String[] toWordArray(String text) {
         String conv = toLowerCaseLettersAndSingleSpaces(text);
         if (conv.isEmpty()) {
             return new String[0];
@@ -439,7 +440,8 @@ public class TextFilters
     /** Amount of output increases with level */
     public static int unit_test(int level) 
     {
-        Sx.puts(TextFilters.class.getName() + ".unit_test");  
+        String testName = TextFilters.class.getName() + ".unit_test";
+        Sz.begin(testName);
 
         char allChars[] = new char[256];
         for (char c = '\0'; c < 256; c++) 
@@ -452,11 +454,11 @@ public class TextFilters
                 , " AAA`~!@#$%^&*()_-=+{}[]\\|;:\"',./<>?zzz "
                 , allCharString
         };
-        int stat = 0;
+        int numWrong = 0;
         if (level > 0) {
-            stat += test_toLowerCaseLettersAndSingleSpaces(lines, 1);
+            numWrong += test_toLowerCaseLettersAndSingleSpaces(lines, 1);
             Sx.puts("+++++++++++++++++++++++++++++++++++++++++++++");
-            stat += test_toLowerCaseLetterWords(lines);
+            numWrong += test_toLowerCaseLetterWords(lines);
         }
 
         String text = "  What in \"dog's\" name is all this--? --well, it's @#^&$* tom=foolery!  ";
@@ -477,7 +479,8 @@ public class TextFilters
         String arr[] = new String[0];
         Sx.putsArray(arr);
         
-        return stat;
+        Sz.end(testName, numWrong);
+        return numWrong;
     } 
 
     public static void main(String[] args) {
