@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 import sprax.Sx;
-import sprax.tries.WordTrie;
 
 public class TextFilters 
 {
@@ -212,11 +211,6 @@ public class TextFilters
         ArrayList<char[]> wordList = new ArrayList<char[]>();
         collectLowerCaseLetterWords(wordList, chr, length);
         return wordList;
-    }
-
-    public static int addLowerCaseLetterWordsToTrie(WordTrie trie, char[] chr, int length)
-    {
-        return collectLowerCaseLetterWords(trie, chr, length);
     }
 
     /**
@@ -485,8 +479,6 @@ public class TextFilters
         
         return stat;
     } 
-
-    // TODO: integrate conversion/parse/trie-addition into one method in WordTrie.
 
     public static void main(String[] args) {
         unit_test(1);

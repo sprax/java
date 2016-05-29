@@ -49,7 +49,7 @@ public class BoggleBoard extends RectGrid8<Character, BoggleNode>
         mMinWordLen = minWordLen;
         mMaxWordLen = maxWordLen;
         mFoundWords = new TreeMap<String, Integer>();
-        initWordsFromDictionaryFile(mMinWordLen, mMaxWordLen, sDictionaryPath);
+        initWordsFromDictionaryFile(sDictionaryPath, mMinWordLen, mMaxWordLen);
     }
     
     BoggleBoard(int numRows, int numCols)
@@ -85,9 +85,9 @@ public class BoggleBoard extends RectGrid8<Character, BoggleNode>
         }
     }
     
-    public void initWordsFromDictionaryFile(int minWordLen, int maxWordLen, String dictionaryPath)
+    public void initWordsFromDictionaryFile(String dictionaryPath, int minWordLen, int maxWordLen)
     {
-        sWordTrie.initFromSortedDictionaryFile(minWordLen, maxWordLen, dictionaryPath, 1);
+        sWordTrie.initFromSortedDictionaryFile(dictionaryPath, minWordLen, maxWordLen, 1);
     }
     
     @Override
