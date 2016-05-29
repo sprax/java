@@ -6,6 +6,7 @@ package sprax;
  */
 public class Sz 
 {
+    public static int wrong(boolean result) { return result ? 0 : 1; }
     public static int oneWrong(boolean result, boolean expected) { return result == expected ? 0 : 1; }
     public static int oneWrong(int result, int expected) { return result == expected ? 0 : 1; }
 

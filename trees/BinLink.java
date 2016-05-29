@@ -18,8 +18,6 @@ import sprax.shuffles.Shuffler;
  *
  */
 
-
-
 public class BinLink 
 {
     static int sAlphabet[] = { 

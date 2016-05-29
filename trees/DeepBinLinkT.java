@@ -4,8 +4,9 @@ class DeepBinLinkT<T> extends BinLinkT
 {
     protected int depth;  // TODO: loosen this
                          
-    public DeepBinLinkT(BinLinkT<T> node, int depth) {
-        super(node.data, node.left, node.right);
+    @SuppressWarnings("unchecked")
+    public DeepBinLinkT(BinLinkT<ToInt> node, int depth) {
+        super((ToInt) node.data, node.left, node.right);
         this.depth = depth;
     }
     
@@ -63,7 +64,6 @@ class DeepBinLinkT<T> extends BinLinkT
     //  }
     
     public static void main(String[] args) {
-        System.out.println("BinLinkT test!");
         BinTree.unit_test();
     }
     

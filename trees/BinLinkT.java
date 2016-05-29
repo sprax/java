@@ -1,11 +1,9 @@
 package sprax.trees;
 
 import java.util.ArrayList;
-//import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.Stack;
 
 import sprax.Spaces;
@@ -378,7 +376,7 @@ public abstract class BinLinkT<T extends ToInt>
         return predicate.apply(this);
     }
     
-    interface NodePredicate<U extends BinLinkT>
+    interface NodePredicate<U extends BinLinkT<?>>
     {
         abstract boolean apply(U node);
     }
@@ -419,8 +417,9 @@ public abstract class BinLinkT<T extends ToInt>
         return true;
     }
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public boolean verifyBstBreadthFirst() {
-        return verifyBreadthFirstQueueLevelOrder(new VerifyBST());
+        return verifyBreadthFirstQueueLevelOrder(new BinLinkT.VerifyBST());
     }
     
     public void printBreadthFirstQueueLevelOrder() {
@@ -429,9 +428,10 @@ public abstract class BinLinkT<T extends ToInt>
         System.out.println();
     }
     
+    @SuppressWarnings("unchecked")
     public void visitBreadthFirstQueueLevelOrderDepth(NodeVisitor visitor) {
         LinkedList<DeepBinLinkT<T>> queue = new LinkedList<>();
-        queue.add(new DeepBinLinkT<T>(this, 0));
+        queue.add(new DeepBinLinkT<T>((BinLinkT<ToInt>) this, 0));
         do {
             DeepBinLinkT<T> node = queue.remove();
             visitor.visit(node);

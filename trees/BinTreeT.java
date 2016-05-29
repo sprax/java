@@ -36,7 +36,7 @@ class BinLinkTI extends BinLinkT<Int>
     
 }
 
-public abstract class BinTreeT<T extends BinLinkT> 
+public abstract class BinTreeT<T extends BinLinkT<?>> 
 {
   static int sDbg = 1;
 
@@ -261,7 +261,7 @@ public abstract class BinTreeT<T extends BinLinkT>
     storePathData(sum, path, beg, end);
   }
 
-  public void findDescendingPathsToSum(BinLinkT node, int sum, int path[],
+  public void findDescendingPathsToSum(BinLinkT<?> node, int sum, int path[],
       int level) {
     if (node == null)
       return;
@@ -286,7 +286,7 @@ public abstract class BinTreeT<T extends BinLinkT>
     // read again
   }
 
-  public static void findAllDescendingPaths(BinLinkT node, int level,
+  public static void findAllDescendingPaths(BinLinkT<?> node, int level,
       int path[], HashMap<Integer, ArrayList<int[]>> pathsFound) {
     if (node == null)
       return;
@@ -308,7 +308,7 @@ public abstract class BinTreeT<T extends BinLinkT>
     findAllDescendingPaths(node.right, level + 1, path, pathsFound);
   }
 
-  public void findAllDascendingPathsToSum(BinLinkT node, int sum)
+  public void findAllDascendingPathsToSum(BinLinkT<?> node, int sum)
   {
     int depth = node.getDepth();
     int path[] = new int[depth];
@@ -320,7 +320,7 @@ public abstract class BinTreeT<T extends BinLinkT>
   }
 
   protected interface TreeNodeVisitor {
-    abstract void visit(BinLinkT node);
+    abstract void visit(BinLinkT<?> node);
   }
 
   /**************************************************************
