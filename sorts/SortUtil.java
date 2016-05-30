@@ -2,8 +2,8 @@ package sprax.sorts;
 
 import java.util.Comparator;
 
+import sprax.Sx;
 import sprax.arrays.ArrayFactory;
-import std.StdOut;
 
 interface SortInt {
     void sort(int A[]);
@@ -138,7 +138,7 @@ public class SortUtil
     // print array to standard output
     public static void show(Comparable<?>[] a) {
         for (int i = 0; i < a.length; i++) {
-            StdOut.println(a[i]);
+            Sx.puts(a[i]);
         }
     }    
     

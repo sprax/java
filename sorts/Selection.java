@@ -47,7 +47,7 @@ public class Selection<T extends Comparable<T>>
     }
 
     // use a custom order and Comparator interface - see Section 3.5
-    public static void sort(Object[] a, Comparator<?> c)
+    public static <T extends Comparable<T>> void sort(Object[] a, Comparator<Object> c)
     {
         int N = a.length;
         for (int i = 0; i < N; i++) {
