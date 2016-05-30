@@ -1,9 +1,11 @@
 package sprax.sorts;
 
+import java.util.Arrays;
+
 import sprax.Sx;
 import sprax.Sz;
 
-public class BucketSort
+public class BucketSort implements SortInt
 {
     int mNumBuckets;
     int mBuckets[];
@@ -48,7 +50,7 @@ public class BucketSort
      * @param arr
      * @param min
      */
-    public static void sortRange(int arr[], int min, int max)
+    static void sortRange(int out[], int arr[], int min, int max)
     {
         // Assumes that for all j, min <= arr[j] < max == numBuckets. 
         // System.out.print("min & max & range: " + min + " " + max + " " + range + "\n");
@@ -57,28 +59,58 @@ public class BucketSort
         for (int j = 0; j < arr.length; j++) {
             count[arr[j] - min]++;
         }
-        
         for (int k = 0, j = 0; j < count.length; j++) {
             while (--count[j] >= 0) {
-                arr[k++] = j + min;
+                out[k++] = j + min;
             }
         }
     }
     
-    public static int[] bucketSort(int[] arr) {
+    /**
+     * Sort int array in place using an auxiliary array of size 
+     * equal to the range of values in the original array.  The
+     * array is sorted in-place by counting then assigning raw values.
+     */
+    public static void bucketSort(int[] arr) {
         // achieves O(n) time by using O(input range) space
-        if (arr.length < 2) {
-            return arr;
+        if (arr == null || arr.length < 2) {
+            return;
         }
-        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-        for (int j = 0; j < arr.length; j++) {
+        int min = arr[0];
+        int max = min;
+        for (int j = 1; j < arr.length; j++) {
             if (min > arr[j]) {
                 min = arr[j];
             } else if (max < arr[j]) {
                 max = arr[j];
             }
         }
-        sortRange(arr, min, max);
+        sortRange(arr, arr, min, max);
+    }
+
+    /**
+     * Achieves O(N) time by using O(input range) extra space.
+     * @return new array containing the same values as the original, but sorted.
+     */
+    public static int[] bucketSortCopy(int[] arr) {
+        
+        if (arr == null)
+            return null;                            // GIGO
+        if (arr.length < 2)
+            return Arrays.copyOf(arr, arr.length);  // already sorted
+
+        // No need for MAX_VALUE, we know the array is not empty.
+        int min = arr[0];
+        int max = min;
+        for (int j = 1; j < arr.length; j++) {
+            if (min > arr[j]) {
+                min = arr[j];
+            } else if (max < arr[j]) {
+                max = arr[j];
+            }
+        }
+        int out[] = new int[arr.length];
+        sortRange(out, arr, min, max);
         return arr;
     }
     
@@ -97,18 +129,28 @@ public class BucketSort
         return arr;
     }
     
-    public static int unit_test()
+
+    @Override
+    public void sort(int[] array) {
+        bucketSort(array);
+    }
+    
+    public static int unit_test(int level)
     {
         String testName = BucketSort.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
+        
+        // test handling of null input
+        int nullA[] = bucketSortCopy(null);
+        numWrong += Sz.wrong(nullA == null);
         
         int[] arr = new int[] { -1, 21, -7, 1, 3, 4, 6, 4, 2, 9, 1, 99, 2, 9 };
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + " ");
         }
         System.out.println();
-        arr = bucketSort(arr);
+        bucketSort(arr);
         for (int i = 0; i < arr.length - 1; i++) {
             if (arr[i] > arr[i + 1])
                 numWrong++;
@@ -130,11 +172,19 @@ public class BucketSort
         Sx.puts(str + " -> " + rst);
         numWrong += SortUtil.countDecreasing(nnn);
         
+        if (level > 0) {
+            int radius = 100;
+            int numBuckets = radius*2 + 1;
+            BucketSort bucketSort = new BucketSort(numBuckets);
+            numWrong += SortUtil.test_sort_random_int_array_default(bucketSort, 32, radius);
+        }
+        
         Sz.end(testName, numWrong);
         return numWrong;
     }
-    
+
     public static void main(String[] args) {
-        unit_test();
+        unit_test(1);
     }
+
 }
