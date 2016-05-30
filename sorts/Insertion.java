@@ -26,6 +26,7 @@ import java.util.Comparator;
 
 import sprax.Sx;
 import sprax.Sz;
+import sprax.arrays.ArrayFactory;
 
 public class Insertion<T extends Comparable<T>>
 {
@@ -126,12 +127,21 @@ public class Insertion<T extends Comparable<T>>
         Sz.begin(testName);
         int numWrong = 0;
      
+        numWrong += test_sort_random_int_array(20, 99, 0);
         if (level > 0)
             test_input();
         
         Sz.end(testName, numWrong);
         return numWrong;
     }
+    
+    public static int test_sort_random_int_array(int size, int radius, int seed)
+    {
+        Integer[] A = ArrayFactory.makeRandomIntegerArray(size, -radius, radius, seed);
+        Insertion.sort(A);
+        return SortUtil.countDecreasing(A);
+    }
+    
     
     public static void main(String[] args) 
     {

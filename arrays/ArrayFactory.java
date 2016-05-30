@@ -1,5 +1,8 @@
 package sprax.arrays;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import sprax.Sx;
 
 public class ArrayFactory<T>
@@ -71,6 +74,7 @@ public class ArrayFactory<T>
       }
       return AA;
     }
+    
     public static int [] makeIntArray(int numCols) 
     {
       if (numCols < 1)
@@ -78,6 +82,53 @@ public class ArrayFactory<T>
       int AA[] = new int[numCols];
       return AA;
     }
+    
+    public static int[] makeRandomIntArray(int size, int minVal, int maxVal, long seed)
+    {
+        if (size < 1 || minVal > maxVal)
+            throw new IllegalArgumentException("input");
+ 
+        int A[] = new int[size];
+        Arrays.fill(A, minVal);
+        int maxInc = maxVal - minVal + 1;
+        Random rng = new Random(seed);
+        for (int j = 0; j < size; j++) {
+            A[j] += rng.nextInt(maxInc);
+        }
+        return A;
+    }
+    
+    public static Integer[] makeRandomIntegerArray(int size, int minVal, int maxVal, long seed)
+    {
+        if (size < 1 || minVal > maxVal)
+            throw new IllegalArgumentException("input");
+ 
+        Integer A[] = new Integer[size];
+        Arrays.fill(A, minVal);
+        int maxInc = maxVal - minVal + 1;
+        Random rng = new Random(seed);
+        for (int j = 0; j < size; j++) {
+            A[j] += rng.nextInt(maxInc);
+        }
+        return A;
+    }
+    
+    /**** FIXME: generic factory pattern, infer type from an argument
+    public static <T extends Number> T[] makeRandomArray(int size, int minVal, int maxVal, long seed)
+    {
+        if (size < 1 || minVal > maxVal)
+            throw new IllegalArgumentException("input");
+ 
+        T A[] = new T[size];
+        Arrays.fill(A, minVal);
+        int maxInc = maxVal - minVal + 1;
+        Random rng = new Random(seed);
+        for (int j = 0; j < size; j++) {
+            A[j] += (T) rng.nextInt(maxInc);
+        }
+        return A;
+    }
+    ****/
     
     /*************************************************************************
      * float array factory <br>
@@ -94,6 +145,7 @@ public class ArrayFactory<T>
       float  AA[][] = new float[numRows][numCols];      
       return AA;
     }
+    
     public static float [] makeFloatArray(int numCols) 
     {
       if (numCols < 1)

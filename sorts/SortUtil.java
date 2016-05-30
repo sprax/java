@@ -2,7 +2,12 @@ package sprax.sorts;
 
 import java.util.Comparator;
 
+import sprax.arrays.ArrayFactory;
 import std.StdOut;
+
+interface SortInt {
+    void sort(int A[]);
+}
 
 public class SortUtil 
 {
@@ -116,12 +121,12 @@ public class SortUtil
      ***********************************************************************/
     
     // is the array a[] sorted?
-    public static boolean isSorted(Object[] a, Comparator c) {
+    public static boolean isSorted(Object[] a, Comparator<Object> c) {
         return isSorted(a, c, 0, a.length - 1);
     }
     
     // is the array sorted from a[lo] to a[hi]
-    public static boolean isSorted(Object[] a, Comparator c, int lo, int hi) {
+    public static boolean isSorted(Object[] a, Comparator<Object> c, int lo, int hi) {
         for (int i = lo + 1; i <= hi; i++) {
             if (c.compare(a[i], a[i-1]) < 0) {
                 return false;
@@ -131,13 +136,13 @@ public class SortUtil
     }
     
     // print array to standard output
-    public static void show(Comparable[] a) {
+    public static void show(Comparable<?>[] a) {
         for (int i = 0; i < a.length; i++) {
             StdOut.println(a[i]);
         }
     }    
     
-    static int countDecreasing(int sorted[])
+    public static int countDecreasing(int sorted[])
     {
         if (sorted == null || sorted.length < 2)
             return 0;
@@ -151,7 +156,21 @@ public class SortUtil
         return count;
     }
     
-    static int countIncreasing(int sorted[])
+    public static int countDecreasing(Integer sorted[])
+    {
+        if (sorted == null || sorted.length < 2)
+            return 0;
+        int count = 0;
+        for (int prv = sorted[0], j = 1; j < sorted.length; j++) {
+            int val = sorted[j];
+            if (prv > val)
+                count++;
+            prv = val;
+        }
+        return count;
+    }
+    
+    public static int countIncreasing(int sorted[])
     {
         if (sorted == null || sorted.length < 2)
             return 0;
@@ -164,4 +183,13 @@ public class SortUtil
         }
         return count;
     }
+    
+    public static int test_sort_random_int_array(SortInt sorter, int size, int radius, int seed)
+    {
+        int A[] = ArrayFactory.makeRandomIntArray(size, -radius, radius, seed);
+        sorter.sort(A);
+        return SortUtil.countDecreasing(A);
+    }
+    
+    
 }
