@@ -12,8 +12,14 @@ import sprax.Sz;
  * 
  * @author sprax
  */
-public class HeapSortInt
+public class HeapSortInt implements SortInt
 {
+
+    @Override
+    public void sort(int[] array) {
+        heapSort(array, array.length);
+    }
+    
     public static void heapSort(int[] iA, int len)
     {
         // first place iA in max-heap order
@@ -108,7 +114,7 @@ public class HeapSortInt
         }
     }
     
-    public static int unit_test()
+    public static int unit_test(int level)
     {
         //  System.getSecurityManager().getClassContext()[0].getName();
         CurrentClassGetter ccg = new CurrentClassGetter();
@@ -153,12 +159,16 @@ public class HeapSortInt
         Sx.putsArray("Largest 5 original values, sorted in descending order: ", five);
         Sx.putsSubArray("Smallest 5 original values, in no particular order: ", iA, 0, 5);
         
+        if (level > 0) {
+            
+        }
+        
         Sz.end(testName, numWrong);
         return numWrong;
     }
     
     public static void main(String[] args) {
-        unit_test();
+        unit_test(1);
     }
     
 }

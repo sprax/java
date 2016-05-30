@@ -5,8 +5,8 @@ import java.util.Comparator;
 import sprax.Sx;
 import sprax.arrays.ArrayFactory;
 
-interface SortInt {
-    void sort(int A[]);
+interface SortT<T extends Comparable<T>> {
+    void sort(T array[]);
 }
 
 public class SortUtil 
@@ -184,12 +184,42 @@ public class SortUtil
         return count;
     }
     
-    public static int test_sort_random_int_array(SortInt sorter, int size, int radius, int seed)
+    public static int test_sort_random_int_array_default(SortInt sorter, int size, int radius)
     {
-        int A[] = ArrayFactory.makeRandomIntArray(size, -radius, radius, seed);
-        sorter.sort(A);
-        return SortUtil.countDecreasing(A);
+        long seed = System.currentTimeMillis();
+        int verbose = 1;
+        return SortUtil.test_sort_random_int_array(sorter, size, radius, seed, verbose);
     }
     
+    public static int test_sort_random_int_array(SortInt sorter, int size, int radius, long seed, int verbose)
+    {
+        int iA[] = ArrayFactory.makeRandomIntArray(size, -radius, radius, seed);
+        if (verbose > 0) {
+            Sx.format("test_sort_random_int_array: %s (size %d, radius %d, seed %d)\n"
+                    , sorter.getClass().getSimpleName(), size, radius, seed);
+            Sx.putsArray("Random: ", iA);
+        }
+        sorter.sort(iA);
+        if (verbose > 0)
+            Sx.putsArray("Sorted: ", iA);
+        return SortUtil.countDecreasing(iA);
+    }
     
+    public static int test_sort_randomIntegerArray(SortT<Integer> sorter, int size, int radius, long seed, int verbose)
+    {
+        Integer[] iA = ArrayFactory.makeRandomIntegerArray(size, -radius, radius, seed);
+        if (verbose > 0) {
+            Sx.format("test_sort_random_int_array: %s (size %d, radius %d, seed %d)\n"
+                    , sorter.getClass().getSimpleName(), size, radius, seed);
+            Sx.putsArray("Random: ", iA);
+        }
+        sorter.sort(iA);
+        if (verbose > 0)
+            Sx.putsArray("Sorted: ", iA);
+        return SortUtil.countDecreasing(iA);
+    }
+
+    public static void main(String[] args) {
+        BucketSort.unit_test(1);
+    }
 }

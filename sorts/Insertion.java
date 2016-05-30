@@ -26,21 +26,30 @@ import java.util.Comparator;
 
 import sprax.Sx;
 import sprax.Sz;
-import sprax.arrays.ArrayFactory;
 
-public class Insertion<T extends Comparable<T>>
+public class Insertion<T extends Comparable<T>> implements SortT<T>
 {
-    // use natural order and Comparable interface
-    public static <T extends Comparable<T>> void sort(T[] a)
+
+    @Override
+    public void sort(T[] iA) {
+        insertionSort(iA);
+    }
+
+    
+    // use natural order and Comparable interface    
+    public static <T extends Comparable<T>> void insertionSort(T[] iA)
     {
-        int N = a.length;
+        if (iA == null || iA.length < 2)
+            return;                     // GIGO
+        
+        int N = iA.length;
         for (int i = 0; i < N; i++) {
-            for (int j = i; j > 0 && less(a[j], a[j-1]); j--) {
-                exch(a, j, j-1);
+            for (int j = i; j > 0 && less(iA[j], iA[j-1]); j--) {
+                exch(iA, j, j-1);
             }
-            assert SortUtil.isSorted(a, 0, i);
+            assert SortUtil.isSorted(iA, 0, i);
         }
-        assert SortUtil.isSorted(a);
+        assert SortUtil.isSorted(iA);
     }
 
     // use a custom order and Comparator interface - see Section 3.5
@@ -114,7 +123,7 @@ public class Insertion<T extends Comparable<T>>
     {
         
         String[] a = Sx.getQuotedStrings("Enter strings between quotes: ");
-        Insertion.sort(a);
+        Insertion.insertionSort(a);
         show(a);
         boolean sorted = SortUtil.isSorted(a);
         return Sz.wrong(sorted);
@@ -126,8 +135,10 @@ public class Insertion<T extends Comparable<T>>
         String testName = Insertion.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
+        int verbose = 1;
      
-        numWrong += test_sort_random_int_array(20, 99, 0);
+        Insertion<Integer> intSorter = new Insertion<>();
+        numWrong += SortUtil.test_sort_randomIntegerArray(intSorter, 32, 100, 0, verbose);
         if (level > 0)
             test_input();
         
@@ -135,18 +146,11 @@ public class Insertion<T extends Comparable<T>>
         return numWrong;
     }
     
-    public static int test_sort_random_int_array(int size, int radius, int seed)
-    {
-        Integer[] A = ArrayFactory.makeRandomIntegerArray(size, -radius, radius, seed);
-        Insertion.sort(A);
-        return SortUtil.countDecreasing(A);
-    }
-    
-    
     public static void main(String[] args) 
     {
-        unit_test(1);
+        unit_test(0);
     }
+
 }
 
 

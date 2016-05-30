@@ -53,7 +53,7 @@ class IntArray implements IndexComparable<Integer>
     }
 }
 
-class InPlaceStableSort<T> implements SortInterface
+class InPlaceStableSort<T> implements SortInt
 {
     IndexComparable<T> mA;
     
@@ -63,9 +63,19 @@ class InPlaceStableSort<T> implements SortInterface
     
     @Override
     public void sort(int[] iA) {
-        IntArray ia = new IntArray(iA);
-        InPlaceStableSort<Integer> ips = new InPlaceStableSort<Integer>(ia);
-        ips.sort();
+        inPlaceStableSort(iA);
+    }    
+    
+    /** Not public, but friendly.  An instance of InPlaceStableSort is created and discarded. */
+    static void inPlaceStableSort(int[] iA) {
+        IntArray intArray = new IntArray(iA);
+        InPlaceStableSort<Integer> ipss = new InPlaceStableSort<Integer>(intArray);
+        ipss.sort();
+    }    
+    
+    /** sorts its own member array */
+    public void sort() {
+        sort(0, mA.size());
     }    
     
     public static InPlaceStableSort<Integer> createFromIntArray(int[] toBeSorted)
@@ -198,26 +208,22 @@ class InPlaceStableSort<T> implements SortInterface
         merge(from, middle, to, middle - from, to - middle);
     }
     
-    @Override
-    public void sort() {
-        sort(0, mA.size());
-    }
-    
-    static int unit_test()
+
+    static int unit_test(int level)
     {
         String testName = InPlaceStableSort.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         
-        int[] intArray = { 0, -1, 2, -3, 4, -5, 6, -7, 8, -9 };
-        SortInterface sorter = InPlaceStableSort.createFromIntArray(intArray);
-        sorter.sort();
-        Sx.putsArray("intArray sorted: ", intArray);
-        boolean sorted = SortUtil.verifySorted(intArray);
+        int[] iA = { 0, -1, 2, -3, 4, -5, 6, -7, 8, -9 };
+        InPlaceStableSort<Integer> ipss = InPlaceStableSort.createFromIntArray(iA);
+        ipss.sort();
+        Sx.putsArray("intArray sorted: ", iA);
+        boolean sorted = SortUtil.verifySorted(iA);
         numWrong += Sz.wrong(sorted);
         
         int iB[] = { 5, -4, 8, -1, 0, 3, -7, 9, -2, 6 };
-        sorter.sort(iB);
+        ipss.sort(iB);
         Sx.putsArray("intArray sorted: ", iB);
         sorted = SortUtil.verifySorted(iB);
         numWrong += Sz.wrong(sorted);
@@ -229,7 +235,7 @@ class InPlaceStableSort<T> implements SortInterface
     
     public static void main(String[] args)
     {
-        unit_test();
+        unit_test(1);
     }
     
 
