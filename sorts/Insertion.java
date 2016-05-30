@@ -1,7 +1,7 @@
 /*************************************************************************
  *  Compilation:  javac Insertion.java
  *  Execution:    java Insertion < input.txt
- *  Dependencies: StdOut.java StdIn.java
+ *  Dependencies: Sx, Sz
  *  Data files:   http://algs4.cs.princeton.edu/21sort/tiny.txt
  *                http://algs4.cs.princeton.edu/21sort/words3.txt
  *  
@@ -22,11 +22,10 @@
  *************************************************************************/
 package sprax.sorts;
 
-
 import java.util.Comparator;
 
-import std.StdIn;
-import std.StdOut;
+import sprax.Sx;
+import sprax.Sz;
 
 public class Insertion<T extends Comparable<T>>
 {
@@ -104,16 +103,39 @@ public class Insertion<T extends Comparable<T>>
     // print array to standard output
     private static <T extends Comparable<T>> void show(T[] a) {
         for (int i = 0; i < a.length; i++) {
-            StdOut.println(a[i]);
+            Sx.printOne(a[i]);
         }
+        Sx.puts();
     }
 
     // Read strings from standard input, sort them, and print.
-    public static void main(String[] args) 
+    public static int test_input() 
     {
-        String[] a = StdIn.readStrings();
+        
+        String[] a = Sx.getQuotedStrings("Enter strings between quotes: ");
         Insertion.sort(a);
         show(a);
+        boolean sorted = SortUtil.isSorted(a);
+        return Sz.wrong(sorted);
+    }
+    
+    // Read strings from standard input, sort them, and print.
+    public static int unit_test(int level) 
+    {
+        String testName = Insertion.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+     
+        if (level > 0)
+            test_input();
+        
+        Sz.end(testName, numWrong);
+        return numWrong;
+    }
+    
+    public static void main(String[] args) 
+    {
+        unit_test(1);
     }
 }
 

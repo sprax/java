@@ -1,5 +1,6 @@
 package sprax;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * static output methods for testing, debugging, etc.
@@ -871,6 +874,40 @@ public class Sx
         return str;
     }
     
+    // assume Unicode UTF-8 encoding
+    private static String charsetName = "UTF-8";
+
+    // the scanner object
+    private static Scanner scanner = new Scanner(new BufferedInputStream(System.in), charsetName);
+
+    // assume language = English, country = US for consistency with System.out.
+    private static Locale usLocale = new Locale("en", "US");
+    
+    // static initializer
+    static { scanner.useLocale(usLocale); }
+
+    /**
+     * Read input delimited by single or double quotation marks 
+     * and split it into an array of strings.
+     */
+    public static String[] getQuotedStrings(String prompt) 
+    {
+        if (prompt != null)
+            print(prompt);
+        String[] fields = readAllQuoted().trim().split("\\s+");
+        return fields;
+    }
+
+    /**
+     * Return rest of input from standard input
+     */
+    public static String readAllQuoted() {
+        if (!scanner.hasNextLine()) 
+            return null;
+
+        return scanner.useDelimiter("[\"\']").next();
+    }
+
     // -------------------------------------------------------------------
     /**
      * reads chars into a pre-allocated char array, but replaces line-ending characters such as \r
@@ -895,7 +932,7 @@ public class Sx
         int numCharsRead = getBufferedReader().read(cbuf, off, maxLen);
         return trimEnd(cbuf, off, numCharsRead);
     }
-    
+
     /**
      * Trims line-endings and any other chars < SPACE_CHAR from the end of a sequence of characters
      * in cbuf, and returns the resulting end index.
@@ -947,6 +984,19 @@ public class Sx
         printSpaces(promptLen);
         puts(strA);
         puts("Goodbye from getString!");
+        
+        return 0;
+    }
+    
+    public static int test_getStrings()
+    {
+        String prompt = "Enter a string between quotation marks: ";
+        int promptLen = prompt.length();                
+        String strs[] = Sx.getQuotedStrings(prompt);
+        printSpaces(promptLen);        
+        Sx.putsArray(strs);
+
+        puts("Goodbye from test_getStrings!");
         
         return 0;
     }
@@ -1025,6 +1075,7 @@ public class Sx
         if (level > 1) {
             test_getString();
             test_getCharray();
+            test_getStrings();
         }
         format("END   %s,  PASS\n", testName);
         return 0;
