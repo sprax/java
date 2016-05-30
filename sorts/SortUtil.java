@@ -3,11 +3,8 @@ package sprax.sorts;
 import java.util.Comparator;
 
 import sprax.Sx;
+import sprax.Sz;
 import sprax.arrays.ArrayFactory;
-
-interface SortT<T extends Comparable<T>> {
-    void sort(T array[]);
-}
 
 public class SortUtil 
 {
@@ -115,10 +112,6 @@ public class SortUtil
          }
          return true;
      }
-     
-     /***********************************************************************
-     * Check if array is sorted - useful for debugging
-     ***********************************************************************/
     
     // is the array a[] sorted?
     public static boolean isSorted(Object[] a, Comparator<Object> c) {
@@ -134,13 +127,15 @@ public class SortUtil
         }
         return true;
     }
-    
+
     // print array to standard output
-    public static void show(Comparable<?>[] a) {
+    public static <T extends Comparable<T>> void show(T[] a) 
+    {
         for (int i = 0; i < a.length; i++) {
-            Sx.puts(a[i]);
+            Sx.printOne(a[i]);
         }
-    }    
+        Sx.puts();
+    }
     
     public static int countDecreasing(int sorted[])
     {
@@ -219,6 +214,17 @@ public class SortUtil
         return SortUtil.countDecreasing(iA);
     }
 
+
+    // Read strings from standard input, sort them, and print.
+    public static int test_input() 
+    {
+        String[] iA = Sx.getQuotedStrings("Enter strings between quotes: ");
+        Insertion.insertionSort(iA);
+        show(iA);
+        boolean sorted = SortUtil.isSorted(iA);
+        return Sz.wrong(sorted);
+    }
+    
     public static void main(String[] args) {
         BucketSort.unit_test(1);
     }

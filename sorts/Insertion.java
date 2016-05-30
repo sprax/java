@@ -24,17 +24,14 @@ package sprax.sorts;
 
 import java.util.Comparator;
 
-import sprax.Sx;
 import sprax.Sz;
 
 public class Insertion<T extends Comparable<T>> implements SortT<T>
 {
-
     @Override
     public void sort(T[] iA) {
         insertionSort(iA);
     }
-
     
     // use natural order and Comparable interface    
     public static <T extends Comparable<T>> void insertionSort(T[] iA)
@@ -110,26 +107,6 @@ public class Insertion<T extends Comparable<T>> implements SortT<T>
         a[j] = swap;
     }
 
-    // print array to standard output
-    private static <T extends Comparable<T>> void show(T[] a) {
-        for (int i = 0; i < a.length; i++) {
-            Sx.printOne(a[i]);
-        }
-        Sx.puts();
-    }
-
-    // Read strings from standard input, sort them, and print.
-    public static int test_input() 
-    {
-        
-        String[] a = Sx.getQuotedStrings("Enter strings between quotes: ");
-        Insertion.insertionSort(a);
-        show(a);
-        boolean sorted = SortUtil.isSorted(a);
-        return Sz.wrong(sorted);
-    }
-    
-    // Read strings from standard input, sort them, and print.
     public static int unit_test(int level) 
     {
         String testName = Insertion.class.getName() + ".unit_test";
@@ -139,8 +116,9 @@ public class Insertion<T extends Comparable<T>> implements SortT<T>
      
         Insertion<Integer> intSorter = new Insertion<>();
         numWrong += SortUtil.test_sort_randomIntegerArray(intSorter, 32, 100, 0, verbose);
-        if (level > 0)
-            test_input();
+        if (level > 0) {
+            SortUtil.test_input();
+        }
         
         Sz.end(testName, numWrong);
         return numWrong;
@@ -148,9 +126,8 @@ public class Insertion<T extends Comparable<T>> implements SortT<T>
     
     public static void main(String[] args) 
     {
-        unit_test(0);
+        unit_test(1);
     }
-
 }
 
 

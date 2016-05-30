@@ -1,7 +1,5 @@
 package sprax.sorts;
 
-import java.util.Arrays;
-
 import sprax.Sx;
 import sprax.Sz;
 
@@ -13,6 +11,88 @@ public class BucketSort implements SortInt
     public BucketSort(int numBuckets) {
         mNumBuckets = numBuckets;
         mBuckets = new int[numBuckets];		// auto-initialized to 0's
+    }
+    
+
+    @Override
+    public void sort(int[] array) {
+        bucketSort(array);
+    }
+    
+    /**
+     * Sort int array in place using an auxiliary array of size 
+     * equal to the range of values in the original array.  The
+     * array is sorted in-place by counting then assigning raw values.
+     * Achieves O(N) time by using O(input range) extra space.
+     */
+    public static void bucketSort(int[] arr) {
+        if (arr == null || arr.length < 2) {
+            return;                             // GIGO
+        }
+
+        // No need for MAX_VALUE, we know the array is not empty.
+        int min = arr[0];
+        int max = min;
+        for (int j = 1; j < arr.length; j++) {
+            if (min > arr[j]) {
+                min = arr[j];
+            } else if (max < arr[j]) {
+                max = arr[j];
+            }
+        }
+        sortRange(arr, arr, min, max);
+    }
+
+    /**
+     * Achieves O(N) time by using O(input range) extra space.
+     * Places sorted contents of input array into output array.
+     */
+    public static void bucketSort(int[] input, int output[])
+    {
+        if (input == null || input.length < 1)
+            return;                             // GIGO
+        if (output == null || output.length < 1)
+            return;                             // GIGO
+        if (input.length < 2) {
+            output[0] = input[0];
+            return;                             // already sorted
+        }
+
+        // No need for MAX_VALUE, we know the array is not empty.
+        int min = input[0];
+        int max = min;
+        for (int j = 1; j < input.length; j++) {
+            if (min > input[j]) {
+                min = input[j];
+            } else if (max < input[j]) {
+                max = input[j];
+            }
+        }
+        sortRange(input, output, min, max);
+    }
+    
+    
+    /**
+     * sortRange does bucket sort of int in the specified range,
+     * that is, in the half-open interval [min, max).
+     * 
+     * @param input
+     * @param min
+     */
+    static void sortRange(int input[], int output[], int min, int max)
+    {
+        // Assumes that for all j, min <= input[j] < max == numBuckets. 
+        // System.out.print("min & max & range: " + min + " " + max + " " + range + "\n");
+        int range = max - min + 1;
+        int count[] = new int[range];
+        for (int j = 0; j < input.length; j++) {
+            count[input[j] - min]++;
+        }
+        for (int k = 0, j = 0; j < count.length; j++) {
+            while (--count[j] >= 0) {
+                output[k++] = j + min;
+            }
+        }
     }
     
     /**
@@ -42,79 +122,10 @@ public class BucketSort implements SortInt
             }
         }
     }
-    
-    /**
-     * sortRange does bucket sort of int in the specified range,
-     * that is, in the half-open interval [min, max).
-     * 
-     * @param arr
-     * @param min
-     */
-    static void sortRange(int out[], int arr[], int min, int max)
+
+    /** @deprecated */
+    static int[] bucketSort_lame(int[] arr) 
     {
-        // Assumes that for all j, min <= arr[j] < max == numBuckets. 
-        // System.out.print("min & max & range: " + min + " " + max + " " + range + "\n");
-        int range = max - min + 1;
-        int count[] = new int[range];
-        for (int j = 0; j < arr.length; j++) {
-            count[arr[j] - min]++;
-        }
-        for (int k = 0, j = 0; j < count.length; j++) {
-            while (--count[j] >= 0) {
-                out[k++] = j + min;
-            }
-        }
-    }
-    
-    /**
-     * Sort int array in place using an auxiliary array of size 
-     * equal to the range of values in the original array.  The
-     * array is sorted in-place by counting then assigning raw values.
-     */
-    public static void bucketSort(int[] arr) {
-        // achieves O(n) time by using O(input range) space
-        if (arr == null || arr.length < 2) {
-            return;
-        }
-        int min = arr[0];
-        int max = min;
-        for (int j = 1; j < arr.length; j++) {
-            if (min > arr[j]) {
-                min = arr[j];
-            } else if (max < arr[j]) {
-                max = arr[j];
-            }
-        }
-        sortRange(arr, arr, min, max);
-    }
-
-    /**
-     * Achieves O(N) time by using O(input range) extra space.
-     * @return new array containing the same values as the original, but sorted.
-     */
-    public static int[] bucketSortCopy(int[] arr) {
-        
-        if (arr == null)
-            return null;                            // GIGO
-        if (arr.length < 2)
-            return Arrays.copyOf(arr, arr.length);  // already sorted
-
-        // No need for MAX_VALUE, we know the array is not empty.
-        int min = arr[0];
-        int max = min;
-        for (int j = 1; j < arr.length; j++) {
-            if (min > arr[j]) {
-                min = arr[j];
-            } else if (max < arr[j]) {
-                max = arr[j];
-            }
-        }
-        int out[] = new int[arr.length];
-        sortRange(out, arr, min, max);
-        return arr;
-    }
-    
-    public static int[] bucketSort_lame(int[] arr) {
         // lame because it only works for non-negative integers < array length
         int[] count = new int[arr.length];
         for (int i = 0; i < arr.length; i++) {
@@ -130,11 +141,6 @@ public class BucketSort implements SortInt
     }
     
 
-    @Override
-    public void sort(int[] array) {
-        bucketSort(array);
-    }
-    
     public static int unit_test(int level)
     {
         String testName = BucketSort.class.getName() + ".unit_test";
@@ -142,8 +148,12 @@ public class BucketSort implements SortInt
         int numWrong = 0;
         
         // test handling of null input
-        int nullA[] = bucketSortCopy(null);
-        numWrong += Sz.wrong(nullA == null);
+        int nullA[] = null;
+        bucketSort(nullA);
+        
+        // test handling of empty input
+        int emptyA[] = new int[0];
+        bucketSort(emptyA, emptyA);
         
         int[] arr = new int[] { -1, 21, -7, 1, 3, 4, 6, 4, 2, 9, 1, 99, 2, 9 };
         for (int i = 0; i < arr.length; i++) {

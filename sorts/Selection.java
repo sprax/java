@@ -3,7 +3,7 @@ package sprax.sorts;
 /*************************************************************************
  *  Compilation:  javac Selection.java
  *  Execution:    java  Selection < input.txt
- *  Dependencies: StdOut.java StdIn.java
+ *  Dependencies: Sx, Sz
  *  Data files:   http://algs4.cs.princeton.edu/21sort/tiny.txt
  *                http://algs4.cs.princeton.edu/21sort/words3.txt
  *   
@@ -25,13 +25,21 @@ package sprax.sorts;
 
 import java.util.Comparator;
 
-import sprax.Sx;
-import std.StdIn;
+import sprax.Sz;
 
-public class Selection<T extends Comparable<T>>
+public class Selection<T extends Comparable<T>> implements SortT<T>
 {
+    @Override
+    public void sort(T[] iA) {
+        selectionSort(iA);
+    }
+
     // selection sort
-    public static <T extends Comparable<T>> void sort(T[] tA) {
+    public static <T extends Comparable<T>> void selectionSort(T[] tA)
+    {
+        if (tA == null || tA.length < 2)
+            return;
+
         int N = tA.length;
         for (int i = 0; i < N; i++) {
             int min = i;
@@ -47,7 +55,7 @@ public class Selection<T extends Comparable<T>>
     }
 
     // use a custom order and Comparator interface - see Section 3.5
-    public static <T extends Comparable<T>> void sort(Object[] a, Comparator<Object> c)
+    public static <T extends Comparable<T>> void sort(T[] a, Comparator<T> c)
     {
         int N = a.length;
         for (int i = 0; i < N; i++) {
@@ -67,15 +75,14 @@ public class Selection<T extends Comparable<T>>
     ***********************************************************************/
     
     // is v < w ?
-    private static boolean less(Comparable v, Comparable w) {
+    private static <T extends Comparable<T>> boolean less(T v, T w) {
         return (v.compareTo(w) < 0);
     }
 
     // is v < w ?
-    private static boolean less(Comparator c, Object v, Object w) {
+    private static <T extends Comparable<T>> boolean less(Comparator<T> c, T v, T w) {
         return (c.compare(v, w) < 0);
     }
-        
         
     // exchange a[i] and a[j]
     private static void exch(Object[] a, int i, int j) {
@@ -84,18 +91,25 @@ public class Selection<T extends Comparable<T>>
         a[j] = swap;
     }
 
-
-    // print array to standard output
-    private static void show(Comparable[] a) {
-        for (int i = 0; i < a.length; i++) {
-            Sx.puts(a[i]);
+    public static int unit_test(int level) 
+    {
+        String testName = Selection.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+        int verbose = 1;
+     
+        Selection<Integer> intSorter = new Selection<>();
+        numWrong += SortUtil.test_sort_randomIntegerArray(intSorter, 32, 100, 0, verbose);
+        if (level > 0) {
+            SortUtil.test_input();
         }
+        
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
-
-    // Read strings from standard input, sort them, and print.
-    public static void main(String[] args) {
-        String[] a = StdIn.readStrings();
-        Selection.sort(a);
-        show(a);
+    
+    public static void main(String[] args) 
+    {
+        unit_test(0);
     }
 }

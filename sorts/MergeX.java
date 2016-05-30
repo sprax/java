@@ -24,6 +24,7 @@
 
 package sprax.sorts;
 
+import sprax.Sz;
 import std.StdIn;
 import std.StdOut;
 
@@ -114,11 +115,25 @@ public class MergeX
         return (a.compareTo(b) < 0);
     }
     
-    // Read strings from standard input, sort them, and print.
-    public static void main(String[] args)
+    public static int unit_test(int level) 
     {
-        String[] a = StdIn.readStrings();
-        MergeX.sort(a);
-        SortUtil.show(a);
+        String testName = MergeX.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+        int verbose = 1;
+     
+        Insertion<Integer> intSorter = new Insertion<>();
+        numWrong += SortUtil.test_sort_randomIntegerArray(intSorter, 32, 100, 0, verbose);
+        if (level > 0) {
+            SortUtil.test_input();
+        }
+        
+        Sz.end(testName, numWrong);
+        return numWrong;
+    }
+    
+    public static void main(String[] args) 
+    {
+        unit_test(0);
     }
 }
