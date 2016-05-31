@@ -41,7 +41,7 @@ public class Insertion<T extends Comparable<T>> implements SortT<T>
         
         int N = iA.length;
         for (int i = 0; i < N; i++) {
-            for (int j = i; j > 0 && less(iA[j], iA[j-1]); j--) {
+            for (int j = i; j > 0 && SortUtil.less(iA[j], iA[j-1]); j--) {
                 exch(iA, j, j-1);
             }
             assert SortUtil.isSorted(iA, 0, i);
@@ -54,7 +54,7 @@ public class Insertion<T extends Comparable<T>> implements SortT<T>
     {
         int N = a.length;
         for (int i = 0; i < N; i++) {
-            for (int j = i; j > 0 && less(c, a[j], a[j-1]); j--) {
+            for (int j = i; j > 0 && SortUtil.less(c, a[j], a[j-1]); j--) {
                 exch(a, j, j-1);
             }
             assert SortUtil.isSorted(a, c, 0, i);
@@ -72,26 +72,13 @@ public class Insertion<T extends Comparable<T>> implements SortT<T>
             index[i] = i;
 
         for (int i = 0; i < N; i++)
-            for (int j = i; j > 0 && less(a[index[j]], a[index[j-1]]); j--)
+            for (int j = i; j > 0 && SortUtil.less(a[index[j]], a[index[j-1]]); j--)
                 exch(index, j, j-1);
 
         return index;
     }
 
-   /***********************************************************************
-    *  Helper sorting functions
-    ***********************************************************************/
-    
-    // is v < w ?
-    private static <T extends Comparable<T>> boolean less(T v, T w)
-    {
-        return (v.compareTo(w) < 0);
-    }
 
-    // is v < w ?
-    private static <T extends Comparable<T>> boolean less(Comparator<T> c, T v, T w) {
-        return (c.compare(v, w) < 0);
-    }
         
     // exchange a[i] and a[j]
     private static void exch(Object[] a, int i, int j) {

@@ -1,7 +1,7 @@
 /*************************************************************************
  *  Compilation:  javac MergeX.java
  *  Execution:    java MergeX < input.txt
- *  Dependencies: StdOut.java StdIn.java
+ *  Dependencies: Sz
  *  Data files:   http://algs4.cs.princeton.edu/22mergesort/tiny.txt
  *                http://algs4.cs.princeton.edu/22mergesort/words3.txt
  *   
@@ -25,14 +25,17 @@
 package sprax.sorts;
 
 import sprax.Sz;
-import std.StdIn;
-import std.StdOut;
 
-public class MergeX
+public class MergeX<T extends Comparable<T>> implements SortT<T>
 {
     private static final int CUTOFF = 7;  // cutoff to insertion sort
+    
+    @Override
+    public void sort(T[] array) {
+        mergeSort(array);    
+    }
                                          
-    private static void merge(Comparable[] src, Comparable[] dst, int lo, int mid, int hi) {
+    private static <T extends Comparable<T>> void merge(T[] src, T[] dst, int lo, int mid, int hi) {
         
         // precondition: src[lo .. mid] and src[mid+1 .. hi] are sorted subarrays
         assert SortUtil.isSorted(src, lo, mid);
@@ -44,7 +47,7 @@ public class MergeX
                 dst[k] = src[j++];
             else if (j > hi)
                 dst[k] = src[i++];
-            else if (less(src[j], src[i]))
+            else if (SortUtil.less(src[j], src[i]))
                 dst[k] = src[j++];   // to ensure stability
             else
                 dst[k] = src[i++];
@@ -54,15 +57,15 @@ public class MergeX
         assert SortUtil.isSorted(dst, lo, hi);
     }
     
-    private static void sort(Comparable[] src, Comparable[] dst, int lo, int hi)
+    private static <T extends Comparable<T>> void mergeSort(T[] src, T[] dst, int lo, int hi)
     {
         if (hi <= lo + CUTOFF) {
             insertionSort(src, lo, hi);
             return;
         }
         int mid = lo + (hi - lo) / 2;
-        sort(dst, src, lo, mid);
-        sort(dst, src, mid + 1, hi);
+        mergeSort(dst, src, lo, mid);
+        mergeSort(dst, src, mid + 1, hi);
         
         /*
                 if (!less(dst[mid+1], dst[mid])) {
@@ -71,7 +74,7 @@ public class MergeX
                 }
         */
         // a bit faster
-        if (!less(dst[mid + 1], dst[mid])) {
+        if (!SortUtil.less(dst[mid + 1], dst[mid])) {
             System.arraycopy(dst, lo, src, lo, hi - lo + 1);
             return;
         }
@@ -79,7 +82,7 @@ public class MergeX
         merge(dst, src, lo, mid, hi);
     }
     
-    public static void sort(Comparable[] a) 
+    public static <T extends Comparable<T>> void mergeSort(T[] a) 
     {
         /*
                 Comparable[] aux = new Comparable[a.length];
@@ -87,33 +90,28 @@ public class MergeX
                     aux[i] = a[i];
         */
         // a bit faster
-        Comparable[] aux = a.clone();
-        sort(a, aux, 0, a.length - 1);
+        T[] aux = a.clone();
+        mergeSort(a, aux, 0, a.length - 1);
         
         assert SortUtil.isSorted(a);
     }
     
     // sort from a[lo] to a[hi] using insertion sort
-    private static void insertionSort(Comparable[] a, int lo, int hi)
+    private static <T extends Comparable<T>> void insertionSort(T[] a, int lo, int hi)
     {
         for (int i = lo; i <= hi; i++)
-            for (int j = i; j > lo && less(a[j], a[j - 1]); j--)
+            for (int j = i; j > lo && SortUtil.less(a[j], a[j - 1]); j--)
                 exch(a, j, j - 1);
     }
     
     // exchange a[i] and a[j]
-    private static void exch(Comparable[] a, int i, int j)
+    private static <T extends Comparable<T>> void exch(T[] a, int i, int j)
     {
-        Comparable swap = a[i];
+        T swap = a[i];
         a[i] = a[j];
         a[j] = swap;
     }
     
-    // is a[i] < a[j]?
-    private static boolean less(Comparable a, Comparable b)
-    {
-        return (a.compareTo(b) < 0);
-    }
     
     public static int unit_test(int level) 
     {
@@ -122,7 +120,7 @@ public class MergeX
         int numWrong = 0;
         int verbose = 1;
      
-        Insertion<Integer> intSorter = new Insertion<>();
+        MergeX<Integer> intSorter = new MergeX<>();
         numWrong += SortUtil.test_sort_randomIntegerArray(intSorter, 32, 100, 0, verbose);
         if (level > 0) {
             SortUtil.test_input();

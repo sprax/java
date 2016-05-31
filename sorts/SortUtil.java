@@ -77,7 +77,22 @@ public class SortUtil
         }
         return true;
     }
-    
+
+    /***********************************************************************
+     *  Helper sorting functions
+     ***********************************************************************/
+     
+     // is v < w ?
+     public static <T extends Comparable<T>> boolean less(T v, T w)
+     {
+         return (v.compareTo(w) < 0);
+     }
+
+     // is v < w ?
+     public static <T extends Comparable<T>> boolean less(Comparator<T> c, T v, T w) {
+         return (c.compare(v, w) < 0);
+     }
+     
     /***********************************************************************
      *  Check if array is sorted - useful for debugging
      ***********************************************************************/
