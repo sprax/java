@@ -1,10 +1,6 @@
 package sprax.numbers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import sprax.Sx;
-import sprax.geom.UnitCircleAngle;
 
 public class Numeral2Counter 
 {

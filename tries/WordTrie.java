@@ -2755,8 +2755,11 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 
 		 if (level > 1) {
 
-			 test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, "text/MobyDick.txt", 2); 
-			 test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, "text/Iliad.txt", 1); 
+		     String 
+		     path = FileUtil.getTextFilePath("MobyDick.txt");
+			 test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, path, 2); 
+			 path = FileUtil.getTextFilePath("Iliad.txt");
+			 test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, path, 1); 
 
 			 if (level < 3) {
 				 Map.Entry<WordNode, Integer> mg = trie.maxGreedyContinuation(root);

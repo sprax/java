@@ -11,6 +11,8 @@ public class ArrayFactory<T>
      * Object array factory <br>
      * Beware ClassCastException: 
      */
+    
+    /**** TODO: static factory creation methods
     public T[][] makeObjectArray(int numRows, int numCols) 
     {
       if (numRows < 1 || numCols < 1)
@@ -29,6 +31,7 @@ public class ArrayFactory<T>
       Object AA[] = new Object[numCols];
       return (T[])AA;
     }
+    ****/
     
     public static Integer[] makeIntegerArray(int A[])
     {

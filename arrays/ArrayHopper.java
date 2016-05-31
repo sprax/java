@@ -182,7 +182,7 @@ class ArrayHopperTest
         int iA[] = { 1, 2, 2, 0, 3, 0, 0, 2 }; // expected answer: 6
         int iB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         int iC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
-        int aiA[][] = { iA, iB, iC };
+        //int aiA[][] = { iA, iB, iC };
 
 		ArrayHopper hopperGRF = new ArrayHopperGreedyRecurseForward();
 		ArrayHopper hopperRBF = new ArrayHopperRecurseBreadthFirst();

@@ -24,6 +24,7 @@ public class Shuffles {
      */
 
 
+    // FIXME: not finished.
     public static void inShuffleArray(char[] A)
     {
         int len = A.length;
@@ -38,9 +39,9 @@ public class Shuffles {
                 m = (pow3_k - 1) / 2;
                 break; 
             }
-        } // TODO: what if 3**8 isn't big enough?
-
-
+        } 
+        // TODO: what if 3**8 isn't big enough?
+        Sx.format("inShuffleArray got m = %d\n", m);
     }
 
 

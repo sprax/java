@@ -9,6 +9,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import sprax.Sx;
+import sprax.files.FileUtil;
 import sprax.tries.WordTrie;
 
 /**
@@ -29,7 +30,7 @@ class BoggleNode extends GridNodeChar
 public class BoggleBoard extends RectGrid8<Character, BoggleNode>
 {
     public static int      sMinWordLen     = 3;
-    public static String   sDictionaryPath = "text/En/words.txt";
+    public static String   sDictionaryPath = "En/words.txt";
     public static WordTrie sWordTrie       = new WordTrie();
     
     public static void setDictionaryPath(String dictPath) {
@@ -49,7 +50,8 @@ public class BoggleBoard extends RectGrid8<Character, BoggleNode>
         mMinWordLen = minWordLen;
         mMaxWordLen = maxWordLen;
         mFoundWords = new TreeMap<String, Integer>();
-        initWordsFromDictionaryFile(sDictionaryPath, mMinWordLen, mMaxWordLen);
+        String textFilePath = FileUtil.getTextFilePath(sDictionaryPath);
+        initWordsFromDictionaryFile(textFilePath, mMinWordLen, mMaxWordLen);
     }
     
     BoggleBoard(int numRows, int numCols)

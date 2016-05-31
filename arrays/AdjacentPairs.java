@@ -205,6 +205,7 @@ public class AdjacentPairs
         int npA = testOneArray(A, level);
         int B[] = { 0, 3, 3, 7, 5, 3, 11, 1 }; 
         int npB = testOneArray(B, level);
+        Sx.format("testOneArray results:  %d  %d\n", npA, npB);
 
         Sx.puts(testName + " END,  status: PASSED");
         return 0;

@@ -160,8 +160,7 @@ public class FindDuplicate
 	 */
 	static int findDuplicateAndMissingFromShuffledOrdinals(int array[])
 	{
-		int duplicate = findDuplicateFromShuffledOrdinalsXor(array);
-		return -1;
+		return findDuplicateFromShuffledOrdinalsXor(array);
 	}
 	
 	static int test_findDuplicatedOrdinal(int size)

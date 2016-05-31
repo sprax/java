@@ -444,19 +444,20 @@ public class Merges
         long pr[] = new long[times], startTime;
         long pq[] = new long[times], stopTime;
         
+        int X[] = { 0 };
         for (int j = 0; j < times; j++) {
             startTime = System.currentTimeMillis();
-            int X[] = mergeArrays(AA);
+            X = mergeArrays(AA);
             stopTime = System.currentTimeMillis();
             pr[j] = stopTime - startTime;
             
             startTime = System.currentTimeMillis();
-            int Z[] = mergeArraysPq(AA);
+            X = mergeArraysPq(AA);
             stopTime = System.currentTimeMillis();
             pq[j] = stopTime - startTime;
         }
-        System.out.format("\n mergeArraysPr(%d, %d) minVal %d  maxInc %d times:   ", nRows, nCols,
-                minVal, maxInc);
+        System.out.format("\n mergeArraysPr(%d, %d) length %d minVal %d  maxInc %d times:   ", nRows, nCols,
+                X.length, minVal, maxInc);
         for (int j = 0; j < times; j++) {
             System.out.format("%7d ", pr[j]);
         }

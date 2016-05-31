@@ -1,11 +1,9 @@
 package sprax.numbers;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import sprax.Sx;
 import sprax.Sz;
-import sprax.geom.UnitCircleAngle;
 
 public class Primes 
 {

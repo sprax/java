@@ -2,7 +2,6 @@ package sprax.shuffles;
 
 import java.util.Random;
 
-import sprax.Sx;
 import sprax.Sz;
 
 public class Shuffler

@@ -1,10 +1,6 @@
 package sprax.arrays;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
 
 import sprax.Sx;
 
@@ -307,7 +303,7 @@ public class ArrayMaxPathSum
                 pathSums[pathRow][pathCol] = prevSum + Z.getIntVal(nodeRow, nodeCol);
             }
         }
-        List path = new LinkedList<Prc>();
+        //List path = new LinkedList<Prc>();
         return pathSums[pathRows-1][pathCols-1];
     }
   

@@ -158,8 +158,8 @@ public class ArrayIterInt implements Comparable<ArrayIterInt>
         ArrayIterInt   ai = null;
         try {
             ArrayIterInt a1 = new ArrayIterInt(1);  ai = a1; // ok
-            ArrayIterInt a0 = new ArrayIterInt(0);   // wrong, but should it be?
-            ArrayIterInt aN = new ArrayIterInt(-1);  // illegal
+            ai = new ArrayIterInt(0);   // wrong, but should it be?
+            ai = new ArrayIterInt(-1);  // illegal
         } catch (IllegalArgumentException ex) {
             Sx.debug(dbg, "Caught expected error: " + ex.getMessage());
             //S.debug(sDbg, "cause: "  + ex.getCause());

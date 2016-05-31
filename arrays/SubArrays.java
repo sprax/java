@@ -168,6 +168,7 @@ public class SubArrays
         int countA = A.length;
         
         int maxSum = max_subarray(A, countA);
+        Sx.format("maxSum %d\n", maxSum);
         
         int firstAndLastIdx[] = new int[2];
         int maxContSum = Kadane(A, countA, firstAndLastIdx);
@@ -256,9 +257,16 @@ public class SubArrays
         
         Integer[] duh = { 1, 2, 3};
         ArrayList<Integer> dork = new ArrayList<Integer>();
-        dork.addAll(Arrays.asList(duh));        HashSet<Integer> set = new HashSet<Integer>();
+        dork.addAll(Arrays.asList(duh));        
+        HashSet<Integer> set = new HashSet<Integer>();
         set.add(1);
-        HashSet<Integer> hmm = new HashSet<Integer>(set); 
+        set.addAll(dork);
+        HashSet<Integer> hmm = new HashSet<Integer>(set);
+        hmm.addAll(dork);
+        int size = hmm.size();
+        Sx.format("HashSet size: %d\n", size);
+        for (Integer v : hmm)
+            Sx.printOne(v);
         
         stat += test_sumContiguousSubArrays();
         stat += test_maxContiguousSubArrays();
@@ -273,69 +281,62 @@ public class SubArrays
     }
     
     
-    
-    
     /*
      * 
-you have an array of integers, find the longest
-subarray which consists of numbers that can be arranged in a sequence, e.g.:
+    you have an array of integers, find the longest
+    subarray which consists of numbers that can be arranged in a sequence, e.g.:
 
-a = {4,5,1,5,7,4,3,6,3,1,9}
-max subarray = {5,7,4,3,6}
-10
-Country: -
-Tags: Microsoft » Algorithm
-Question #11256218 (Report Dup) | Edit | History
+    a = {4,5,1,5,7,4,3,6,3,1,9}
+    max subarray = {5,7,4,3,6}
+    10
+    Country: -
+    Tags: Microsoft » Algorithm
+    Question #11256218 (Report Dup) | Edit | History
 
+    0
+    of 0 vote
+    sumit.gupta23121988 on October 19, 2011 |Edit | Edit
 
-0
-of 0 vote
-sumit.gupta23121988 on October 19, 2011 |Edit | Edit
+    can u give the solution of this
+    Reply to Comment
+    0
+    of 0 vote
+    Aditya H on October 19, 2011 |Edit | Edit
 
-can u give the solution of this
-Reply to Comment
-0
-of 0 vote
-Aditya H on October 19, 2011 |Edit | Edit
+    What do you mean by numbers that can be arranged in a sequence, all numbers can be arranged in a sequence
+    Anonymous on October 19, 2011 |Edit | Edit
 
-What do you mean by numbers that can be arranged in a sequence, all numbers can be arranged in a sequence
-Anonymous on October 19, 2011 |Edit | Edit
+    consecutive elements sequence... this is a google interview question... this was discussed earlier.
+    Anonymous on October 19, 2011 |Edit | Edit
 
-consecutive elements sequence... this is a google interview question... this was discussed earlier.
-Anonymous on October 19, 2011 |Edit | Edit
+    can you please provide discussion link?
+    Anonymous on October 19, 2011 |Edit | Edit
 
-can you please provide discussion link?
-Anonymous on October 19, 2011 |Edit | Edit
+    id=9783960
+    Anonymous on October 20, 2011 |Edit | Edit
 
-id=9783960
-Anonymous on October 20, 2011 |Edit | Edit
+    I think the Google interview asked for a subset of the array, this question asks for a subarray. The obvious solution is checking all possible subarrays, but there must be a better solution...
+    asm on October 20, 2011 |Edit | Edit
 
-I think the Google interview asked for a subset of the array, this question asks for a subarray. The obvious solution is checking all possible subarrays, but there must be a better solution...
-asm on October 20, 2011 |Edit | Edit
+    'id=9783960' it's a different problem.
+    Here it is asked to find a SUBARRAY (contiguous part) that can be transformed to a sequence of consecutive integers, i.e.:
 
-'id=9783960' it's a different problem.
-Here it is asked to find a SUBARRAY (contiguous part) that can be transformed to a sequence of consecutive integers, i.e.:
+    a = {4,5,1,5,7,4,3,6,3,1,9}
+    the subarray is: {5,7,4,3,6} because these numbers can be arranged as: {3,4,5,6,7}
+    Anonymous on October 20, 2011 |Edit | Edit
 
-a = {4,5,1,5,7,4,3,6,3,1,9}
-the subarray is: {5,7,4,3,6} because these numbers can be arranged as: {3,4,5,6,7}
-Anonymous on October 20, 2011 |Edit | Edit
+    ok, here is an algorithm I had in mind:
 
-ok, here is an algorithm I had in mind:
+    The idea is if the numbers of a subarray can be arranged in consecutive way that their sum can be evaluated as follows:
+    max*(max+1)/2 - min*(min-1)/2
+    where 'max' and 'min' are the maximal and minimal numbers in a subarray.
 
-The idea is if the numbers of a subarray can be arranged in consecutive way that their sum can be evaluated as follows:
-max*(max+1)/2 - min*(min-1)/2
-where 'max' and 'min' are the maximal and minimal numbers in a subarray.
+    So the algorithm is go through the array updating 'max' and 'min', as well as the current sum.
+    In each step we check if computed sum equals to the value returned by the formula above.
+    If so, we have found a subarray with the given properties.
+    We keep the longest one seen so far.
 
-So the algorithm is go through the array updating 'max' and 'min', as well as the current sum.
-In each step we check if computed sum equals to the value returned by the formula above.
-If so, we have found a subarray with the given properties.
-We keep the longest one seen so far.
-
-Since we have to consider all possible array suffixes, the complexity is O(n^2)
-
+    Since we have to consider all possible array suffixes, the complexity is O(n^2)
      */
-    
-    
-    
     
 }
