@@ -2,16 +2,18 @@ package sprax.sorts;
 
 import java.util.*;
 
+import sprax.Sz;
+
 public class QuickSelect
 {
     
-    public static void quickselect(Comparable[] a, int k) {
+    public static <T extends Comparable<T>> void quickselect(T[] a, int k) {
         quickselect(a, 0, a.length - 1, k);
     }
     
     private static final int CUTOFF = 10;
     
-    private static void quickselect(Comparable[] a, int low, int high,
+    private static <T extends Comparable<T>> void quickselect(T[] a, int low, int high,
             int k)
     {
         if (low + CUTOFF > high)
@@ -28,7 +30,7 @@ public class QuickSelect
             
             // Place pivot at position high - 1
             swapReferences(a, middle, high - 1);
-            Comparable pivot = a[high - 1];
+            T pivot = a[high - 1];
             
             // Begin partitioning
             int i, j;
@@ -61,9 +63,9 @@ public class QuickSelect
         a[index2] = tmp;
     }
     
-    private static void insertionSort(Comparable[] a, int low, int high) {
+    private static <T extends Comparable<T>> void insertionSort(T[] a, int low, int high) {
         for (int p = low + 1; p <= high; p++) {
-            Comparable tmp = a[p];
+            T tmp = a[p];
             int j;
             
             for (j = p; j > low && tmp.compareTo(a[j - 1]) < 0; j--)
@@ -72,11 +74,16 @@ public class QuickSelect
         }
     }
     
-    public static void main(String[] args) {
+    public static int unit_test()
+    {
+        String testName = QuickSelect.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+        
         for (int SIZE = 100; SIZE < 1000000; SIZE *= 2) {
             long start, end;
             long elapsed1 = 0, elapsed2 = 0, elapsed3 = 0;
-            Comparable[] a = new Comparable[SIZE];
+            Integer[] a = new Integer[SIZE];
             
             // sorted input
             for (int i = 0; i < SIZE; i++) {
@@ -111,6 +118,12 @@ public class QuickSelect
                     "\treverse: " + elapsed2 +
                     "\trandom: " + elapsed3);
         }
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
-    
+
+    public static void main(String[] args)
+    {
+        unit_test();
+    }
 }
