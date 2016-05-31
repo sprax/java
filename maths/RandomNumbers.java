@@ -3,7 +3,8 @@ package sprax.maths;
 import java.util.Random;
 
 import sprax.Sx;
-import std.StdStats;
+import sprax.Sz;
+import sprax.arrays.ArrayAlgo;
 
 public class RandomNumbers 
 {
@@ -44,7 +45,7 @@ public class RandomNumbers
 	}
 	
 
-	static public void test_rand7fromRand5(int size)
+	static public int test_rand7fromRand5(int size)
 	{
         Sx.puts(RandomNumbers.class.getName() + ".test_rand7fromRand5");
 		int histogram[] = new int[7];
@@ -53,15 +54,20 @@ public class RandomNumbers
 			histogram[rand7fromRand5()]++;
 		}
 		Sx.putsArray("Historgram: ", histogram);
-		double mean = StdStats.mean(histogram);
-		double sdev = StdStats.stddev(histogram);
+		double mean = ArrayAlgo.mean(histogram);
+		double sdev = ArrayAlgo.stddev(histogram);
 		Sx.format("Mean and StdDev:  %f  %f\n", mean, sdev);
+		return 0;
 	}
 	
-    public static void unit_test() 
+    public static int unit_test() 
     {
-        Sx.puts(RandomNumbers.class.getName() + ".unit_test");
-        test_rand7fromRand5(10000);
+        String testName = RandomNumbers.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+        numWrong += test_rand7fromRand5(10000);
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
     
     public static void main(String[] args)
