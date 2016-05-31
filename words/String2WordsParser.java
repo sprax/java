@@ -7,7 +7,6 @@ package sprax.words;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import sprax.Sx;
 import sprax.Sz;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;

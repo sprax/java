@@ -135,7 +135,7 @@ public class DoubleToFraction
         return (num2.equals(BigDecimal.ZERO)) ? num1 : gcd(num2, num1.remainder(num2));
     }
     
-    private static String createFractionLine(BigDecimal numerator, BigDecimal denominator)
+    protected static String createFractionLine(BigDecimal numerator, BigDecimal denominator)
     {
         char[] chars = new char[Math.max(numerator.precision(), denominator.precision())];
         Arrays.fill(chars, '—');

@@ -7,7 +7,6 @@ import sprax.Sx;
 import sprax.Sz;
 import sprax.files.FileUtil;
 import sprax.files.TextFileToStringCollection;
-import sprax.files.TextFilters;
 
 public class AutoCompleter implements AutoCompleteInterface
 {

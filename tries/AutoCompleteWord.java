@@ -295,7 +295,7 @@ public class AutoCompleteWord implements AutoCompleteInterface
         }
 
         String filePath = FileUtil.getTextFilePath("MobyDick.txt");
-        int numNewWords = WordTrie.test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, filePath, 1);
+        WordTrie.test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, filePath, 1);
         if (level > 1) {
             test_getPossible(auto, str, maxNum, 2);
             test_getProbableNodes(auto, str, maxNum, 16, 2);
@@ -303,7 +303,7 @@ public class AutoCompleteWord implements AutoCompleteInterface
         }      
 
         filePath = FileUtil.getTextFilePath("Iliad.txt");
-        numNewWords = WordTrie.test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, filePath, 1); 
+        WordTrie.test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, filePath, 1); 
         if (level > 1) {
             test_getPossible(auto, str, maxNum, 2);
             test_getProbableNodes(auto, str, maxNum, 16, 2);

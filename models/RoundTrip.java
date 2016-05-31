@@ -103,8 +103,8 @@ public class RoundTrip
 
         double G[] = {  1,  2,  3,  4,  5 };
         double D[] = {  4,  1,  2,  3,  4 };
-        double F[] = { -3, -2, -1,  0,  1 };      // excess starting at index 0
-        double H[] = {      1,  2,  3,  4,  1 };  //        starting at index 1
+        //double F[] = { -3, -2, -1,  0,  1 };      // excess starting at index 0
+        //double H[] = {      1,  2,  3,  4,  1 };  //        starting at index 1
         start = circleStart(G, D, mpg);
         Sx.putsArray("circleStart fuel:", G, " (" + fuelTot + ")");
         Sx.putsArray("        distance:", D, " (" + distTot + ") got start = " + start);

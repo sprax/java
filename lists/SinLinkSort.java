@@ -400,12 +400,7 @@ public class SinLinkSort
         String stra = strA.toLowerCase();
         char[] chrZ = strA.toCharArray();
         ArrayAlgo.reverseArray(chrZ);
-        String strZ = new String(chrZ);
-        char[] chrz = stra.toCharArray();
         ArrayAlgo.reverseArray(chrZ);
-        String strz = new String(chrz);
-        String strZz = strZ + "-" + strz;
-        
         SinList sinListA, sinListB;
         sinListA = SinList.fromString("JLPQRSTVW");
         // sinListA = SinList.fromString("01236789ACEKMOQR");

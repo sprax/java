@@ -2742,7 +2742,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 	 {
 		 Sx.puts(WordTrie.class.getName() + ".unit_test");
 
-		 int stat = 0, zoof = 0;
+		 int stat = 0;
 		 int minWordLen = 3;
 		 int maxWordLen = 12;
 		 WordTrie trie = new WordTrie();
@@ -2755,8 +2755,8 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 
 		 if (level > 1) {
 
-			 int numNewWords = test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, "text/MobyDick.txt", 2); 
-			 numNewWords = test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, "text/Iliad.txt", 1); 
+			 test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, "text/MobyDick.txt", 2); 
+			 test_addAllWordsInTextFile(trie, minWordLen, maxWordLen, "text/Iliad.txt", 1); 
 
 			 if (level < 3) {
 				 Map.Entry<WordNode, Integer> mg = trie.maxGreedyContinuation(root);
@@ -2802,7 +2802,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 
 					 Map.Entry<WordNode, Integer> nxtCon = trie.nextGreedyContinuation(minNode);
 					 nodeCount.mNode = minNode;
-					 boolean bFound = trie.nextGreedyContinuation(nodeCount);
+					 boolean bFound = WordTrie.nextGreedyContinuation(nodeCount);
 					 if (nxtCon == null) {
 						 trie.zoid++;
 						 maxCon = trie.maxGreedyContinuation(minNode);  // min == max, no nxt in between
@@ -2962,7 +2962,6 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 					 if (nodeCount.mNode != nodeOptim.mNode) {
 						 Sx.format("maxTextCount3xhs & 3opt disagree: %s != %s (%d & %d)\n"
 								 , nodeCount.mNode, nodeOptim.mNode, nodeCount.mCount, nodeOptim.mCount);
-						 zoof++;//===========================================================================================
 					 }
 
 					 nodeCounts[0].reset();
@@ -3000,7 +2999,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 				 int maxNumWords = 10;
 				 int maxDepth    = 16;           
 				 int maxLength   =  4;
-				 //            stat += test_time_getProbable(trie, 2, numTrials, maxNumWords, maxDepth, maxLength, 0);
+				 stat += test_time_getProbable(trie, 2, numTrials, maxNumWords, maxDepth, maxLength, 0);
 				 //            stat += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, maxLength, 0);
 				 //            stat += test_time_getProbable(trie, 0, numTrials, maxNumWords, maxDepth, maxLength, 0);
 				 //            stat += test_time_getProbable(trie, 3, numTrials, maxNumWords, maxDepth, maxLength, 0);

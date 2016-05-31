@@ -1,8 +1,5 @@
 package sprax.trees;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 //import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -44,8 +41,6 @@ public class TreeFactory<T extends BinLink>
     static int addCount(int num) {
         return mCount += num;
     }
-    
-    private T mRoot = null;
     
     /**
      * growGlobalCountingBinTreeRecurse creates a binary tree in pre-order:
@@ -134,6 +129,7 @@ public class TreeFactory<T extends BinLink>
     /**
      * unit_test
      */
+    @SuppressWarnings("deprecation")
     public static int unit_test()
     {
         String testName = TreeFactory.class.getName() + ".unit_test";

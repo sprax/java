@@ -40,7 +40,7 @@ public class Recon
     public static int test_2d0a(int numObs)
     {
     	int numDim  = 2;
-    	int numSeen = numObs - 1;	// each observer sees all others, not itself
+    	//int numSeen = numObs - 1;	// each observer sees all others, not itself
     	int maxIter = 12;			// iteration limit
     	boolean bUpdateObservations = true;
     	boolean bNewObservations = true;

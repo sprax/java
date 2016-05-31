@@ -259,6 +259,7 @@ public class SinList
      * @param link the node to become the new tail of the list
      * @deprecated this method is less readable than {@link #append(SinLink)}.
      */
+    @SuppressWarnings("unused")
     private void append_less_readable(SinLink link) { // deprecated
         if (link == null)
             return;

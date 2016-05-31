@@ -13,6 +13,7 @@ import java.util.Map;
 
 import sprax.Sx;
 import sprax.Sz;
+import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
 import sprax.lists.StrLink;
 import sprax.lists.StringList;
@@ -99,7 +100,6 @@ public class UniqueStringFinders
     // The stupidly wrapped version of the above
     public static boolean firstUniqueStringInIterable_hashMapList(StringAndNumber san, Iterable<String> strs)
     {
-        
         StringList strList = new StringList();
         HashMap<String, StrLink> str2strLink = new HashMap<String, StrLink>();
         
@@ -564,7 +564,7 @@ public class UniqueStringFinders
         Sx.putsReversed(lit);
         
         if (level > 1) {
-            String textFilePath = "text/ReadMe.txt"; // "text/Iliad.txt";  //
+            String textFilePath = FileUtil.getTextFilePath("ReadMe.txt");
             int  numTrials = 10;
             long begTime, endTime, mapTime, wrdTime, wrmTime, lhmTime, hmlTime, hmsTime;
             long setTime, totTime = 0;
@@ -575,14 +575,15 @@ public class UniqueStringFinders
             StringAndNumber sanWrd = new StringAndNumber(null, 0);
             StringAndNumber sanWrm = new StringAndNumber(null, 0);
             StringAndNumber sanLhm = new StringAndNumber(null, 0);
-            StringAndNumber sanHmL = new StringAndNumber(null, 0);
+            //StringAndNumber sanHmL = new StringAndNumber(null, 0);
             StringAndNumber sanHml = new StringAndNumber(null, 0);
-            
             
             // The uselessly wrapped version of the above
             begTime = System.currentTimeMillis();
+            boolean lhFound = false;
             for (int j = 0; j < numTrials; j++) {
-                boolean lhFound = firstUniqueStringInIterable_hashMapList(sanHml, wordsStr);
+                lhFound = firstUniqueStringInIterable_hashMapList(sanHml, wordsStr);
+                numWrong += Sz.wrong(lhFound);
             }
             endTime  = System.currentTimeMillis();
             hmlTime  = endTime - begTime;
@@ -601,6 +602,7 @@ public class UniqueStringFinders
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
                 boolean hmFound = firstUniqueStringInIterable_hashMap(sanMap, wordsStr);
+                numWrong += Sz.wrong(hmFound);
             }
             endTime  = System.currentTimeMillis();
             mapTime  = endTime - begTime;
@@ -609,6 +611,7 @@ public class UniqueStringFinders
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
                 boolean wtFound = firstUniqueStringInIterable_wordTrie(sanWrd, wordsStr);
+                numWrong += Sz.wrong(wtFound);
             }
             endTime  = System.currentTimeMillis();
             wrdTime  = endTime - begTime;
@@ -617,6 +620,7 @@ public class UniqueStringFinders
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
                 boolean wmFound = firstUniqueStringInIterable_wordTrieMap(sanWrm, wordsStr);
+                numWrong += Sz.wrong(wmFound);
             }
             endTime  = System.currentTimeMillis();
             wrmTime  = endTime - begTime;
@@ -624,7 +628,7 @@ public class UniqueStringFinders
             
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
-                boolean lhFound = firstUniqueStringInIterable_linkHashMap(sanLhm, wordsStr);
+                lhFound = firstUniqueStringInIterable_linkHashMap(sanLhm, wordsStr);
             }
             endTime  = System.currentTimeMillis();
             lhmTime  = endTime - begTime;
@@ -659,6 +663,6 @@ public class UniqueStringFinders
     }
     
     public static void main(String[] args) {  
-        unit_test(1);
+        unit_test(2);
     }
 }

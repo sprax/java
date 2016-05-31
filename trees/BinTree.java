@@ -366,6 +366,7 @@ public class BinTree<T extends BinLink>
         } while (!queue.isEmpty());
     }
     
+    @SuppressWarnings("deprecation")
     public static int test_print(BinTree<?> bintree)
     {
         Sx.print("printDepthFirstRecursivePreOrder  0:");
@@ -1228,8 +1229,6 @@ public class BinTree<T extends BinLink>
             // HashMap<Integer, Integer> sums = tree3.mRoot.pathSumsBreadthFirstQueueLevelOrder();
             
             // Make a random binary tree with N = 2^M nodes: int N = 2*2*2;
-            
-            Random rng = new Random(27); // i.e., java.util.Random.
             
             depth = 4;
             BinLink root4 = growGlobalCountingBinTreeRecurse(depth, 0, true);
