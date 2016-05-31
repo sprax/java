@@ -118,8 +118,6 @@ public class CheckerBoard extends RectGrid4<Character, CheckerSquare>
     
     public void showAllMoves(int nShowCols)
     {
-        int q = 0;
-        
         Sx.puts("showAllMoves");
     }
     

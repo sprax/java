@@ -138,8 +138,6 @@ public class ChessBoard extends RectGrid4<Character, ChessSquare>
     
     public void showAllMoves(int nShowCols)
     {
-        int q = 0;
-        
         Sx.puts("showAllMoves");
     }
     

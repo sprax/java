@@ -34,6 +34,7 @@ public abstract class RectGrid<T, NodeT extends GridNode<T>> extends Grid<T, Nod
     abstract NodeT[]   getNodes(int row);        // { return mNodes[row]; }
     abstract NodeT[][] getNodes();               // { return mNodes; }
 
+    @SuppressWarnings("unchecked")
     protected GridNode<T> addNeighbors(int row, int col, int num)
     {
         GridNode<T> node = getNode(row, col);     // Getting a node by row & col always works for a

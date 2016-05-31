@@ -1,8 +1,5 @@
 package sprax.files;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import sprax.Sx;
 
 public class TextParser 

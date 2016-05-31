@@ -37,9 +37,10 @@ public abstract class RectGrid8<T, NodeT extends GridNode<T>> extends RectGrid<T
      * @param row
      * @param col
      */
+    @SuppressWarnings("unchecked")
     protected void setNeighborsFromRowCol(int row, int col)
     {
-        GridNode<?> node = getNode(row, col);
+        GridNode<T> node = getNode(row, col);
         int maxRowIndex = mNumRows - 1;
         int maxColIndex = mNumCols - 1;
         int minRow = (row == 0) ? 0 : row - 1;
@@ -57,7 +58,7 @@ public abstract class RectGrid8<T, NodeT extends GridNode<T>> extends RectGrid<T
             for (col = minCol; col <= maxCol; col++) {
                 GridNode<T> neighbor = getNode(row, col);
                 if (neighbor != node) {
-                    node.mNeighbors[numSet] = (GridNode) neighbor; // Safe: only assigning refs
+                    node.mNeighbors[numSet] = (GridNode<T>) neighbor; // Safe: only assigning refs
                     numSet++;
                 }
             }
