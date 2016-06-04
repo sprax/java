@@ -32,64 +32,64 @@ public abstract class RectGrid4<T, NodeT extends GridNode<T>> extends RectGrid<T
         
         // First corner: The node at (0, 0) gets 2 neighbors
         GridNode<T> node = addNeighbors(row, col, 2);
-        node.setNeighbor(0, (GridNode) getNode(1, 0));  // up // Safe: only assigning refs
-        node.setNeighbor(1, (GridNode) getNode(0, 1));  // right // Safe: only assigning refs
+        node.setNeighbor(0, getNode(1, 0));  // up // Safe: only assigning refs
+        node.setNeighbor(1, getNode(0, 1));  // right // Safe: only assigning refs
         
         // First row: Each node gets 3 neighbors
         for (row = 0, col = 1; col < lastCol; col++) {
             node = addNeighbors(row, col, 3);
-            node.setNeighbor(0, (GridNode) getNode(1, col));        // up
-            node.setNeighbor(1, (GridNode) getNode(0, col + 1));      // right
-            node.setNeighbor(2, (GridNode) getNode(0, col - 1));      // left
+            node.setNeighbor(0, getNode(1, col));        // up
+            node.setNeighbor(1, getNode(0, col + 1));      // right
+            node.setNeighbor(2, getNode(0, col - 1));      // left
         }
         
         // Second corner: The node at (0, lastCol) gets 2 neighbors
         node = addNeighbors(row, col, 2);
-        node.setNeighbor(0, (GridNode) getNode(1, lastCol));    // up
-        node.setNeighbor(1, (GridNode) getNode(0, lastCol - 1));    // left
+        node.setNeighbor(0, getNode(1, lastCol));    // up
+        node.setNeighbor(1, getNode(0, lastCol - 1));    // left
         
         for (row = 1; row < lastRow; row++) {
             
             // First column: Each node gets 3 neighbors
             node = addNeighbors(row, col = 0, 3);
-            node.setNeighbor(0, (GridNode) getNode(row + 1, col));  // up
-            node.setNeighbor(1, (GridNode) getNode(row, col + 1));  // right
+            node.setNeighbor(0, getNode(row + 1, col));  // up
+            node.setNeighbor(1, getNode(row, col + 1));  // right
                                                                    // ////////////////////////////
-            node.setNeighbor(2, (GridNode) getNode(row - 1, col));  // down
+            node.setNeighbor(2, getNode(row - 1, col));  // down
             
             // Interior: Each node gets 4 neighbors
             for (col = 1; col < lastCol; col++) {
                 node = addNeighbors(row, col, 4);
-                node.setNeighbor(0, (GridNode) getNode(row + 1, col));  // up
-                node.setNeighbor(1, (GridNode) getNode(row, col + 1));  // right
-                node.setNeighbor(2, (GridNode) getNode(row - 1, col));  // down
-                node.setNeighbor(3, (GridNode) getNode(row, col - 1));  // left
+                node.setNeighbor(0, getNode(row + 1, col));  // up
+                node.setNeighbor(1, getNode(row, col + 1));  // right
+                node.setNeighbor(2, getNode(row - 1, col));  // down
+                node.setNeighbor(3, getNode(row, col - 1));  // left
             }
             
             // Last column: Each node gets 3 neighbors
             node = addNeighbors(row, col, 3);
-            node.setNeighbor(0, (GridNode) getNode(row + 1, col));    // up
-            node.setNeighbor(1, (GridNode) getNode(row - 1, col));    // down
-            node.setNeighbor(2, (GridNode) getNode(row, col - 1));    // left
+            node.setNeighbor(0, getNode(row + 1, col));    // up
+            node.setNeighbor(1, getNode(row - 1, col));    // down
+            node.setNeighbor(2, getNode(row, col - 1));    // left
         }
         
         // Third corner: The node at (lastRow, 0) gets 2 neighbors
         node = addNeighbors(row, col = 0, 2);
-        node.setNeighbor(0, (GridNode) getNode(row, 1));          // right
-        node.setNeighbor(1, (GridNode) getNode(row - 1, 0));          // down
+        node.setNeighbor(0, getNode(row, 1));          // right
+        node.setNeighbor(1, getNode(row - 1, 0));          // down
         
         // Last row: Each node gets 3 neighbors
         for (col = 1; col < lastCol; col++) {
             node = addNeighbors(row, col, 3);
-            node.setNeighbor(0, (GridNode) getNode(row, col + 1));      // right
-            node.setNeighbor(1, (GridNode) getNode(row - 1, col));      // down
-            node.setNeighbor(2, (GridNode) getNode(row, col - 1));      // left
+            node.setNeighbor(0, getNode(row, col + 1));      // right
+            node.setNeighbor(1, getNode(row - 1, col));      // down
+            node.setNeighbor(2, getNode(row, col - 1));      // left
         }
         
         // Fourth corner: The node at (lastRow, lastCol) gets 2 neighbors
         node = addNeighbors(row, col, 2);
-        node.setNeighbor(0, (GridNode) getNode(row - 1, lastCol));    // down
-        node.setNeighbor(1, (GridNode) getNode(row, lastCol - 1));    // left
+        node.setNeighbor(0, getNode(row - 1, lastCol));    // down
+        node.setNeighbor(1, getNode(row, lastCol - 1));    // left
     }
     
     /**
@@ -116,14 +116,14 @@ public abstract class RectGrid4<T, NodeT extends GridNode<T>> extends RectGrid<T
         
         // First corner: The node at (0, 0) gets 1 neighbor
         GridNode<T> node = addNeighbors(row, col, 1);
-        node.setNeighbor(0, (GridNode) getNode(row + 1, col));        // up-right; safe: only assigning
+        node.setNeighbor(0, getNode(row + 1, col));        // up-right; safe: only assigning
                                                                // ref)
         
         // First row: Each node gets 2 neighbors
         for (col = 1; col <= lastCol; col++) {
             node = addNeighbors(row, col, 2);
-            node.setNeighbor(0, (GridNode) getNode(row + 1, col - 1));      // up-left
-            node.setNeighbor(1, (GridNode) getNode(row + 1, col));      // up-right
+            node.setNeighbor(0, getNode(row + 1, col - 1));      // up-left
+            node.setNeighbor(1, getNode(row + 1, col));      // up-right
         }
         
         boolean oddRow = true;
@@ -134,31 +134,31 @@ public abstract class RectGrid4<T, NodeT extends GridNode<T>> extends RectGrid<T
                 // Odd row interior: Each node gets 4 neighbors
                 for (col = 0; col < lastCol; col++) {
                     node = addNeighbors(row, col, 4);
-                    node.setNeighbor(0, (GridNode) getNode(row + 1, col));    // up-left
-                    node.setNeighbor(1, (GridNode) getNode(row + 1, col + 1));    // up-right
-                    node.setNeighbor(2, (GridNode) getNode(row - 1, col + 1));    // down-right
-                    node.setNeighbor(3, (GridNode) getNode(row - 1, col));    // down-left
+                    node.setNeighbor(0, getNode(row + 1, col));    // up-left
+                    node.setNeighbor(1, getNode(row + 1, col + 1));    // up-right
+                    node.setNeighbor(2, getNode(row - 1, col + 1));    // down-right
+                    node.setNeighbor(3, getNode(row - 1, col));    // down-left
                 }
                 
                 // Odd row, last column: Each node gets 2 neighbors
                 node = addNeighbors(row, col, 2);
-                node.setNeighbor(0, (GridNode) getNode(row + 1, col));      // up-left
-                node.setNeighbor(1, (GridNode) getNode(row - 1, col));      // down-left
+                node.setNeighbor(0, getNode(row + 1, col));      // up-left
+                node.setNeighbor(1, getNode(row - 1, col));      // down-left
                 
             } else {  // even row
             
                 // Even row, first column: Each node gets 2 neighbors
                 node = addNeighbors(row, col = 0, 2);
-                node.setNeighbor(0, (GridNode) getNode(row + 1, col));      // up-right
-                node.setNeighbor(1, (GridNode) getNode(row - 1, col));      // down-right
+                node.setNeighbor(0, getNode(row + 1, col));      // up-right
+                node.setNeighbor(1, getNode(row - 1, col));      // down-right
                 
                 // Even row interior: Each node gets 4 neighbors, even the last node.
                 for (col = 1; col <= lastCol; col++) {
                     node = addNeighbors(row, col, 4);
-                    node.setNeighbor(0, (GridNode) getNode(row + 1, col - 1));    // up-left
-                    node.setNeighbor(1, (GridNode) getNode(row + 1, col));    // up-right
-                    node.setNeighbor(2, (GridNode) getNode(row - 1, col));    // down-right
-                    node.setNeighbor(3, (GridNode) getNode(row - 1, col - 1));    // down-left
+                    node.setNeighbor(0, getNode(row + 1, col - 1));    // up-left
+                    node.setNeighbor(1, getNode(row + 1, col));    // up-right
+                    node.setNeighbor(2, getNode(row - 1, col));    // down-right
+                    node.setNeighbor(3, getNode(row - 1, col - 1));    // down-left
                 }
             }
         }
@@ -168,21 +168,21 @@ public abstract class RectGrid4<T, NodeT extends GridNode<T>> extends RectGrid<T
             // Odd row at top: each node gets 2 neighbors
             for (col = 0; col < lastCol; col++) {
                 node = addNeighbors(row, col, 2);
-                node.setNeighbor(0, (GridNode) getNode(row - 1, col + 1));    // down-right
-                node.setNeighbor(1, (GridNode) getNode(row - 1, col));    // down-left
+                node.setNeighbor(0, getNode(row - 1, col + 1));    // down-right
+                node.setNeighbor(1, getNode(row - 1, col));    // down-left
             }
             // Odd row, last node is the corner at (lastRow, lastCol): 1 neighbor
             node = addNeighbors(row, col, 1);
-            node.setNeighbor(0, (GridNode) getNode(row - 1, col));        // down-left
+            node.setNeighbor(0, getNode(row - 1, col));        // down-left
         } else {
             // Even row, first node is the corner at (lastRow, 0): 1 neighbor
             node = addNeighbors(row, col = 0, 1);
-            node.setNeighbor(0, (GridNode) getNode(row - 1, col));        // down-right
+            node.setNeighbor(0, getNode(row - 1, col));        // down-right
             // Even row at top: each node gtes 2 neighbors
             for (col = 1; col <= lastCol; col++) {
                 node = addNeighbors(row, col, 2);
-                node.setNeighbor(0, (GridNode) getNode(row - 1, col));    // down-right
-                node.setNeighbor(1, (GridNode) getNode(row - 1, col - 1));    // down-left
+                node.setNeighbor(0, getNode(row - 1, col));    // down-right
+                node.setNeighbor(1, getNode(row - 1, col - 1));    // down-left
             }
         }
     }

@@ -2,8 +2,6 @@ package sprax.converts;
 
 import sprax.Sx;
 import sprax.Sz;
-import sprax.maths.DoubleToFraction;
-import sprax.maths.NumberAlgo;
 
 public class HexStringToNum 
 {

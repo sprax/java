@@ -6,7 +6,6 @@ import java.util.List;
 
 import sprax.Sx;
 import sprax.Sz;
-import sprax.bits.BitsAlgo;
 
 public class MadeImmutable 
 {	

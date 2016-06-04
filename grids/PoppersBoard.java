@@ -100,17 +100,14 @@ public class PoppersBoard implements Serializable
         char chrs[] = new char[15];
         boolean even = true;
         char cd = 0;
-        int id = 0;
         for (int sz = 0, row = 0; row < mNumRows; row++) {
             for (int col = 0; col < mNumCols; col++) {
                 char val = mValues[row][col];
                 int vin = val;
                 if (even) {
                     cd = (char) (val << 4);
-                    id = cd;
                 } else {
                     cd |= val;
-                    id = cd;
                     chrs[sz++] = cd;
                 }
                 even = !even;

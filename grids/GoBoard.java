@@ -2,7 +2,6 @@ package sprax.grids;
 
 import sprax.Sx;
 import sprax.Sz;
-import sprax.arrays.AdjacentPairs;
 
 public class GoBoard
 {

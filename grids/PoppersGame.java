@@ -211,8 +211,7 @@ public class PoppersGame
     }
     
     // FIXME: make getTap return a Tap, move game play into doTurn
-    void getTap()
-    {
+    void getTap() {
         String tapPrompt = "Enter tap row & col: ";
         int promptLen = tapPrompt.length();
         String spaces = Spaces.get(promptLen);
@@ -220,49 +219,49 @@ public class PoppersGame
             Sx.print(tapPrompt);
             String tapStr = Sx.getString();
             if (tapStr.length() > 2) {
-                Scanner scanner = new Scanner(tapStr).useDelimiter("\\s+");
-                if (scanner.hasNextInt()) {
-                    int tapRow = scanner.nextInt();
+                try (Scanner scanner = new Scanner(tapStr).useDelimiter("\\s+")) {
                     if (scanner.hasNextInt()) {
-                        int tapCol = scanner.nextInt();
-                        Sx.format("%s%d %d ", spaces, tapRow, tapCol);
-                        if (mBoard.isOutOfBounds(tapRow, tapCol)) {
-                            Sx.format("is out of bounds; try row < %d, col < %d\n"
-                                    , getNumRows(), getNumCols());
-                        } else {
-                            char val = mBoard.mValues[tapRow][tapCol];
-                            if (val < 1) {
-                                Sx.puts("has no Popper; try again...");
+                        int tapRow = scanner.nextInt();
+                        if (scanner.hasNextInt()) {
+                            int tapCol = scanner.nextInt();
+                            Sx.format("%s%d %d ", spaces, tapRow, tapCol);
+                            if (mBoard.isOutOfBounds(tapRow, tapCol)) {
+                                Sx.format("is out of bounds; try row < %d, col < %d\n",
+                                        getNumRows(), getNumCols());
                             } else {
-                                Sx.puts("is OK; tapping...");
-                                mTapSeq[mTurnCount] = new Tap(tapRow, tapCol, val);
-                                mBoardSeq[mTurnCount] = new PoppersBoard(mBoard);
-                                mTurnCount++;
-                                tap(tapRow, tapCol);
-                                break;
+                                char val = mBoard.mValues[tapRow][tapCol];
+                                if (val < 1) {
+                                    Sx.puts("has no Popper; try again...");
+                                } else {
+                                    Sx.puts("is OK; tapping...");
+                                    mTapSeq[mTurnCount] = new Tap(tapRow, tapCol, val);
+                                    mBoardSeq[mTurnCount] = new PoppersBoard(mBoard);
+                                    mTurnCount++;
+                                    tap(tapRow, tapCol);
+                                    break;
+                                }
                             }
                         }
+                    } else if (scanner.hasNext("....")) {		// accept only four-letter commands
+                        String str = scanner.next();
+                        if (str.equalsIgnoreCase("help"))
+                            showHelp();
+                        else if (str.equalsIgnoreCase("hint"))
+                            showHint();
+                        else if (str.equalsIgnoreCase("show"))
+                            showBoard();
+                        else if (str.equalsIgnoreCase("undo"))
+                            undoLastTurn();
+                        else
+                            Sx.puts("Unrecognized command: " + str);
                     }
-                } else if (scanner.hasNext("....")) {		// accept only four-letter commands
-                    String str = scanner.next();
-                    if (str.equalsIgnoreCase("help"))
-                        showHelp();
-                    else if (str.equalsIgnoreCase("hint"))
-                        showHint();
-                    else if (str.equalsIgnoreCase("show"))
-                        showBoard();
-                    else if (str.equalsIgnoreCase("undo"))
-                        undoLastTurn();
-                    else
-                        Sx.puts("Unrecognized command: " + str);
                 }
             }
         }
     }   // end of getTap()
     
     /** If state is not already play or won or lost, play. Else, no-op. */
-    void play()
-    {
+    void play() {
         if (mPlayState == PlayState.Pause) {
             mPlayState = PlayState.Play;
             if (mTapSeq == null) {
