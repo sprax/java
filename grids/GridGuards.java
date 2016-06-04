@@ -57,34 +57,30 @@ public class GridGuards
             
             // West (Left)
             col--;
-            if (col >= 0 && okToAdd(row, col)) {
+            if (col >= 0 && distance[row][col] == 0) {
                 addToMarked(row, col, dst, marked);
             }
             
             // East (Right)
             col += 2;
-            if (col < wide && okToAdd(row, col)) {
+            if (col < wide && distance[row][col] == 0) {
                 addToMarked(row, col, dst, marked);
             }
             
             // North (Up)
             row--;
             col--;
-            if (row >= 0 && okToAdd(row, col)) {
+            if (row >= 0 && distance[row][col] == 0) {
                 addToMarked(row, col, dst, marked);
             }
             
             // South (Down)
             row += 2;
-            if (row < tall && okToAdd(row, col)) {
+            if (row < tall && distance[row][col] == 0) {
                 addToMarked(row, col, dst, marked);
             }
         }
         assert (marked.isEmpty());
-    }
-    
-    boolean okToAdd(int row, int col) {
-        return (layout[row][col] == o && distance[row][col] == 0);
     }
     
     void addToMarked(int row, int col, int dst, Queue<Point> marked) {
