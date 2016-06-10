@@ -6,7 +6,6 @@ import java.util.Queue;
 
 import sprax.Sx;
 import sprax.arrays.ArrayDiffs;
-import sprax.robopaths.GridNav;
 
 public class GridGuards
 {
@@ -194,7 +193,7 @@ public class GridGuards
         int gc[][] = mg.distance;
         Sx.putsArray("GridGuards constructor made distance matrix:\n", gc);
         int gd[][] = GridGuards.guardDistance(testFloor);
-        Sx.putsArray("static GridGuards.guardDistance output:\n", gd, GridNav::printOneDistanceCell);
+        Sx.putsArray("static GridGuards.guardDistance output:\n", gd, GridGuards::printOneDistanceCell);
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
         int status = (err == 0.0 ? 0 : 1);

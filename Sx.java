@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
+import sprax.sprout.*;
+
 /**
  * static output methods for testing, debugging, etc.
  *
@@ -430,7 +432,7 @@ public class Sx
             printListInt(A[j]);
     }
     
-    public static void printArray(int A[], PrintOne printOne)
+    public static void printArray(int A[], PrintOneInt printOne)
     {
         for (int j = 0; j < A.length; j++)
             printOne.printOne(A[j]);
@@ -464,7 +466,7 @@ public class Sx
         puts();
     }
     
-    public static void putsArray(int A[], PrintOne printOne)
+    public static void putsArray(int A[], PrintOneInt printOne)
     {
         printArray(A, printOne);
         puts();
@@ -509,7 +511,7 @@ public class Sx
     }
     
     
-    public static void putsArray(int AA[][], PrintOne printOne)
+    public static void putsArray(int AA[][], PrintOneInt printOne)
     {
         for (int j = 0; j < AA.length; j++)
             putsArray(AA[j], printOne);
@@ -527,7 +529,7 @@ public class Sx
         putsArray(AA);
     }
     
-    public static void putsArray(String preLabel, int AA[][], PrintOne printOne)
+    public static void putsArray(String preLabel, int AA[][], PrintOneInt printOne)
     {
         print(preLabel);
         putsArray(AA, printOne);
