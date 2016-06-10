@@ -91,20 +91,30 @@ public class Sx
     {
         System.out.format(", %2d", k);
     }
-    
-    public static <T> void printOne(T t)
+
+    public static void printOne(int k)
     {
-        System.out.format(" " + t);
+        System.out.format(" %d", k);
+    }
+    
+    public static void printOne(char ch)
+    {
+        System.out.format(" %c", ch);
     }
     
     public static void printOne(Character ch)
     {
-        System.out.format(" c " + ch);
+        System.out.format(" %c", ch);
     }
     
     public static void printOne(String str)
     {
-        System.out.format(" s " + str);
+        System.out.format(" %s", str);
+    }
+    
+    public static <T> void printOne(T t)
+    {
+        System.out.format(" " + t);
     }
     
     public static void space(int numSpaces)
@@ -420,6 +430,12 @@ public class Sx
             printListInt(A[j]);
     }
     
+    public static void printArray(int A[], PrintOne printOne)
+    {
+        for (int j = 0; j < A.length; j++)
+            printOne.printOne(A[j]);
+    }
+    
     public static void printArray(long A[])
     {
         for (int j = 0; j < A.length; j++)
@@ -445,6 +461,12 @@ public class Sx
     public static void putsArray(int A[])
     {
         printArray(A);
+        puts();
+    }
+    
+    public static void putsArray(int A[], PrintOne printOne)
+    {
+        printArray(A, printOne);
         puts();
     }
     
@@ -486,6 +508,13 @@ public class Sx
             putsArray(AA[j]);
     }
     
+    
+    public static void putsArray(int AA[][], PrintOne printOne)
+    {
+        for (int j = 0; j < AA.length; j++)
+            putsArray(AA[j], printOne);
+    }
+    
     public static void putsArray(Integer AA[][])
     {
         for (int j = 0; j < AA.length; j++)
@@ -496,6 +525,12 @@ public class Sx
     {
         print(preLabel);
         putsArray(AA);
+    }
+    
+    public static void putsArray(String preLabel, int AA[][], PrintOne printOne)
+    {
+        print(preLabel);
+        putsArray(AA, printOne);
     }
     
     public static void putsArray(int AA[][], String postLabel)

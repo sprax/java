@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import sprax.Sx;
 import sprax.arrays.ArrayDiffs;
+import sprax.robopaths.GridNav;
 
 public class GridGuards
 {
@@ -47,6 +48,18 @@ public class GridGuards
         }
     }
     
+    
+    // Translate distance back into readable characters
+    public static void printOneDistanceCell(int val)
+    {
+        switch(val) {
+        case -1: Sx.printOne(X); break;
+        case  0: Sx.printOne(o); break;     // cell was never reached
+        case  1: Sx.printOne(G); break;
+        default: Sx.printOne(val); break;
+        }
+    }
+
     private void markDistances(Queue<Point> marked)
     {
         while (!marked.isEmpty()) {
@@ -147,17 +160,17 @@ public class GridGuards
     }
     
     static char[][] testFloorA = {                   // 8x8 test matrix
-                               { o, o, o, X, o, o, o, o },
-                               { o, o, o, X, o, X, X, o },
-                               { o, X, o, X, o, o, X, o },
-                               { G, X, o, X, G, o, X, o },
-                               { o, X, o, X, X, X, X, o },
-                               { o, X, o, o, o, X, o, o },
-                               { o, X, G, o, o, X, o, G },
-                               { o, X, o, o, o, o, o, o },
-                               };
+            { o, o, o, X, o, o, o, o },
+            { o, o, o, X, o, X, X, o },
+            { o, X, o, X, o, o, X, o },
+            { G, X, o, X, G, o, X, o },
+            { o, X, o, X, X, X, X, o },
+            { o, X, o, o, o, X, o, o },
+            { o, X, G, o, o, X, o, G },
+            { o, X, o, o, o, o, o, o },
+    };
     static char[][] testFloorB = {                      // 12x12
-                               { o, o, o, o, o, X, o, o, o, o, o, G },     // 0
+            { o, o, o, o, o, X, o, o, o, o, o, G },     // 0
             { o, o, o, o, o, X, o, o, o, o, o, o },     // 1
             { o, o, o, o, o, X, o, X, X, X, o, o },     // 2
             { o, o, X, X, o, X, o, o, X, o, o, o },     // 3
@@ -169,8 +182,8 @@ public class GridGuards
             { o, o, X, o, o, o, o, o, o, o, o, o },     // 9
             { o, o, X, o, o, o, o, o, o, o, o, o },     // 10
             { o, o, X, o, o, o, o, G, o, o, o, o },     // 11
-                               };
-    
+    };
+
     public static int test_oneLayout(char testFloor[][])
     {
         String testName = GridGuards.class.getName() + ".test_oneLayout";
@@ -179,9 +192,9 @@ public class GridGuards
         Sx.putsArray(testFloor);
         GridGuards mg = new GridGuards(testFloor);
         int gc[][] = mg.distance;
-        Sx.putsArray("GridGuards constructor made\n", gc);
+        Sx.putsArray("GridGuards constructor made distance matrix:\n", gc);
         int gd[][] = GridGuards.guardDistance(testFloor);
-        Sx.putsArray("static GridGuards.guardDistance output:\n", gd);
+        Sx.putsArray("static GridGuards.guardDistance output:\n", gd, GridNav::printOneDistanceCell);
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
         int status = (err == 0.0 ? 0 : 1);
