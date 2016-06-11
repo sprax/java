@@ -1,93 +1,135 @@
 package sprax.robopaths;
 
-import java.awt.Point;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
 import sprax.Sx;
+import sprax.Sz;
 import sprax.arrays.ArrayDiffs;
 
+class Cell {
+    final int row;
+    final int col;
+    Cell(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+    @Override 
+    public String toString() {
+        return String.format("<%d, %d>", row, col);
+    }
+}
+
+/**
+ * Given a non-empty rectangular grid containing zero or more goal cells,
+ * and other cells that can either be traversed ("empty" cells) or not
+ * ("obstacle" cells, such as might represent wall, barriers, buildings,
+ * guards, or whatever, find the shortest distance and minimal path(s) 
+ * from any cell to a goal cell.
+ * @author Sprax Lines
+ */
 public class GridNav
 {
     static final char o = '.', G = 'G', X = 'X';  // Floor, Goal, Wall or Obstacle
             
     final int         cols, rows, status;
     final char        layout[][];
-    final int         distance[][];     // grid distance to nearest goal
+    final int         minDst[][];     // grid distance to nearest goal
     
     public GridNav(final char layout[][])
     {
-        // TODO: Check for null and length < 1; throw exceptions? For now:
         assert (layout != null && layout.length > 0 && layout[0].length > 0);
         this.layout = layout;
-        this.rows = layout.length;
-        this.cols = layout[0].length;
-        this.distance = new int[rows][cols];  // All 0s        
-        this.status = goalDistance(layout, distance, rows, cols);
+        this.rows   = layout.length;
+        this.cols   = layout[0].length;
+        this.minDst = new int[rows][cols];  // All 0s        
+        this.status = computeMinDist(layout, minDst, rows, cols);
     }
     
-    // Fills distance array with distances from goals, using specified number of rows and columns.
-    // Obviously the pre-allocated input and output arrays must be at least that large. 
-    static int goalDistance(final char input[][], int distance[][], int rows, int cols)
-    {
-        assert (input != null && input.length > 0 && input[0] != null);     
-        Queue<Point> found = markGoals(input, distance, rows, cols); 
-        return markDistances(found, distance, rows, cols);
+    public int minimumDistanceToGoal(int row, int col) {
+        return minimumDistanceToGoal(minDst, rows, cols, row, col);
     }
-    
-    // Translate distance back into readable characters
-    public static void printOneDistanceCell(int val)
+
+    public LinkedList<Cell> pathToNearestGoal(int row, int col) 
     {
-        switch(val) {
-            case -1: Sx.format("X%cX", X); break;
-            case  0: Sx.format(" %c ", o); break;     // cell was never reached
-            case  1: Sx.format("*%c*", G); break;
-            default: Sx.format("%2d ", val); break;
+        return pathToNearestGoal(minDst, rows, cols, row, col);   
+    }
+
+    //// static methods, friendly access ////
+    
+    /** Translate distance back into readable characters */
+    public static void printOneDistanceCell(int v)
+    {
+        switch(v) {
+            case -1: Sx.format(" X%cX", X); break;
+            case  0: Sx.format("  %c ", o); break;     // cell was never visited
+            case  1: Sx.format(" *%c*", G); break;
+            default: Sx.format("%3d ",  v); break;
         }
     }
 
-    // Takes in raw layout and builds queue of goal cells, also starting to fill in the output 
-    // which is assumed to come in pre-filled with all zeros.
-    static Queue<Point> markGoals(final char layout[][], int distance[][], int rows, int cols)
+    /**
+     *  Fills distance array with distances from goals, using specified number of rows and columns.
+     * Obviously the pre-allocated input and output arrays must be at least that large. 
+     */
+    static int computeMinDist(final char input[][], int distance[][], int rows, int cols)
     {
-        Queue<Point> marked = new LinkedList<Point>();
+        assert (input != null && input.length > 0 && input[0] != null);     
+        Queue<Cell> found = markGoals(input, distance, rows, cols); 
+        return markDistances(found, distance, rows, cols);
+    }
+    
+    /** 
+     * Takes in raw layout and builds queue of goal cells, also starting to fill in the output 
+     * which is assumed to come in pre-filled with all zeros. 
+     */
+    static Queue<Cell> markGoals(final char layout[][], int distance[][], int rows, int cols)
+    {
+        Queue<Cell> marked = new LinkedList<Cell>();
         for (int row = 0; row < rows; row++) {
-            assert (layout[row] != null && layout[row].length == cols);
+            assert (layout[row] != null && layout[row].length >= cols);
             for (int col = 0; col < cols; col++) {
                 char val = layout[row][col];
                 if (val == X) {
                     distance[row][col] = -1;
                 } else if (layout[row][col] == G) {
                     distance[row][col] = 1;
-                    marked.add(new Point(row, col));    // x = row, y = col
+                    marked.add(new Cell(row, col));    // x = row, y = col
                 }
             }
         }
         return marked;
     }
 
-    // Takes in the queue of goal cells, the initialized distance array,
-    // and fills in the distance to any nearest goal.
-    static int markDistances(Queue<Point> marked, int distance[][], int rows, int cols)
+    /** Takes in the queue of goal cells, the initialized distance array,
+     *  and fills in the distance to any nearest goal.
+     * @param marked    temporary queue
+     * @param distance  distance array to be filled in
+     * @param rows      number of rows
+     * @param cols      number of cols
+     * @return   0 on success
+     */
+    static int markDistances(Queue<Cell> marked, int distance[][], int rows, int cols)
     {
         while (!marked.isEmpty()) {
-            Point old = marked.remove();
-            int row = old.x;
-            int col = old.y;
+            Cell old = marked.remove();
+            int row = old.row;
+            int col = old.col;
             int dst = distance[row][col] + 1;
             
             // West (Left)
             col--;
             if (col >= 0 && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Point(row, col));
+                marked.add(new Cell(row, col));
             }
             
             // East (Right)
             col += 2;
             if (col < cols && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Point(row, col));
+                marked.add(new Cell(row, col));
             }
             
             // North (Up)
@@ -95,27 +137,98 @@ public class GridNav
             col--;
             if (row >= 0 && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Point(row, col));
+                marked.add(new Cell(row, col));
             }
             
             // South (Down)
             row += 2;
             if (row < rows && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Point(row, col));
+                marked.add(new Cell(row, col));
             }
         }
         return 0;
     }
+    
+    static int minimumDistanceToGoal(int distance[][], int rows, int cols, int startRow, int startCol) 
+    {
+        if (distance == null || rows < 1 || cols < 1)
+            throw new IllegalArgumentException("bad distance");
+        if (startRow < 0 || startRow >= rows || startCol < 0 || startCol >= cols)
+            throw new IllegalArgumentException("bad start");
+        return distance[startRow][startCol];
+    }
         
+    /** 
+     * Order of directions tried (ESWN) results in counter-clockwise wall following
+     * @param row
+     * @param col
+     * @return
+     */
+    static LinkedList<Cell> pathToNearestGoal(int minDst[][], int rows, int cols, int row, int col) 
+    {
+        LinkedList<Cell> path = new LinkedList<>();     // empty list
+        int dist, minDist = minimumDistanceToGoal(minDst, rows, cols, row, col);  // error checking
+        while (minDist > 0) {
+            path.add(new Cell(row, col));
+            if (minDist == 1)                           // goal at row, col
+                return path;
+            
+            // ESWN: Try to keep nearest wall on the left by trying directions
+            // in this order: East, South, West, North
+            
+            // East:
+            if (++col < cols) {
+                dist = minDst[row][col];
+                if (dist > 0 && minDist > dist) {
+                    minDist = dist;
+                    continue;
+                }
+            }
+            
+            // South
+            --col;
+            if (++row < rows) {
+                dist = minDst[row][col];
+                if (dist > 0 && minDist > dist) {
+                    minDist = dist;
+                    continue;
+                }
+            }
+
+            // West
+            --row;
+            if (--col >= 0) {
+                dist = minDst[row][col];
+                if (dist > 0 && minDist > dist) {
+                    minDist = dist;
+                    continue;
+                }
+            }
+            
+            // North
+            ++col;
+            if (--row >= 0) {
+                dist = minDst[row][col];
+                if (dist > 0 && minDist > dist) {
+                    minDist = dist;
+                    continue;
+                }
+            }
+                
+            throw new IllegalStateException("no way nearer");
+        }
+        return path;
+    }
+
     static char[][] testFloorA = {                   // 8x8 test matrix
-                               { o, o, o, X, o, o, o, o },
+                               { o, o, o, X, o, o, o, G },
                                { o, o, o, X, o, X, X, o },
                                { o, X, o, X, o, o, X, o },
-                               { G, X, o, X, G, o, X, o },
+                               { o, X, o, X, o, o, X, o },
                                { o, X, o, X, X, X, X, o },
                                { o, X, o, o, o, X, o, o },
-                               { o, X, G, o, o, X, o, G },
+                               { o, X, o, o, o, X, o, o },
                                { o, X, o, o, o, o, o, o },
     };
     static char[][] testFloorB = {                      // 12x12
@@ -137,24 +250,31 @@ public class GridNav
     public static int test_oneLayout(char testFloor[][])
     {
         String testName = GridNav.class.getName() + ".test_oneLayout";
-        Sx.format("BEGIN %s\n", testName);
+        Sz.begin(testName);
         
         Sx.putsArray(testFloor);
         GridNav mg = new GridNav(testFloor);
-        int gc[][] = mg.distance;
+        int gc[][] = mg.minDst;
         Sx.putsArray("GridGoals constructor made\n", gc, GridNav::printOneDistanceCell);
+        int row = 0, col = 0;
+        int minDist = mg.minimumDistanceToGoal(row, col);
+        LinkedList<Cell> path = mg.pathToNearestGoal(row, col);
+        int pathLen = path.size();
+        String label = String.format("Path of length %d from <%d, %d> to nearest goal: ", minDist, row, col);
+        Sx.putsList(label, path);
+        assert(minDist == pathLen);
 
         int rows = testFloor.length;
         int cols = testFloor[0].length;
         int gd[][] = new int[rows][cols];  // All 0s 
-        int status = GridNav.goalDistance(testFloor, gd, rows, cols);        
+        int numWrong = GridNav.computeMinDist(testFloor, gd, rows, cols);        
         Sx.putsArray("static GridGoals.goalDistance output:\n", gd, GridNav::printOneDistanceCell);
         
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
-        status += (err == 0.0 ? 0 : 1);
-        Sx.format("END %s: %s\n", testName, (status == 0 ? "PASS" : "FAIL"));
-        return status;
+        numWrong += Sz.wrong(err == 0.0);
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
     
     public static int unit_test()
@@ -166,7 +286,7 @@ public class GridNav
         status += test_oneLayout(testFloorA);
         status += test_oneLayout(testFloorB);
         
-        Sx.format("END %s: %s\n", testName, (status == 0 ? "PASS" : "FAIL"));
+        Sz.end(testName, 0);
         return status;
     }
     
