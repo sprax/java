@@ -271,10 +271,10 @@ public class GridNav
         int distWithPath[][] = new int[rows][cols];  // All 0s
         addPathToArray(path, distWithPath, rows, cols);
         Sx.putsArray("Array with path only:\n", distWithPath, GridNav::printOneDistanceCell);
-                
+        
         addObstaclesToArray(testFloor, distWithPath, rows, cols);
         Sx.putsArray("Array with path and obstacles:\n", distWithPath, GridNav::printOneDistanceCell);
-                
+                     
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
         numWrong += Sz.wrong(err == 0.0);
@@ -301,14 +301,14 @@ public class GridNav
 
     //// TEST DATA ////
     static char[][] testFloorA = {  // 8x8 test matrix
-                               { o, o, o, X, o, o, o, G },
-                               { o, o, o, X, o, X, X, o },
-                               { o, X, o, X, o, o, X, o },
-                               { o, X, o, X, o, o, X, o },
-                               { o, X, o, X, X, X, X, o },
-                               { o, X, o, o, o, X, o, o },
-                               { o, X, o, o, o, X, o, o },
-                               { o, X, o, o, o, o, o, o },
+                               { o, X, o, X, o, o, X, G },
+                               { o, o, o, X, o, o, o, o },
+                               { X, X, o, X, o, X, X, o },
+                               { o, o, o, X, o, o, o, X },
+                               { o, X, o, X, X, X, o, X },
+                               { o, o, o, X, o, o, o, o },
+                               { o, X, X, o, o, o, X, o },
+                               { o, o, o, o, X, o, o, o },
     };
     static char[][] testFloorB = {                                     // 12x12
                                { o, X, o, o, o, o, o, X, o, o, o, G }, // 0
