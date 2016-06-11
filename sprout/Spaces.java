@@ -1,4 +1,4 @@
-package sprax;
+package sprax.sprout;
 
 public class Spaces
 {   
