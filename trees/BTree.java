@@ -3,7 +3,7 @@ package sprax.trees;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 import sprax.Sz;
 

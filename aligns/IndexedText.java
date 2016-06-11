@@ -2,7 +2,7 @@ package sprax.aligns;
 
 import java.util.ArrayList;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 
 public 
 

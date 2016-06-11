@@ -3,7 +3,7 @@ package sprax.aligns;
 import java.util.ArrayList;
 import java.util.List;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 
 interface TextPartInterface // TODO: why keep this non-public interface?

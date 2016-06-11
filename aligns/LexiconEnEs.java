@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 import sprax.files.TextFileReader;
 

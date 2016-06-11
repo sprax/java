@@ -7,7 +7,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 import sprax.shuffles.Shuffler;
 

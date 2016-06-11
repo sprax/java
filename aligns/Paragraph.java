@@ -3,7 +3,7 @@ package sprax.aligns;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 
 public class Paragraph extends TextPart

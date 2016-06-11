@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import sprax.Sx;
 import sprax.arrays.ArrayFactory;
+import sprax.sprout.Spaces;
 
 public class LocalSequenceAlignment<T> extends GlobalSequenceAlignment<T>
 {
@@ -125,11 +126,11 @@ public class LocalSequenceAlignment<T> extends GlobalSequenceAlignment<T>
         Sx.format("Max similarity at row, col: %d %d; local alignment %d-%d\n"
                 , loc.mRow, loc.mCol, loc.mRow-1, loc.mCol-1);
         if (loc.mRow < loc.mCol) {
-            Sx.print(sprax.Spaces.get(loc.mCol - loc.mRow));
+            Sx.print(Spaces.get(loc.mCol - loc.mRow));
         }
         Sx.puts(strA);
         if (loc.mRow > loc.mCol) {
-            Sx.print(sprax.Spaces.get(loc.mRow - loc.mCol));
+            Sx.print(Spaces.get(loc.mRow - loc.mCol));
         }
         Sx.puts(strB);
         Sx.puts();

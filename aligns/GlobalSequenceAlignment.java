@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 import sprax.arrays.ArrayFactory;
 

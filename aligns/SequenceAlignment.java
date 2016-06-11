@@ -3,7 +3,7 @@ package sprax.aligns;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 import sprax.Sx;
 import sprax.arrays.ArrayFactory;
 

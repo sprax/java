@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Stack;
 
-import sprax.Spaces;
+import sprax.sprout.Spaces;
 
 public class BinLinkString 
 {    
