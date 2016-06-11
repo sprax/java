@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import sprax.Sx;
+import sprax.Sz;
 import sprax.arrays.ArrayDiffs;
+import sprax.sprout.Spaces;
 
 public class GridGuards
 {
@@ -186,7 +188,7 @@ public class GridGuards
     public static int test_oneLayout(char testFloor[][])
     {
         String testName = GridGuards.class.getName() + ".test_oneLayout";
-        Sx.format("BEGIN %s\n", testName);
+        Sz.begin(testName);
         
         Sx.putsArray(testFloor);
         GridGuards mg = new GridGuards(testFloor);
@@ -196,22 +198,22 @@ public class GridGuards
         Sx.putsArray("static GridGuards.guardDistance output:\n", gd, GridGuards::printOneDistanceCell);
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
-        int status = (err == 0.0 ? 0 : 1);
-        Sx.format("END %s: %s\n", testName, (status == 0 ? "PASS" : "FAIL"));
-        return status;
+        int numWrong = (err == 0.0 ? 0 : 1);
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
     
     public static int unit_test()
     {
         String testName = GridGuards.class.getName() + ".unit_test";
-        Sx.format("BEGIN %s\n", testName);
+        Sz.begin(testName);
+        int numWrong = 0;
         
-        int status = 0;
-        status += test_oneLayout(testFloorA);
-        status += test_oneLayout(testFloorB);
+        numWrong += test_oneLayout(testFloorA);
+        numWrong += test_oneLayout(testFloorB);
         
-        Sx.format("END %s: %s\n", testName, (status == 0 ? "PASS" : "FAIL"));
-        return status;
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
     
     public static void main(String[] args) {
