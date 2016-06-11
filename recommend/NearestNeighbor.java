@@ -1,5 +1,6 @@
 package sprax.recommend;
 
-public class NearestNeighbor {
+public class NearestNeighbor 
+{
 
 }
