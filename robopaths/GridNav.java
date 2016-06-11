@@ -1,5 +1,6 @@
 package sprax.robopaths;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -220,31 +221,28 @@ public class GridNav
         return path;
     }
 
-    static char[][] testFloorA = {                   // 8x8 test matrix
-                               { o, o, o, X, o, o, o, G },
-                               { o, o, o, X, o, X, X, o },
-                               { o, X, o, X, o, o, X, o },
-                               { o, X, o, X, o, o, X, o },
-                               { o, X, o, X, X, X, X, o },
-                               { o, X, o, o, o, X, o, o },
-                               { o, X, o, o, o, X, o, o },
-                               { o, X, o, o, o, o, o, o },
-    };
-    static char[][] testFloorB = {                      // 12x12
-                               { o, o, o, o, o, X, o, o, o, o, o, G },     // 0
-                               { o, o, o, o, o, X, o, o, o, o, o, o },     // 1
-                               { o, o, o, o, o, X, o, X, X, X, o, o },     // 2
-                               { o, o, X, X, o, X, o, o, X, o, o, o },     // 3
-                               { G, o, X, o, o, X, G, o, X, o, o, o },     // 4
-                               { o, o, X, o, X, X, o, o, X, o, o, o },     // 5
-                               { o, G, X, o, o, X, o, X, o, o, o, o },     // 6
-                               { o, X, X, o, o, o, o, X, o, X, o, o },     // 7
-                               { o, o, X, G, G, o, o, X, o, o, G, o },     // 8
-                               { o, o, X, o, o, o, o, o, o, o, o, o },     // 9
-                               { o, o, X, o, o, o, o, o, o, o, o, o },     // 10
-                               { o, o, X, o, o, o, o, G, o, o, o, o },     // 11
-    };
+    /** NIECE: No input error-checking or exceptions! */
+    static void addObstaclesToArray(char obstacles[][], int destArray[][], int rows, int cols) 
+    {
+        for (int row = 0; row < rows; row++)
+            for (int col = 0; col < cols; col++)
+                if (obstacles[row][col] == X)
+                    destArray[row][col] = -1;
+    }
     
+    static int addPathToArray(LinkedList<Cell> path, int array[][], int rows, int cols) 
+    {
+        return addPathToArray(path, array, rows, cols, 0);
+    }
+    
+    static int addPathToArray(LinkedList<Cell> path, int array[][], int rows, int cols, int markOffset) 
+    {
+        int mark = path.size() + markOffset;    // path length (distance) + some constant
+        for (Cell cell : path) {
+            array[cell.row][cell.col] = mark--;
+        }
+        return 0;
+    }
     
     public static int test_oneLayout(char testFloor[][])
     {
@@ -258,17 +256,25 @@ public class GridNav
         int row = 0, col = 0;
         int minDist = mg.minimumDistanceToGoal(row, col);
         LinkedList<Cell> path = mg.pathToNearestGoal(row, col);
-        int pathLen = path.size();
+        int pathSize = path.size();
         String label = String.format("Path of length %d from <%d, %d> to nearest goal: ", minDist, row, col);
         Sx.putsList(label, path);
-        assert(minDist == pathLen);
+        assert(minDist == pathSize);
+
 
         int rows = testFloor.length;
         int cols = testFloor[0].length;
         int gd[][] = new int[rows][cols];  // All 0s 
         int numWrong = GridNav.computeMinDist(testFloor, gd, rows, cols);        
         Sx.putsArray("static GridGoals.goalDistance output:\n", gd, GridNav::printOneDistanceCell);
-        
+
+        int distWithPath[][] = new int[rows][cols];  // All 0s
+        addPathToArray(path, distWithPath, rows, cols);
+        Sx.putsArray("Array with path only:\n", distWithPath, GridNav::printOneDistanceCell);
+                
+        addObstaclesToArray(testFloor, distWithPath, rows, cols);
+        Sx.putsArray("Array with path and obstacles:\n", distWithPath, GridNav::printOneDistanceCell);
+                
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
         numWrong += Sz.wrong(err == 0.0);
@@ -292,4 +298,31 @@ public class GridNav
     public static void main(String[] args) {
         unit_test();
     }
+
+    //// TEST DATA ////
+    static char[][] testFloorA = {  // 8x8 test matrix
+                               { o, o, o, X, o, o, o, G },
+                               { o, o, o, X, o, X, X, o },
+                               { o, X, o, X, o, o, X, o },
+                               { o, X, o, X, o, o, X, o },
+                               { o, X, o, X, X, X, X, o },
+                               { o, X, o, o, o, X, o, o },
+                               { o, X, o, o, o, X, o, o },
+                               { o, X, o, o, o, o, o, o },
+    };
+    static char[][] testFloorB = {                                     // 12x12
+                               { o, X, o, o, o, o, o, X, o, o, o, G }, // 0
+                               { o, X, o, o, X, o, o, X, o, X, X, X }, // 1
+                               { o, o, X, o, o, X, o, X, o, o, X, o }, // 2
+                               { o, o, X, o, X, X, o, o, X, o, o, o }, // 3
+                               { X, o, X, o, o, X, X, o, X, o, X, X }, // 4
+                               { o, o, X, X, o, X, o, o, X, o, o, o }, // 5
+                               { o, X, X, o, o, X, o, X, o, X, o, o }, // 6
+                               { o, o, X, o, X, X, o, X, X, o, X, o }, // 7
+                               { X, o, X, o, o, X, o, o, X, o, X, o }, // 8
+                               { o, o, X, X, o, X, X, o, o, X, o, o }, // 9
+                               { o, X, X, o, o, X, o, X, o, X, o, o }, // 10
+                               { o, o, o, o, X, X, o, X, o, o, o, o }, // 11
+    };
+    
 }
