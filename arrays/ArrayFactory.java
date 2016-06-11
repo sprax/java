@@ -3,7 +3,7 @@ package sprax.arrays;
 import java.util.Arrays;
 import java.util.Random;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class ArrayFactory<T>
 {

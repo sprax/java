@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Breadth-first search from a single vertex. Given a graph G and a source vertex v, visit all

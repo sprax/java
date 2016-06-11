@@ -153,8 +153,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.LinkedList;
 
-import sprax.Sx;
 import sprax.shuffles.Shuffler;
+import sprax.sprout.Sx;
 
 public class BinTree<T extends BinLink>
 {

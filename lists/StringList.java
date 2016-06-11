@@ -1,6 +1,6 @@
 package sprax.lists;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.strings.UniqueStringFinders;
 
 /**

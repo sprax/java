@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import sprax.Sx;
 import sprax.arrays.ArrayFactory;
 import sprax.containers.Reversed;
 import sprax.search.BinarySearch;
 import sprax.shuffles.Shuffler;
+import sprax.sprout.Sx;
 
 public class Ranks 
 {

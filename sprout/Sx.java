@@ -1,4 +1,4 @@
-package sprax;
+package sprax.sprout;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

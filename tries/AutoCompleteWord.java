@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sprax.Sx;
 import sprax.arrays.ArrayIter;
 import sprax.files.FileUtil;
 import sprax.files.TextFileToStringCollection;
 import sprax.files.TextFilters;
 import sprax.heaps.MinHeap;
+import sprax.sprout.Sx;
 import sprax.tries.WordTrie.WordNode;
 
 public class AutoCompleteWord implements AutoCompleteInterface

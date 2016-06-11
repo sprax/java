@@ -2,8 +2,8 @@ package sprax.numbers;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
 import sprax.Sz;
+import sprax.sprout.Sx;
 
 public class Primes 
 {

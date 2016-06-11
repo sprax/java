@@ -3,7 +3,7 @@ package sprax.trees;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /** 
  * binary search tree

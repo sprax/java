@@ -1,6 +1,6 @@
 package sprax.vis;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class Transform2d 
 {

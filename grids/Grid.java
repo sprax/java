@@ -1,6 +1,6 @@
 package sprax.grids;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /*
  * TODO: For maximal path problems, define both edge weights and node

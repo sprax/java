@@ -7,7 +7,7 @@ package sprax.maths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Number of ways to make a sum with specified coin denominations.

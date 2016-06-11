@@ -1,6 +1,6 @@
 package sprax.grids;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Square

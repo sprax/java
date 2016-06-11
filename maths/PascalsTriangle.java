@@ -2,7 +2,7 @@ package sprax.maths;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 
 /** 

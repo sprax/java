@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.threads.Threads;
 
 /*

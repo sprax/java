@@ -4,8 +4,8 @@ package sprax.arrays;
 import java.util.Arrays;
 import java.util.Random;
 
-import sprax.Sx;
 import sprax.shuffles.Shuffler;
+import sprax.sprout.Sx;
 
 /**
  * Find the single duplicate in an array of size N which contains

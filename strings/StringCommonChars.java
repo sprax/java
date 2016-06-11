@@ -1,7 +1,7 @@
 package sprax.strings;
 
-import sprax.Sx;
 import sprax.Sz;
+import sprax.sprout.Sx;
 
 public class StringCommonChars
 {

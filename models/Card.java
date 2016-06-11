@@ -3,7 +3,7 @@ package sprax.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class Card
 {

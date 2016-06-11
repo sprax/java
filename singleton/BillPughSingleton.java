@@ -1,6 +1,6 @@
 package sprax.singleton;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class BillPughSingleton {
  

@@ -2,8 +2,8 @@ package sprax.lists;
 
 import java.util.Arrays;
 
-import sprax.Sx;
 import sprax.arrays.ArrayAlgo;
+import sprax.sprout.Sx;
 
 /**
  * TODO: Consider deriving SortableSinList, which maintains state flags

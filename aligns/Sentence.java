@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class Sentence extends TextPart
 {

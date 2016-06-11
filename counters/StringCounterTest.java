@@ -3,9 +3,9 @@ package sprax.counters;
 import java.util.ArrayList;
 import java.util.List;
 
-import sprax.Sx;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
+import sprax.sprout.Sx;
 
 public class StringCounterTest 
 {

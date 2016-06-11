@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /** =========================================================================
  * Word differences for English-English proof-of-concept testing.

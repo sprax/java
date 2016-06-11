@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import sprax.Sx;
 import sprax.containers.Reversed;
+import sprax.sprout.Sx;
 
 class Vertex
 {

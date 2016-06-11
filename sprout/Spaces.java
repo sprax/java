@@ -1,6 +1,5 @@
 package sprax.sprout;
 
-import sprax.Sx;
 
 public class Spaces
 {   

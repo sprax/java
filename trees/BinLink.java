@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.shuffles.Shuffler;
 
 /** 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class FindTriplets 
 {

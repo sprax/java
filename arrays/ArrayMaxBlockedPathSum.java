@@ -2,7 +2,7 @@ package sprax.arrays;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 class Prc extends Object
 {

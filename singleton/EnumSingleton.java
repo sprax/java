@@ -2,7 +2,7 @@ package sprax.singleton;
 
 import java.io.ObjectStreamException;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 // From an idea by Joshua Bloch
 public enum EnumSingleton

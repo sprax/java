@@ -2,9 +2,9 @@ package sprax.sorts;
 
 import java.util.Comparator;
 
-import sprax.Sx;
 import sprax.Sz;
 import sprax.arrays.ArrayFactory;
+import sprax.sprout.Sx;
 
 public class SortUtil 
 {

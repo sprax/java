@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Amortize the cost of tracking the top N most frequent strings by sorting a copy of some entries

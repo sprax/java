@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.Sz;
 
 public class BTree

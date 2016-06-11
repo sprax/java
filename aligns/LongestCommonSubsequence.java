@@ -1,7 +1,7 @@
 package sprax.aligns;
 
-import sprax.Sx;
 import sprax.arrays.ArrayFactory;
+import sprax.sprout.Sx;
 
 public class LongestCommonSubsequence 
 {

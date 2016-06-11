@@ -2,7 +2,7 @@ package sprax.geom;
 
 import java.util.Comparator;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 //Non-zero double-precision point in the plane
 public final class Pxy

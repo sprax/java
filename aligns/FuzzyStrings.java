@@ -1,6 +1,6 @@
 package sprax.aligns;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Container for 2 strings, distinguished from each other by length.

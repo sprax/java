@@ -3,7 +3,7 @@ package sprax.maths;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 
 public interface FibonacciNumber<T extends Number>

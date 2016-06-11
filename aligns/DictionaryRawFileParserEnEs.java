@@ -3,9 +3,9 @@ package sprax.aligns;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import sprax.Sx;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
+import sprax.sprout.Sx;
 
 /**
  * Inputs raw dictionary file and outputs cleaned-up dictionary file 

@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
-import sprax.Sx;
 import sprax.arrays.ArrayAlgo;
 import sprax.containers.Merges;
+import sprax.sprout.Sx;
 
 class Wrap
 {

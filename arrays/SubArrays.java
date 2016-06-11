@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class SubArrays 
 {    

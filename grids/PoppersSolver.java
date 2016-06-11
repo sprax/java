@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sprax.Sx;
 import sprax.grids.PoppersGame.Tap;
+import sprax.sprout.Sx;
 
 /* 
  * Minimum-number-of-taps solution for a specified Poppers game.

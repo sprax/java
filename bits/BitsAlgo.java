@@ -1,6 +1,6 @@
 package sprax.bits;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class BitsAlgo 
 {

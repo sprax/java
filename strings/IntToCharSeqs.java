@@ -5,8 +5,8 @@ package sprax.strings;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
 import sprax.Sz;
+import sprax.sprout.Sx;
 
 
 /**

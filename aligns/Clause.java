@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import sprax.Sx;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
+import sprax.sprout.Sx;
 
 public class Clause extends TextPart
 {

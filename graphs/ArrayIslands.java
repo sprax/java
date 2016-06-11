@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import sprax.Sx;
 import sprax.arrays.ArrayAlgo;
+import sprax.sprout.Sx;
 
 /**
  * Given a matrix containing 0 and 1. Consider 1 as 'Land' and 0 as 'Water'. Find out the number of

@@ -1,7 +1,7 @@
 package sprax.sorts;
 
-import sprax.Sx;
 import sprax.Sz;
+import sprax.sprout.Sx;
 
 public class BucketSort implements SortInt
 {

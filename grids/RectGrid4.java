@@ -1,6 +1,6 @@
 package sprax.grids;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * RectGrid<T> Grid of packed, connected nodes, generally 2-dimensional,

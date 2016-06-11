@@ -2,7 +2,7 @@ package sprax.heaps;
 
 import java.util.Comparator;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * MaxHeap

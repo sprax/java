@@ -1,6 +1,6 @@
 package sprax.vis;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /*************************************
  * Reconstruction/Localization of sensor network nodes

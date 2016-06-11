@@ -14,8 +14,9 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 
+
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.files.TextFileReader;
 
 public class LexiconEnEs extends Lexicon

@@ -1,6 +1,6 @@
 package sprax.heaps;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /*************************************************************************
  *  Compilation:  javac Heap.java

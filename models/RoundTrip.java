@@ -1,6 +1,6 @@
 package sprax.models;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class RoundTrip
 {

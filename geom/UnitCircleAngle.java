@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
-import sprax.Sx;
 import sprax.search.BinarySearch;
+import sprax.sprout.Sx;
 
 /**
  * Given an array, list, or set of non-zero points on the unit circle,

@@ -1,6 +1,6 @@
 package sprax.palindromes;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Basic static methods on number, string, and word palindromes, including:

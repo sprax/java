@@ -7,7 +7,7 @@ import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class FileToCharSequence {
     

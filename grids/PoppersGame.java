@@ -5,8 +5,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
+
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 class Dart
 {

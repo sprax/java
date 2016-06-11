@@ -2,8 +2,8 @@ package sprax.grids;
 
 import java.util.Random;
 
-import sprax.Sx;
 import sprax.arrays.ArrayMaxPathSum;
+import sprax.sprout.Sx;
 
 // TODO: Derive from Grid
 

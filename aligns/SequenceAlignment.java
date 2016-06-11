@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.arrays.ArrayFactory;
 
 class IndexPair

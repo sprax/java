@@ -12,7 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Reads a text file into a Collections object.

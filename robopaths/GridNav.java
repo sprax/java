@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import sprax.Sx;
 import sprax.Sz;
 import sprax.arrays.ArrayDiffs;
+import sprax.sprout.Sx;
 
 class Cell {
     final int row;

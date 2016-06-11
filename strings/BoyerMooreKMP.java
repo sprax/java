@@ -2,7 +2,7 @@ package sprax.strings;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class BoyerMooreKMP 
 {

@@ -2,7 +2,7 @@ package sprax.fields;
 
 import java.util.Random;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 //////////// FIELD<T> //////////////////////////////////////////////////
 /**

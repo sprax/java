@@ -22,13 +22,13 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import sprax.Sx;
 import sprax.arrays.ArrayIter;
 import sprax.files.FileUtil;
 import sprax.files.StringCollectorInterface;
 import sprax.files.TextFilters;
 import sprax.heaps.MinHeap;
 import sprax.sorts.SaveMax;
+import sprax.sprout.Sx;
 
 /**
  * Trie Terminology:

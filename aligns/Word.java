@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 
-import sprax.Sx;
+
+import sprax.sprout.Sx;
 
 /**
  * Representation of a single word.

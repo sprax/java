@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import sprax.Sx;
 import sprax.files.FileUtil;
+import sprax.sprout.Sx;
 import sprax.tries.WordTrie;
 
 /**

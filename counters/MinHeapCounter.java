@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import sprax.Sx;
 import sprax.heaps.MinHeap;
+import sprax.sprout.Sx;
 
 
 /** 

@@ -2,9 +2,9 @@ package sprax.aligns;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
 import sprax.arrays.ArrayFactory;
 import sprax.sprout.Spaces;
+import sprax.sprout.Sx;
 
 public class LocalSequenceAlignment<T> extends GlobalSequenceAlignment<T>
 {

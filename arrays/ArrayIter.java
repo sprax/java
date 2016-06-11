@@ -2,7 +2,7 @@ package sprax.arrays;
 
 import java.util.Arrays;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * class ArrayIter -- easy operations on arrays, as in Perl

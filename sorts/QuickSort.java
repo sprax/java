@@ -1,6 +1,6 @@
 package sprax.sorts;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class QuickSort<T extends Comparable<T>>
 {

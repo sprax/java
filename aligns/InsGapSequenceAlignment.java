@@ -2,8 +2,8 @@ package sprax.aligns;
 
 import java.util.ArrayList;
 
-import sprax.Sx;
 import sprax.arrays.ArrayFactory;
+import sprax.sprout.Sx;
 
 /** 
  * Sequence alignment with gap/multiple insert penalties

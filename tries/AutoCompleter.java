@@ -3,10 +3,10 @@ package sprax.tries;
 import java.util.ArrayList;
 import java.util.List;
 
-import sprax.Sx;
 import sprax.Sz;
 import sprax.files.FileUtil;
 import sprax.files.TextFileToStringCollection;
+import sprax.sprout.Sx;
 
 public class AutoCompleter implements AutoCompleteInterface
 {

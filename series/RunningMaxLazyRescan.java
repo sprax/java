@@ -2,7 +2,7 @@ package sprax.series;
 
 import java.util.LinkedList;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * From an ongoing stream of N numbers, keep track the most recent

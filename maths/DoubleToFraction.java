@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class DoubleToFraction
 {

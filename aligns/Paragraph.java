@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class Paragraph extends TextPart
 {

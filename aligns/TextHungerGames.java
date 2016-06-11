@@ -1,6 +1,6 @@
 package sprax.aligns;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class TextHungerGames 
 {    

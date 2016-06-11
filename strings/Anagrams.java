@@ -2,7 +2,7 @@ package sprax.strings;
 
 import java.util.HashMap;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Are stringA and stringB anagrams of each other?  That is, are they

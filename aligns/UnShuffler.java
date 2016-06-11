@@ -3,7 +3,7 @@ package sprax.aligns;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * TODO: Not done!  This is analogous to unshuffling a natural image (like 

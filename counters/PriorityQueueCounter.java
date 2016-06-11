@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Problem: Given a growing large number N of strings and counts of how many times

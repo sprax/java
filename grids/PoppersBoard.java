@@ -2,7 +2,7 @@ package sprax.grids;
 
 import java.io.Serializable;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class PoppersBoard implements Serializable
 {

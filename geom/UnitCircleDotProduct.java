@@ -1,6 +1,6 @@
 package sprax.geom;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Given an array, list, or set of non-zero points on the unit circle,

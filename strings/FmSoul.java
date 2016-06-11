@@ -1,6 +1,6 @@
 package sprax.strings;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /*
 TODO:

@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 /**
  * Cribbed from Holger's answer in:

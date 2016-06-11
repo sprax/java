@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
-import sprax.Sx;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
+import sprax.sprout.Sx;
 
 /**
  * TODO: Separate classes for dictionary parsing and storage?

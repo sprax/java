@@ -1,6 +1,6 @@
 package sprax.files;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class TextParser 
 {

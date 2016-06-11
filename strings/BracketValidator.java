@@ -2,7 +2,7 @@ package sprax.strings;
 
 import java.util.Stack;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class BracketValidator {
 

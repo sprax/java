@@ -1,7 +1,7 @@
 package sprax.lists;
 
-import sprax.Sx;
 import sprax.arrays.ArrayAlgo;
+import sprax.sprout.Sx;
 
 public class SinLinkSort
 {

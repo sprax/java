@@ -2,7 +2,7 @@ package sprax.arrays;
 
 import java.io.IOException;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 class PrcNode extends Object	// weighted point object with row and col and next ref
 {

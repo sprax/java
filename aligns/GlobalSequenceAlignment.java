@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 import sprax.arrays.ArrayFactory;
 
 

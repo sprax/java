@@ -1,6 +1,6 @@
 package sprax.numbers;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class Numeral2Counter 
 {

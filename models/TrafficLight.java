@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class TrafficLight
 {

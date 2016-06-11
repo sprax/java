@@ -2,8 +2,8 @@ package sprax.grids;
 
 import java.util.Random;
 
-import sprax.Sx;
 import sprax.arrays.ArrayMaxPathSum;
+import sprax.sprout.Sx;
 
 /**
  * RectGrid<T> Grid of packed, connected nodes, generally 2-dimensional,

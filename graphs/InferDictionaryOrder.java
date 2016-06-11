@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import sprax.arrays.ArrayAlgo;
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 public class InferDictionaryOrder
 {

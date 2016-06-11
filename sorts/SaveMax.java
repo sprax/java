@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
-import sprax.Sx;
 import sprax.arrays.ArrayAlgo;
 import sprax.arrays.ArrayIter;
 import sprax.heaps.MaxHeap;
 import sprax.heaps.MinHeap;
 import sprax.shuffles.Shuffler;
+import sprax.sprout.Sx;
 
 public class SaveMax
 {

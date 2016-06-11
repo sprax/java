@@ -2,7 +2,8 @@ package sprax.arrays;
 
 import java.util.Arrays;
 import java.util.Random;
-import sprax.Sx;
+
+import sprax.sprout.Sx;
 
 // package-only interface
 interface Finder { int find(int array[]); }

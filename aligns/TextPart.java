@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sprax.sprout.Spaces;
-import sprax.Sx;
+import sprax.sprout.Sx;
 
 interface TextPartInterface // TODO: why keep this non-public interface?
 {

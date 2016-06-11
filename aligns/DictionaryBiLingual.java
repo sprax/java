@@ -6,10 +6,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import sprax.Sx;
 import sprax.files.FileUtil;
 import sprax.files.StringCollection;
 import sprax.files.TextFileReader;
+import sprax.sprout.Sx;
 
 
 class WordSet extends StringCollection<TreeSet<String>> 
