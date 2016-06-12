@@ -9,7 +9,7 @@ public class BoyerMooreKMP
 	protected final int       mCharSetSize;  // the radix
 	protected char[]          mPatArr;       // store the pattern as a character array
 	protected String          mPatStr;       // or as a string
-	protected int[]           mRightmostArr;    // the bad-character skip array
+	protected int[]           mRightmostArr; // the bad-character skip array
 
 
 	public BoyerMooreKMP(final String patStr, int charSetSize) 

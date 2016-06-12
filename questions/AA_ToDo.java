@@ -1,4 +1,5 @@
-package sprax;
+package sprax.questions
+;
 
 /**
  * random stream<T> from array<T>
