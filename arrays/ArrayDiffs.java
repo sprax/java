@@ -2,6 +2,7 @@
 package sprax.arrays;
 
 import java.util.Arrays;
+import java.util.List;
 
 import sprax.test.Sz;
 
@@ -61,6 +62,22 @@ public class ArrayDiffs
         int sum = 0;
         for (int val, i = 0; i < iA.length; i++) {
             val = iA[i] - iB[i];
+            sum += val * val;
+        }
+        return sum;
+    }
+    
+    /**
+     * Return sum of squares of element by element array differences.
+     */
+    public static int sumOfSquaredDifferences(List<Integer> iA, List<Integer> iB)
+    {
+        if (iA == null || iB == null || iA.size() != iB.size()) {
+            throw new IllegalArgumentException("null or mismatched array");
+        }
+        int sum = 0;
+        for (int val, i = 0; i < iA.size(); i++) {
+            val = iA.get(i) - iB.get(i);
             sum += val * val;
         }
         return sum;

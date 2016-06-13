@@ -1,4 +1,4 @@
-package sprax.maths;
+package sprax.numbers;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package sprax.maths;
+package sprax.numbers;
 
 /**
  * Fibonacci interface and test class

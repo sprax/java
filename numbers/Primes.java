@@ -2,6 +2,11 @@ package sprax.numbers;
 
 import java.util.ArrayList;
 
+<<<<<<< Updated upstream
+=======
+import sprax.Sz;
+import sprax.arrays.ArrayDiffs;
+>>>>>>> Stashed changes
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -136,7 +141,8 @@ public class Primes
 		int countB = primesB.size();
 		Sx.format("primesInRangeSeive(%d, %d) got %d primes:\n",  lo, hi, countB);
 		Sx.putsArray(primesB);
-		return 0;
+		
+		return ArrayDiffs.sumOfSquaredDifferences(primesA, primesB);
 	}
 	
 	public static int[] digitCounts(ArrayList<Integer> nums)
