@@ -2,6 +2,7 @@ package sprax.strings;
 
 import java.util.ArrayList;
 
+import sprax.Sz;
 import sprax.sprout.Sx;
 
 public class BoyerMooreKMP 
@@ -127,7 +128,7 @@ public class BoyerMooreKMP
 		Sx.puts(testName + " BEGIN\n");
 
 		//String txt = "Our house is almost at the edge of the Seam.";
-		String txt = "Our house is almost at the edge of the Seam.  I only have to pass a few gates to reach the scruffy field called the Meadow.  Separating the Meadow from the woods, in fact enclosing all of District 12, is a high chain-link fence topped with barbed-wire loops.  In theory, it�s supposed to be electrified twenty-four hours a day as a deterrent to the predators that live in the woods�packs of wild dogs, lone cougars, bears�that used to threaten our streets.  But since we�re lucky to get two or three hours of electricity in the evenings, it�s usually safe to touch.  Even so, I always take a moment to listen carefully for the hum that means the fence is live.  Right now, it�s silent as a stone.  Concealed by a clump of bushes, I flatten out on my belly and slide under a two-foot stretch that�s been loose for years.  There are several other weak spots in the fence, but this one is so close to home I almost always enter the woods here.";
+		String txt = "Our house is almost at the edge of the Seam.  I only have to pass a few gates to reach the scruffy field called the Meadow.  Separating the Meadow from the woods, in fact enclosing all of District 12, is a high chain-link fence topped with barbed-wire loops.  In theory, it's supposed to be electrified twenty-four hours a day as a deterrent to the predators that live in the wood -- packs of wild dogs, lone cougars, bears -- that used to threaten our streets.  But since we're lucky to get two or three hours of electricity in the evenings, it's usually safe to touch.  Even so, I always take a moment to listen carefully for the hum that means the fence is live.  Right now, it's silent as a stone.  Concealed by a clump of bushes, I flatten out on my belly and slide under a two-foot stretch that's been loose for years.  There are several other weak spots in the fence, but this one is so close to home I almost always enter the woods here.";
 		String pat = "the";
 		BoyerMooreKMP bmk = new BoyerMooreKMP(pat, 256);
 		ArrayList<Integer> starts = new ArrayList<Integer>();
@@ -139,11 +140,9 @@ public class BoyerMooreKMP
 				break;
 			starts.add(ss);
 		}
-		for (int ff : starts)
-		{
-			Sx.puts(ff);
-		}
-		Sx.puts(testName + " END,  status: PASSED");
+        Sx.format("Indexes of start of <%s>: ", pat);
+        Sx.putsList(starts);
+		Sz.end(testName, 0);
 		return 0;
 	}
 

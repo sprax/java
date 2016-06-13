@@ -1,13 +1,14 @@
 package sprax.questions;
 
+import sprax.Sz;
 import sprax.sprout.Sx;
 
 /** function(s) to return longest substring lexicographically greater than the whole string. */
-public class LongestGreaterSubString
+public class LongestGreaterSubstring
 {
 
     /**
-     * EPavlova on CareerCup: 
+     * Modified from EPavlova on CareerCup: 
      * Let's use Failure function of KMP algorithm. 
      * First calculate it. Then iterate the array and each time get Failure[i] 
      * which is the end of the longest prefix that is suffix to the substring[0...i] 
@@ -20,7 +21,6 @@ public class LongestGreaterSubString
      * @param str
      * @return
      */
-    
     static String longestGreaterSubstring(String str) {
         int[] failure = new int[str.length()];
         failure[0] = -1;
@@ -41,7 +41,7 @@ public class LongestGreaterSubString
                 failure[i] = -1;
             i++;
         }
-        String res = null;
+        String res = "";
         for (i = 1; i < str.length() - 1; i++) {
             if (failure[i] == -1) {
                 if (str.charAt(0) < str.charAt(i)) {
@@ -61,12 +61,26 @@ public class LongestGreaterSubString
         return res;
     }
     
-    public static void main(String[] args) {
-        String str, out;
-        str = "aardvark";
-        out = longestGreaterSubstring(str);
-        Sx.format("%s ==> %s\n", str, out);
+    public static int testOne(String str, String expected) {
+        String result = longestGreaterSubstring(str);
+        Sx.format("%s ==> %s\n", str, result);
+        return Sz.oneWrong(result, expected);
+    }
+    
+    public static int unit_test() {
+        String testName = LongestGreaterSubstring.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
         
+        numWrong += testOne("aardvark", "ardvark");
+        numWrong += testOne("zzzyxwvutsrqp", "");
+        
+        Sz.end(testName, numWrong);
+        return numWrong;
+    }
+    
+    public static void main(String[] args) {
+        unit_test();
     }
     
 }
