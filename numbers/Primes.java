@@ -2,11 +2,7 @@ package sprax.numbers;
 
 import java.util.ArrayList;
 
-<<<<<<< Updated upstream
-=======
-import sprax.Sz;
 import sprax.arrays.ArrayDiffs;
->>>>>>> Stashed changes
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 

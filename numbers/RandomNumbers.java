@@ -2,7 +2,7 @@ package sprax.numbers;
 
 import java.util.Random;
 
-import sprax.Sz;
+import sprax.test.Sz;
 import sprax.arrays.ArrayAlgo;
 import sprax.sprout.Sx;
 
