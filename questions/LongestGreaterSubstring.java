@@ -4,7 +4,7 @@ import sprax.Sz;
 import sprax.sprout.Sx;
 
 /** function(s) to return longest substring lexicographically greater than the whole string. */
-public class LongestGreaterSubStr
+public class LongestGreaterSubstring
 {
 
     /**
@@ -68,7 +68,7 @@ public class LongestGreaterSubStr
     }
     
     public static int unit_test() {
-        String testName = LongestGreaterSubStr.class.getName() + ".unit_test";
+        String testName = LongestGreaterSubstring.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         
