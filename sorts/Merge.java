@@ -3,8 +3,8 @@ package sprax.sorts;
 import java.util.LinkedList;
 import java.util.Random;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class Merge<E extends Comparable<? super E>>
 {

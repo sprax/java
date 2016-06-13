@@ -1,7 +1,7 @@
 package sprax.clocks;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public abstract class Clock
 {

@@ -2,7 +2,7 @@ package sprax.sorts;
 
 import java.util.*;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class QuickSelect
 {

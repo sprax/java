@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class TextFilters 
 {

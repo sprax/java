@@ -3,8 +3,8 @@ package sprax.converts;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class ConvertCharsToStrings
 {

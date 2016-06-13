@@ -6,7 +6,7 @@ package sprax.maths;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 /** random collection of basic math operations */
 public abstract class Maths

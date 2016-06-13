@@ -3,7 +3,7 @@ package sprax.shuffles;
 import sprax.arrays.ArrayAlgo;
 import sprax.series.RunningMaxTest;
 import sprax.sprout.Sx;
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class Shuffles {
     /**

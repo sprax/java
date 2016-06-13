@@ -1,7 +1,7 @@
 package sprax.questions;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /** function(s) to return longest substring lexicographically greater than the whole string. */
 public class LongestGreaterSubstring

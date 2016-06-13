@@ -2,9 +2,9 @@ package sprax.maths;
 
 import java.util.Random;
 
-import sprax.Sz;
 import sprax.arrays.ArrayAlgo;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class RandomNumbers 
 {

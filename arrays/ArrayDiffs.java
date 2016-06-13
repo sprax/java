@@ -3,7 +3,7 @@ package sprax.arrays;
 
 import java.util.Arrays;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class ArrayDiffs
 {

@@ -1,11 +1,11 @@
 package sprax.search;
 
-import sprax.Sz;
 import sprax.arrays.ArrayAlgo;
 import sprax.selectors.Medians;
 import sprax.shuffles.Shuffler;
 import sprax.sorts.SortUtil;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class BinarySearch<T extends Comparable<T>>
 {  

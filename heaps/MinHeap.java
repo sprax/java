@@ -5,9 +5,9 @@ package sprax.heaps;
 
 import java.util.Comparator;
 
-import sprax.Sz;
 import sprax.sorts.SortUtil;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 class ReverseCompare<T extends Comparable<T>> implements Comparator<T>
 {

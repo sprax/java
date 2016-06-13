@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class ArrayAlgo
 {

@@ -1,7 +1,5 @@
 package sprax.test;
 
-import sprax.Sz;
-
 /**
  * static utility methods for testing, debugging, etc.
  *

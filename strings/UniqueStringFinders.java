@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import sprax.Sz;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
 import sprax.lists.StrLink;
 import sprax.lists.StringList;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 import sprax.tries.WordTrie;
 import sprax.tries.WordTrie.NodeCount;
 import sprax.tries.WordTrie.WordNode;

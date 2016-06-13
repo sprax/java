@@ -1,4 +1,4 @@
-package sprax;
+package sprax.test;
 
 import sprax.sprout.Sx;
 

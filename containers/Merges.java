@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import sprax.Sz;
 import sprax.arrays.ArrayAlgo;
 import sprax.arrays.ArrayIterInt;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 class CompareByMapVal<M extends Map<K, V>, K, V extends Comparable<V>> implements Comparator<K>
 {

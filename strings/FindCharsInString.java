@@ -3,8 +3,8 @@ package sprax.strings;
 import java.util.HashMap;
 import java.util.Map;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class FindCharsInString {
     

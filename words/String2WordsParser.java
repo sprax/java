@@ -7,9 +7,9 @@ package sprax.words;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import sprax.Sz;
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
+import sprax.test.Sz;
 
 
 public class String2WordsParser {

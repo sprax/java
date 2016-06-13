@@ -3,8 +3,8 @@ package sprax.designpats;
 import java.util.Observable;
 import java.util.Observer;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /** Observer/Subscriber/Consumer */
 public class MessageObserver implements Observer

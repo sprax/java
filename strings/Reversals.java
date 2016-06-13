@@ -1,7 +1,7 @@
 package sprax.strings;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * String reversals: words, sentence, or any string.

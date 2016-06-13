@@ -1,6 +1,6 @@
 package sprax.strings;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class StringCompare {
 	

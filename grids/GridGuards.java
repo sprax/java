@@ -4,9 +4,9 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import sprax.Sz;
 import sprax.arrays.ArrayDiffs;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class GridGuards
 {

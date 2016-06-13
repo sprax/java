@@ -25,7 +25,7 @@ package sprax.sorts;
 
 import java.util.Comparator;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class Selection<T extends Comparable<T>> implements SortT<T>
 {

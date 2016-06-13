@@ -1,7 +1,7 @@
 package sprax.grids;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class GoBoard
 {

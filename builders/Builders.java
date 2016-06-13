@@ -3,8 +3,8 @@ package sprax.builders;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 class BitsComp<T>
 {    

@@ -30,8 +30,8 @@
  ***************************************************************/
 package sprax.strings;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class BoyerMoore implements SubStringSearch
 {

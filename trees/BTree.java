@@ -5,7 +5,7 @@ import java.util.Queue;
 
 import sprax.sprout.Spaces;
 import sprax.sprout.Sx;
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class BTree
 {

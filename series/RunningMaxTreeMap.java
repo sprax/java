@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TreeMap;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * From an ongoing stream of N numbers, keep track the most recent

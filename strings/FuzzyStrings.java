@@ -1,7 +1,7 @@
 package sprax.strings;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * Container for 2 strings, distinguished from each other by length.

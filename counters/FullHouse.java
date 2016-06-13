@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class FullHouse
 {

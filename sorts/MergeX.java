@@ -24,7 +24,7 @@
 
 package sprax.sorts;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class MergeX<T extends Comparable<T>> implements SortT<T>
 {

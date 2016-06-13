@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 /**
  * Keeps all string counts in a hash map for quick access, and keeps a short list of the maximal

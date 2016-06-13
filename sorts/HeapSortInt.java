@@ -1,7 +1,7 @@
 package sprax.sorts;
 
-import sprax.Sz;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * Heap methods on array, no keeping of state.

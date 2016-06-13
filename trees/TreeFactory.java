@@ -3,7 +3,7 @@ package sprax.trees;
 //import java.util.HashSet;
 import java.util.LinkedList;
 
-import sprax.Sz;
+import sprax.test.Sz;
 
 public class TreeFactory<T extends BinLink>
 {
