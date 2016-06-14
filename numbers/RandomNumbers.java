@@ -72,7 +72,7 @@ public class RandomNumbers
     
     public static void main(String[] args)
     {
-        unit_test();
+        unit_test();        
     }	
 
 }
