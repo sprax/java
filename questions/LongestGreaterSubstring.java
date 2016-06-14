@@ -9,7 +9,7 @@ public class LongestGreaterSubstring
 
     // ad hoc search for first greater character followed by
     // brute force back-tracking to grow prefix; no extra space needed.
-    static String longestGreaterSubstringBT(String string)
+    static String longestGreaterSubstring(String string)
     {
         String result = "";
         if (string == null || string.isEmpty())
@@ -113,9 +113,12 @@ public class LongestGreaterSubstring
     }
     
     public static int testOne(String str, String expected) {
-        String result = longestGreaterSubstringBT(str);
-        Sx.format("'%s' ==> '%s'\n", str, result);
-        return Sz.oneWrong(result, expected);
+        String result = longestGreaterSubstring(str);
+        String resKMP = longestGreaterSubstringKMP(str);
+        int numWrong = Sz.oneWrong(result, expected);
+        numWrong    += Sz.oneWrong(result, resKMP);
+        Sx.format("'%s' ==> '%s' =?= '%s'\n", str, result, resKMP);
+        return numWrong;
     }
     
     public static int unit_test() {
