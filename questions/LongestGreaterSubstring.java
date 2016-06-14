@@ -7,6 +7,56 @@ import sprax.test.Sz;
 public class LongestGreaterSubstring
 {
 
+    // ad hoc search for first greater character followed by
+    // brute force back-tracking to grow prefix; no extra space needed.
+    static String longestGreaterSubstringBT(String string)
+    {
+        String result = "";
+        if (string == null || string.isEmpty())
+            return result;                          // GIGO
+        
+        // Find the index (beg) of the first char > string[0] or > string[m]
+        // where all the characters immediately preceding the found character
+        // match the beginning of the string, i.e. string[0 .. m-1]
+        char c0 = string.charAt(0);
+        int beg = 0, same = 0;
+        while (++beg < string.length()) {
+            
+            char chr = string.charAt(beg);
+            if (chr == string.charAt(same))
+                same++;
+            else if (chr > string.charAt(same)) {
+                beg -= same;
+                break;
+            } else {
+                same = 0;
+            }
+        }
+        int strlen = string.length();
+        if (beg < strlen) {
+            // Now that we know string[beg ..] > string[0 ..], we find the
+            // longest prefix string[pre .. beg-1] matching string[0 .. k] where 0 < pre < beg and 0 <= k < beg
+            int pre = beg;
+            while (--pre > 0) {
+                if (string.charAt(pre) == c0) {
+                    int m = 0, prefSize = beg - pre;
+                    while (++m < prefSize) {
+                        if (string.charAt(m) != string.charAt(pre + m))
+                            break;                      // inner break
+                    }
+                    if (m == prefSize) {
+                        beg = pre;                      // prefix string[pre .. beg-1] == string[0 .. beg-1-pre]
+                    } else {
+                        break;                          // outer break
+                    }
+                }
+            }
+            result = string.substring(beg);
+        }
+        return result;
+    }
+    
+    
     /**
      * Modified from EPavlova on CareerCup: 
      * Let's use Failure function of KMP algorithm. 
@@ -21,7 +71,9 @@ public class LongestGreaterSubstring
      * @param str
      * @return
      */
-    static String longestGreaterSubstring(String str) {
+    static String longestGreaterSubstringKMP(String str) 
+    {
+        String result = "";
         int[] failure = new int[str.length()];
         failure[0] = -1;
         int i = 1;
@@ -41,28 +93,27 @@ public class LongestGreaterSubstring
                 failure[i] = -1;
             i++;
         }
-        String res = "";
         for (i = 1; i < str.length() - 1; i++) {
             if (failure[i] == -1) {
                 if (str.charAt(0) < str.charAt(i)) {
-                    res = str.substring(i);
+                    result = str.substring(i);
                     break;
                 }
             }
             else {
                 if (str.charAt(failure[i] + 1) < str.charAt(i + 1)) {
-                    res = str.substring(i - failure[i]);
+                    result = str.substring(i - failure[i]);
                     break;
                 }
             }
         }
         if (str.charAt(0) < str.charAt(i))
             return str.substring(i);
-        return res;
+        return result;
     }
     
     public static int testOne(String str, String expected) {
-        String result = longestGreaterSubstring(str);
+        String result = longestGreaterSubstringBT(str);
         Sx.format("'%s' ==> '%s'\n", str, result);
         return Sz.oneWrong(result, expected);
     }
@@ -72,9 +123,16 @@ public class LongestGreaterSubstring
         Sz.begin(testName);
         int numWrong = 0;
         
+        numWrong += testOne("thethezoo", "thezoo");
+        numWrong += testOne("thetheaterzoo", "zoo");
         numWrong += testOne("aardvark", "ardvark");
         numWrong += testOne("zzzyxwvutsrqp", "");
-        
+        numWrong += testOne("thezoothezoo", "zoothezoo");
+        numWrong += testOne("thethethezoo", "thethezoo");
+        numWrong += testOne("thethirdthezoo", "thirdthezoo");
+        numWrong += testOne("thethethirdthezoo", "thethirdthezoo");
+        numWrong += testOne("thearielthethirdthezoo", "thethirdthezoo");
+
         Sz.end(testName, numWrong);
         return numWrong;
     }

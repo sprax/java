@@ -2,23 +2,27 @@ package sprax.questions
 ;
 
 /**
+ * TODO:
+ * re-factor Poppers and add ML at least for guiding heuristic search
+ * Family Trees
+ * Map problem: where to hold a reunion to minimize collective cost.
+ * LanguageId from ML  supervised learning
+ * Remember Bhattacharyya distance from pattern classification?
+ * 
  * random stream<T> from array<T>
  * linked-hash-set for max-N counts?    backed by balanced tree?
  * 
- * find duplicate lines or sentences
+ * find duplicate lines or sentences (with fuzzy strings/fuzzy sets)
  * 
- * re-factor poppers
- *
+ * DONE:
  * TrafficLight
  * TrafficLights
  * Elevator
  * Elevators
  * PoppersSolver
- * LanguageId
  * TimeSinceLastQuery[C, Java, Python] => function that returns true if it not returned n trues in last k seconds in O(1) time
  * 
- * @author sprax
- *
+ * @author Sprax Lines
  */
 public class AA_ToDo {
     
@@ -128,7 +132,7 @@ Quick sort and then take i+1 to n elements and reverse them. Here i is the index
  16
  Country: India
  Interview Type: In-Person
- Tags: Microsoft » Algorithm  » Software Engineer / Developer
+ Tags: Microsoft ï¿½ Algorithm  ï¿½ Software Engineer / Developer
  Question #11446728 (Report Dup) | Edit | History
 
 
