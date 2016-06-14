@@ -1,4 +1,4 @@
-package sprax.questions;
+package sprax.strings;
 
 import sprax.sprout.Sx;
 import sprax.test.Sz;
