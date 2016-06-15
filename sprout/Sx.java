@@ -710,22 +710,31 @@ public class Sx
     
     public static <T> void printIterable(Iterable<T> iter)
     {
-        for (T x : iter)
-            print(" " + x);
+        if (iter == null) {
+            print("[null iterable]");
+        } else {
+            for (T x : iter) {
+                print(" " + x);
+            }
+        }
     }
     
-    public static <T> void printIterable(Iterable<T> list, int limit)
+    public static <T> void printIterable(Iterable<T> iter, int numPerLine, int limit)
     {
-        if (list == null)
-            print("[null iterable]");
-        else
-            for (T x : list) {
-                if (--limit < 0) {
-                    print("...");
-                    break;
-                }
-                print(x + " ");
+        if (iter == null || limit < 1 || numPerLine < 1) {
+            printIterable(iter);
+            return;
+        }
+        int j = 0;
+        for (T x : iter) {
+            if (++j % numPerLine == 0)
+                puts();
+            if (j > limit) {
+                print("...");       // print ellipses only if truncating
+                break;
             }
+            print(" " + x);
+        }
     }
     
     public static <T> void putsIterable(Iterable<T> iter)
@@ -734,9 +743,9 @@ public class Sx
         puts();
     }
     
-    public static <T> void putsIterable(Iterable<T> iter, int limit)
+    public static <T> void putsIterable(Iterable<T> iter, int numPerLine, int limit)
     {
-        printIterable(iter, limit);
+        printIterable(iter, numPerLine, limit);
         puts();
     }
     
@@ -753,16 +762,16 @@ public class Sx
         puts(postLabel);
     }
     
-    public static <T> void putsIterable(Iterable<T> iter, int limit, String postLabel)
+    public static <T> void putsIterable(Iterable<T> iter, int numPerLine, int limit, String postLabel)
     {
-        printIterable(iter, limit);
+        printIterable(iter, numPerLine, limit);
         puts(postLabel);
     }
     
-    public static <T> void putsIterable(String preLabel, Iterable<T> iter, int limit)
+    public static <T> void putsIterable(String preLabel, Iterable<T> iter, int numPerLine, int limit)
     {
         print(preLabel);
-        printIterable(iter, limit);
+        printIterable(iter, numPerLine, limit);
         puts();
     }
     

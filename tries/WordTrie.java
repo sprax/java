@@ -29,6 +29,7 @@ import sprax.files.TextFilters;
 import sprax.heaps.MinHeap;
 import sprax.sorts.SaveMax;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * Trie Terminology:
@@ -1455,7 +1456,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 		String stem = trie.longestPrefix(prefix);
 		List<String> words = trie.getWordsPartiallyMatchingPrefix(prefix);
 		Sx.format("WordTrie words partially matching prefix \"%s\"[%s] (%d):\t", prefix, stem, words.size());
-		Sx.putsIterable(words, 8);
+		Sx.putsIterable(words, 10, 8);
 		return 0;
 	}
 
@@ -1463,7 +1464,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 	{
 		Set<String> words = trie.getWordsMatchingPattern(pattern);
 		System.out.format("Words matching pattern \"%s\" (%d):\t", pattern, words.size());
-		Sx.putsIterable(words, 8);
+		Sx.putsIterable(words, 10, 8);
 		return 0;
 	}
 
@@ -1471,7 +1472,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 	{
 		Set<String> words = trie.getWordsMatchingPrefixWildCardRecurse(pattern);
 		System.out.format("Words matching pattern \"%s\" (%d):\t", pattern, words.size());
-		Sx.putsIterable(words, 8);
+		Sx.putsIterable(words, 10, 8);
 		return 0;
 	}
 
@@ -1479,7 +1480,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 	{
 		Set<String> words = trie.getWordsMatchingPatternWildCardRecurse(pattern);
 		System.out.format("Words matching pattern \"%s\" (%d):\t", pattern, words.size());
-		Sx.putsIterable(words, 8);
+		Sx.putsIterable(words, 10, 8);
 		return 0;
 	}
 
@@ -1487,7 +1488,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 	{
 		Set<String> words = trie.getWordsMatchingPatternWildCardRecIter(pattern);
 		System.out.format("Words matching pattern \"%s\" (%d):\t", pattern, words.size());
-		Sx.putsIterable(words, 8);
+		Sx.putsIterable(words, 10, 8);
 		return 0;
 	}
 
@@ -2740,9 +2741,10 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 	  */
 	 public static int unit_test(int level)
 	 {
-		 Sx.puts(WordTrie.class.getName() + ".unit_test");
-
-		 int stat = 0;
+	     String testName = WordTrie.class.getName() + ".unit_test";
+	     Sz.begin(testName);
+	     
+		 int numWrong = 0;
 		 int minWordLen = 3;
 		 int maxWordLen = 12;
 		 WordTrie trie = new WordTrie();
@@ -2751,7 +2753,7 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 		 trie.initFromSortedDictionaryFile(dictFile, minWordLen, maxWordLen, 1);
 
 
-		 stat += test_patternMatching(trie);
+		 numWrong += test_patternMatching(trie);
 
 		 if (level > 1) {
 
@@ -2993,8 +2995,8 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 			 }
 
 			 if (level == 3) {
-				 stat += AutoCompleteWord.test_ux_AutoCompleteWord(trie);
-				 return stat;
+				 numWrong += AutoCompleteWord.test_ux_AutoCompleteWord(trie);
+				 return numWrong;
 			 }
 			 if (level == 4) {
 				 Sx.puts(WordTrie.class.getName() + ".time_test begin...");
@@ -3002,28 +3004,29 @@ public class WordTrie implements StringCollectorInterface<WordTrie>
 				 int maxNumWords = 10;
 				 int maxDepth    = 16;           
 				 int maxLength   =  4;
-				 stat += test_time_getProbable(trie, 2, numTrials, maxNumWords, maxDepth, maxLength, 0);
+				 numWrong += test_time_getProbable(trie, 2, numTrials, maxNumWords, maxDepth, maxLength, 0);
 				 //            stat += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, maxLength, 0);
 				 //            stat += test_time_getProbable(trie, 0, numTrials, maxNumWords, maxDepth, maxLength, 0);
 				 //            stat += test_time_getProbable(trie, 3, numTrials, maxNumWords, maxDepth, maxLength, 0);
 
 				 SaveMax.setCountIsFull(SaveMax.sCountNotFull = 0);
-				 stat += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 2, 0);
+				 numWrong += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 2, 0);
 				 SaveMax.setCountIsFull(SaveMax.sCountNotFull = 0);            
-				 stat += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 3, 0);
+				 numWrong += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 3, 0);
 				 SaveMax.setCountIsFull(SaveMax.sCountNotFull = 0);
-				 stat += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 4, 0);
+				 numWrong += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 4, 0);
 				 SaveMax.setCountIsFull(SaveMax.sCountNotFull = 0);
-				 stat += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 5, 0);
+				 numWrong += test_time_getProbable(trie, 1, numTrials, maxNumWords, maxDepth, 5, 0);
 
 				 Sx.puts(WordTrie.class.getName() + ".time_test   ...end");
 			 }
 			 if (level == 5) {
-				 stat = test_timeHasWordStrVsChr(trie);
+				 numWrong = test_timeHasWordStrVsChr(trie);
 			 }
 		 }
 
-		 return stat;
+		 Sz.end(testName, numWrong);
+		 return numWrong;
 	 }
 
 

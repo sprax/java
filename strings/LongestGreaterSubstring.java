@@ -6,7 +6,6 @@ import sprax.test.Sz;
 /** function(s) to return longest substring lexicographically greater than the whole string. */
 public class LongestGreaterSubstring
 {
-
     // ad hoc search for first greater character followed by
     // brute force back-tracking to grow prefix; no extra space needed.
     static String longestGreaterSubstring(String string)
@@ -112,7 +111,11 @@ public class LongestGreaterSubstring
         return result;
     }
     
+    
+    //// TESTING ////
+    
     public static int testOne(String str, String expected) {
+        //String result = longestGreaterSubstring(str);
         String result = longestGreaterSubstring(str);
         String resKMP = longestGreaterSubstringKMP(str);
         int numWrong = Sz.oneWrong(result, expected);
@@ -126,9 +129,9 @@ public class LongestGreaterSubstring
         Sz.begin(testName);
         int numWrong = 0;
         
+        numWrong += testOne("aardvark", "ardvark");
         numWrong += testOne("thethezoo", "thezoo");
         numWrong += testOne("thetheaterzoo", "zoo");
-        numWrong += testOne("aardvark", "ardvark");
         numWrong += testOne("zzzyxwvutsrqp", "");
         numWrong += testOne("thezoothezoo", "zoothezoo");
         numWrong += testOne("thethethezoo", "thethezoo");

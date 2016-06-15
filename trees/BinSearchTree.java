@@ -210,13 +210,13 @@ public class BinSearchTree extends BinTree<BinLink>
     treeC.printBreadthFirstQueueLevelSpacedHexComplete(24);
     
     Iterable<Integer> it = treeC.keys(1, -1);
-    Sx.putsIterable("keys(1, -1): ", it, 100);
+    Sx.putsIterable("keys(1, -1): ", it, 50, 100);
     
     it = treeC.keys(1, 1);
-    Sx.putsIterable("keys(1,  1): ", it, 100);
+    Sx.putsIterable("keys(1,  1): ", it, 50, 100);
     
     it = treeC.keys(2, 5);
-    Sx.putsIterable("keys(2,  5): ", it, 100);
+    Sx.putsIterable("keys(2,  5): ", it, 50, 100);
   }
     
 

@@ -9,6 +9,7 @@ package sprax.numbers;
 import java.util.ArrayList;
 
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public interface Fibonacci
 {
@@ -90,7 +91,7 @@ class TestFibonacci
     public static int unit_test(int lvl)
     {   
         String testName = TestFibonacci.class.getName() + ".unit_test";  
-        Sx.puts(testName + " BEGIN");
+        Sz.begin(testName);
         
         int size = 93;  // Limit for long
         test_time_firstN(new FibonacciIterate(),  size);
@@ -103,7 +104,7 @@ class TestFibonacci
             test_time_firstN(new FibonacciMemoized(), size);
         }        
         
-        Sx.puts(testName + " END");
+        Sz.end(testName, 0);
         return 0;
     }
     

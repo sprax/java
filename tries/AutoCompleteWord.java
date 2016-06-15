@@ -73,7 +73,7 @@ public class AutoCompleteWord implements AutoCompleteInterface
             String stem = auto.getTrie().longestPrefix(prefix);
             Sx.format("AutoComplete possible completions for prefix \"%s\"[%s] (%d):\t", prefix, stem, words.size());
         }
-        Sx.putsIterable(words, 8);
+        Sx.putsIterable(words, 10, 8);
         return 0;
     }
 
@@ -237,7 +237,7 @@ public class AutoCompleteWord implements AutoCompleteInterface
             String stem = auto.getTrie().longestPrefix(prefix);
             Sx.format("AutoComplete probable completions for prefix \"%s\"[%s] (%d):\t", prefix, stem, words.size());
         }
-        Sx.putsIterable(words, 10, "\n");
+        Sx.putsIterable(words, 10, 10, "\n");
         return 0;
     }
 

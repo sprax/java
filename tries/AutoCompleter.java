@@ -51,7 +51,7 @@ public class AutoCompleter implements AutoCompleteInterface
         String stem = auto.getTrie().longestPrefix(prefix);
         List<String> words = auto.getPossible(prefix, limit);
         System.out.format("AutoComplete possible completions for prefix \"%s\"[%s] (%d):\t", prefix, stem, words.size());
-        Sx.putsIterable(words, 8);
+        Sx.putsIterable(words, 10, 8);
         return 0;
     }
 
@@ -110,7 +110,7 @@ public class AutoCompleter implements AutoCompleteInterface
 
         String filePath = FileUtil.getTextFilePath("mobydick00.txt");
         List<String> moby = TextFileToStringCollection.load(new ArrayList<String>(), filePath);
-        Sx.putsIterable(moby, 8);
+        Sx.putsIterable(moby, 10, 8);
 
         if (level > 0) {
         }
