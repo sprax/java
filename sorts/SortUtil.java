@@ -237,7 +237,7 @@ public class SortUtil
         Insertion.insertionSort(iA);
         show(iA);
         boolean sorted = SortUtil.isSorted(iA);
-        return Sz.wrong(sorted);
+        return Sz.oneIfFalse(sorted);
     }
     
     public static void main(String[] args) {

@@ -583,7 +583,7 @@ public class UniqueStringFinders
             boolean lhFound = false;
             for (int j = 0; j < numTrials; j++) {
                 lhFound = firstUniqueStringInIterable_hashMapList(sanHml, wordsStr);
-                numWrong += Sz.wrong(lhFound);
+                numWrong += Sz.oneIfFalse(lhFound);
             }
             endTime  = System.currentTimeMillis();
             hmlTime  = endTime - begTime;
@@ -602,7 +602,7 @@ public class UniqueStringFinders
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
                 boolean hmFound = firstUniqueStringInIterable_hashMap(sanMap, wordsStr);
-                numWrong += Sz.wrong(hmFound);
+                numWrong += Sz.oneIfFalse(hmFound);
             }
             endTime  = System.currentTimeMillis();
             mapTime  = endTime - begTime;
@@ -611,7 +611,7 @@ public class UniqueStringFinders
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
                 boolean wtFound = firstUniqueStringInIterable_wordTrie(sanWrd, wordsStr);
-                numWrong += Sz.wrong(wtFound);
+                numWrong += Sz.oneIfFalse(wtFound);
             }
             endTime  = System.currentTimeMillis();
             wrdTime  = endTime - begTime;
@@ -620,7 +620,7 @@ public class UniqueStringFinders
             begTime = System.currentTimeMillis();
             for (int j = 0; j < numTrials; j++) {
                 boolean wmFound = firstUniqueStringInIterable_wordTrieMap(sanWrm, wordsStr);
-                numWrong += Sz.wrong(wmFound);
+                numWrong += Sz.oneIfFalse(wmFound);
             }
             endTime  = System.currentTimeMillis();
             wrmTime  = endTime - begTime;

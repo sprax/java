@@ -220,13 +220,13 @@ class InPlaceStableSort<T> implements SortInt
         ipss.sort();
         Sx.putsArray("intArray sorted: ", iA);
         boolean sorted = SortUtil.verifySorted(iA);
-        numWrong += Sz.wrong(sorted);
+        numWrong += Sz.oneIfFalse(sorted);
         
         int iB[] = { 5, -4, 8, -1, 0, 3, -7, 9, -2, 6 };
         ipss.sort(iB);
         Sx.putsArray("intArray sorted: ", iB);
         sorted = SortUtil.verifySorted(iB);
-        numWrong += Sz.wrong(sorted);
+        numWrong += Sz.oneIfFalse(sorted);
         
         
         Sz.end(testName, numWrong);

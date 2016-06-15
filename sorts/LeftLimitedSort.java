@@ -20,6 +20,9 @@ public class LeftLimitedSort<T extends Comparable<T>>
      * Sort only within a leftLimit-sized moving window, basically
      * a leftLimit-size min-heap moving left to right.
      * Implementation: Uses PriorityQueue as the implementation of a min-heap.
+     * Complexity: O(NlogK), added Space O(K), because adding each of N entries
+     * to the min-heap (priority queue) is O(logK), where log is really log2,
+     * so more explicitly, the time complexity is O(N*log2(K)).
      * @param iA
      * @param leftLimit
      */

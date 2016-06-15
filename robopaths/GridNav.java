@@ -277,7 +277,7 @@ public class GridNav
                      
         double err = ArrayDiffs.sumOfSquaredDifferences(gc, gd);
         Sx.format("sum of squared differences: %f\n", err);
-        numWrong += Sz.wrong(err == 0.0);
+        numWrong += Sz.oneIfFalse(err == 0.0);
         Sz.end(testName, numWrong);
         return numWrong;
     }

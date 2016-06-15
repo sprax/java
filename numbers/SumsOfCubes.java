@@ -1,14 +1,12 @@
 package sprax.numbers;
 
 /**
- * SumsOfCubes
- * @author sprax
- * Elapsed time: 662396 to compute first 50 recursively (ending with 50  12586269025)
+ * SumsOfCubes, or, numbers that are sums of multiple pairs of cubes.
+ * @author sprax 2016.06.14
  */
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -71,16 +69,16 @@ public class SumsOfCubes
     static int test_approxCubeRoot()
     {
         int numWrong = 0;
-        numWrong = Sz.wrong(2 == approxCubeRoot(8));
-        numWrong = Sz.wrong(3 == approxCubeRoot(27));
-        numWrong = Sz.wrong(4 == approxCubeRoot(64));
-        numWrong = Sz.wrong(5 == approxCubeRoot(125));
-        numWrong = Sz.wrong(6 == approxCubeRoot(216));
-        numWrong = Sz.wrong(7 == approxCubeRoot(343));
-        numWrong = Sz.wrong(8 == approxCubeRoot(512));
-        numWrong = Sz.wrong(9 == approxCubeRoot(729));
+        numWrong = Sz.oneIfFalse(2 == approxCubeRoot(8));
+        numWrong = Sz.oneIfFalse(3 == approxCubeRoot(27));
+        numWrong = Sz.oneIfFalse(4 == approxCubeRoot(64));
+        numWrong = Sz.oneIfFalse(5 == approxCubeRoot(125));
+        numWrong = Sz.oneIfFalse(6 == approxCubeRoot(216));
+        numWrong = Sz.oneIfFalse(7 == approxCubeRoot(343));
+        numWrong = Sz.oneIfFalse(8 == approxCubeRoot(512));
+        numWrong = Sz.oneIfFalse(9 == approxCubeRoot(729));
         for (long k = 10; k < 100; k++)
-            numWrong += Sz.wrong(k == approxCubeRoot(k*k*k));
+            numWrong += Sz.oneIfFalse(k == approxCubeRoot(k*k*k));
         return numWrong;
     }
     
@@ -94,10 +92,15 @@ public class SumsOfCubes
         
         long maxNum = Integer.MAX_VALUE;
         SortedSet<Long> cubesSums = sumsOfCubesNumbers(maxNum);
-        Sx.puts("Natural numbers that are sums of cubes in at least two different ways:");
+        int numFound = cubesSums.size();
+        Sx.format("The %d natural numbers that are sums of cubes in at least two different ways, up to %d:\n"
+                , numFound, maxNum);
         Sx.putsIterable(cubesSums, 10, cubesSums.size());
+        Sx.format("Found %d numbers <= %d that are sums of cubes in at least two different ways.\n"
+                , numFound, maxNum);
+        
         long max = Collections.max(cubesSums);
-        numWrong += Sz.wrong(max <= maxNum);
+        numWrong += Sz.oneIfFalse(max <= maxNum);
         
         Sz.end(testName, numWrong);
         return numWrong;
