@@ -14,6 +14,10 @@ package sprax.questions
  * 
  * find duplicate lines or sentences (with fuzzy strings/fuzzy sets)
  * 
+ * Given an array of length N and an integer K, sort the array as much as possible
+ * such that no element travels more than k positions to its left - an element 
+ * however can travel as much as it likes to its right.
+ * 
  * DONE:
  * TrafficLight
  * TrafficLights
