@@ -1,9 +1,14 @@
 package sprax.robopaths;
 
+import java.awt.geom.Rectangle2D;
+
+import javax.vecmath.Point2d;
+
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 /**
+ * Problem:
  * Given a rectangle with lower-left coordinates (x0, y0) and upper-right 
  * coordinates (x1, y1) and N sensors at coordinates {(m,n)} inside the 
  * rectangle, find a path from the left side to the ride side that avoids
@@ -20,14 +25,14 @@ import sprax.test.Sz;
  * (choose type float or double).<br>
  * <code>
  *    Example:                                    (x1, y1)<br>
- *    |----------------------------------------------|     <br> 
- *    |....................O.......O.................|end  <br>
- *    |......O...............O.......................|     <br>
- *    |........................O........O............|     <br>
- *    |start.........O...............................|     <br>
- *    |...................O................O.........|     <br>
- *    |..........O.................O.................|     <br>
- *    |----------------------------------------------|<br> 
+ *    |----------------------------------------------|    <br> 
+ *    |....................O.......O.................|end <br>
+ *    |......O...............O.......................|    <br>
+ *    |........................O........O............|    <br>
+ *    |start.........O...............................|    <br>
+ *    |...................O................O.........|    <br>
+ *    |..........O.................O.................|    <br>
+ *    |----------------------------------------------|    <br> 
  * (x0, y0)
  * </code>
  * @author Sprax Lines
@@ -81,15 +86,27 @@ public class AvoidCirclesInRect
      *  6) Some kind of dual graph constructed from the graph of sensors.
      */
     
+    Point2d rect0, rect1, sensors[];
+    Rectangle2D.Double rect;
+    /** Ctor */
+    public AvoidCirclesInRect(Point2d r0, Point2d r1, Point2d sensorPoints[]) {
+        
+        rect = new Rectangle2D.Double(r0.x, r0.y, r1.x - r0.x, r1.y - r0.y);
+        
+        
+    }
     
+
+
     public static int unit_test()
     {
         String testName = AvoidCirclesInRect.class.getName() + ".unit_test";
         Sx.format("BEGIN %s\n", testName);
         int numWrong = 0;
         
-
         
+        //Rectangle2d rect = new Rectangle2d(0.0,  2.0);
+
         
         
         Sz.end(testName, numWrong);
@@ -99,6 +116,8 @@ public class AvoidCirclesInRect
     public static void main(String[] args) {
         unit_test();
     }
+
+    //// OTHER CLASSES ////
 
     //// TEST DATA ////
 

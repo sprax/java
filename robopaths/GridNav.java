@@ -7,18 +7,6 @@ import sprax.arrays.ArrayDiffs;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
-class Cell {
-    final int row;
-    final int col;
-    Cell(int row, int col) {
-        this.row = row;
-        this.col = col;
-    }
-    @Override 
-    public String toString() {
-        return String.format("<%d, %d>", row, col);
-    }
-}
 
 /**
  * Given a non-empty rectangular grid containing zero or more goal cells,
@@ -30,8 +18,22 @@ class Cell {
  */
 public class GridNav
 {
+    /** inner class representing a grid cell */
+    private static class Cell {
+        final int row;
+        final int col;
+        Cell(int row, int col) {
+            this.row = row;
+            this.col = col;
+        }
+        @Override 
+        public String toString() {
+            return String.format("<%d, %d>", row, col);
+        }
+    }
+    
     static final char o = '.', G = 'G', X = 'X';  // Floor, Goal, Wall or Obstacle
-            
+    
     final int         cols, rows, status;
     final char        layout[][];
     final int         minDst[][];     // grid distance to nearest goal
