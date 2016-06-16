@@ -1,6 +1,5 @@
 package sprax.robopaths;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -286,13 +285,13 @@ public class GridNav
     {
         String testName = GridNav.class.getName() + ".unit_test";
         Sx.format("BEGIN %s\n", testName);
+        int numWrong = 0;
         
-        int status = 0;
-        status += test_oneLayout(testFloorA);
-        status += test_oneLayout(testFloorB);
+        numWrong += test_oneLayout(testFloorA);
+        numWrong += test_oneLayout(testFloorB);
         
-        Sz.end(testName, 0);
-        return status;
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
     
     public static void main(String[] args) {
@@ -300,6 +299,7 @@ public class GridNav
     }
 
     //// TEST DATA ////
+    
     static char[][] testFloorA = {  // 8x8 test matrix
                                { o, X, o, X, o, o, X, G },
                                { o, o, o, X, o, o, o, o },
