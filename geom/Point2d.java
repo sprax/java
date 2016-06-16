@@ -1,19 +1,26 @@
 package sprax.geom;
 
+import java.awt.geom.Point2D;
 import java.util.Comparator;
 
 import sprax.sprout.Sx;
 
-//Non-zero double-precision point in the plane
-public final class Pxy
+// Double-precision point in the plane based on Jim Harris's Point2D.Double
+public class Point2d extends Point2D.Double
 {
-    final double x;
-    final double y;
+    /** Generated SVUID */
+    private static final long serialVersionUID = 1080527089991183869L;
+
+    public Point2d( Point2D pt){
+        super(pt.getX(), pt.getY());
+    }
     
-    Pxy(double x, double y) {
-        assert (x != 0.0 || y != 0.0);
-        this.x = x;
-        this.y = y;
+    public Point2d() {
+        super();
+    }
+
+    public Point2d(double x, double y) {
+        super(x, y);
     }
     
     @Override
@@ -21,12 +28,12 @@ public final class Pxy
         return String.format("(%+2.4f|%+2.4f)", x, y);
     }
     
-    public double dotProduct(Pxy other) {
+    public double dotProduct(Point2d other) {
         assert (other != null);
         return x * other.x + y * other.y;
     }
     
-    public static double dotProduct(Pxy p, Pxy q) {
+    public static double dotProduct(Point2d p, Point2d q) {
         return p.dotProduct(q);
     }
     
@@ -34,16 +41,16 @@ public final class Pxy
         return Math.sqrt(x * x + y * y);
     }
     
-    static class AngleComp implements Comparator<Pxy>
+    static class AngleComp implements Comparator<Point2d>
     {
         @Override
-        public int compare(Pxy pA, Pxy pB) {
+        public int compare(Point2d pA, Point2d pB) {
             if (pA.x == pB.x && pA.y == pB.y)
                 return 0;
             
             if (pA.y < 0) {
                 if (pB.y < 0)
-                    return Double.compare(pA.x, pB.x);	// Angle increases with x
+                    return java.lang.Double.compare(pA.x, pB.x);	// Angle increases with x
                 else
                     return -1;							// Angle(pA) < 0 and Angle(pB) > 0 
             } else	// (pA.y >= 0)
@@ -51,16 +58,16 @@ public final class Pxy
                 if (pB.y < 0)
                     return 1;							// Angle(pA) >= 0 and Angle(pB) < 0
                 else
-                    return Double.compare(pB.x, pA.x);	// Angle decreases with x
+                    return java.lang.Double.compare(pB.x, pA.x);	// Angle decreases with x
             }
         }
     }
     
-    static Comparator<Pxy> sAngleComp = new AngleComp();
+    static Comparator<Point2d> sAngleComp = new AngleComp();
     
     public static int unit_test() 
     {
-        String className = Pxy.class.getName();
+        String className = Point2d.class.getName();
         String testName = className + ".unit_test";
         Sx.format("BEGIN %s\n", testName);
         
