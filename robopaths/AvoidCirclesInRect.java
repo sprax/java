@@ -36,21 +36,49 @@ public class AvoidCirclesInRect
 {
     /** Strategies:
      *  1) Discretize: Get an approximate solution by dividing the rectangle
-     *  into a grid with cell size = R, the radius of the sensors.  Then use
+     *  into a grid with cell size <= R, the radius of the sensors.  Then use
      *  ordinary wavefront algorithm, where all cells on the far right have 
      *  distance 0 from the goal, and sensor cells are treated as obstacles.
+     *  NOTE 1: Using a cell size or approximately R or greater is very optimistic.
+     *  If there is any doubt whether a path exists (because the sensors may
+     *  be close enough together to form a blockade), a smaller cell size will
+     *  help.  
+     *  NOTE 2: Since the sensors are not actually constrained to be in cell 
+     *  centers, this solution remains only approximate even if the cell size
+     *  is made small compared to R.
+     *  Thus:
      *  1a) Same as (1) but use cell size R/3, so that each sensor becomes
      *  an obstacle spanning 5 cells (Center, East, South, West, North).
      *  1b...) Same as (1) but use cell size R/5, etc...
      *  
-     *  2) Create a Voronoi diagram based on the sensor points.
+     *  2) Potential function:
+     *  2a) V(x,y) = 1 if distance(S, x, y) <= R or 0, where S is the set of 
+     *  sensor coordinates.  The distance can be made easier to compute by
+     *  sorting S first (by x then y), and noting that 
+     *  (x**2 + y**2)**0.5 <= |x| + |y|
+     *  2b) To avoid numerical edge cases, it may be better use an interpolated
+     *  potential function: V(S) = Float.MAX_VALUE, and V(x,y) = R/distance(S,x,y)
+     *  for (x,y) in R - S, so that V ~= 1.0 at sensor area boundaries. 
+     *  
+     *  Then, discretize the space as before, but this time we have not 
+     *  implicitly assumed that sensors reside in cell centers, so any 
+     *  blockades will be represented more accurately.  
+     *  
+     *  3) Create a Voronoi diagram based on the sensor points.
      *  Add segments along the top and bottom edges of the rectangle.
      *  Remove any edges that are (partly) within the radius R from any sensor
      *  (i.e. from the nearest sensor).  
      *  Search for a path along the remaining edges connecting left and
      *  right sides of the rectangle.  
      *  To get a minimal path, add up the edge lengths of each path,
-     *  and select the one with a minimal sum. 
+     *  and select the one with a minimal sum.
+     *  
+     *  4) Bug algorithms: follow implicit walls around sensors and groups
+     *  of sensors (blockades).
+     *  
+     *  5) Elastic path repelled from sensors, computed by relaxation.
+     *  
+     *  6) Some kind of dual graph constructed from the graph of sensors.
      */
     
     
@@ -59,6 +87,8 @@ public class AvoidCirclesInRect
         String testName = AvoidCirclesInRect.class.getName() + ".unit_test";
         Sx.format("BEGIN %s\n", testName);
         int numWrong = 0;
+        
+
         
         
         
