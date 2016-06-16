@@ -432,6 +432,16 @@ public class Sx
             printListInt(A[j]);
     }
     
+    public static void printArrayFolded(int A[], int numPerLine)
+    {
+        for (int j = 0; j < A.length; )
+        {
+            printListInt(A[j]);
+            if (++j % numPerLine == 0)
+                puts();
+        }
+    }
+
     public static void printArray(int A[], PrintOneInt printOne)
     {
         for (int j = 0; j < A.length; j++)
@@ -461,6 +471,12 @@ public class Sx
     }
     
     public static void putsArray(int A[])
+    {
+        printArray(A);
+        puts();
+    }
+    
+    public static void putsArray(int A[], int numPerLines)
     {
         printArray(A);
         puts();
