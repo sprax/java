@@ -112,8 +112,10 @@ public class AvoidCirclesInRect
             throw new IllegalArgumentException("bad dimensions");
         rect = new Rectangle2D.Double(r0.x, r0.y, width, height);
         sensors = Arrays.copyOf(sensorPoints, sensorPoints.length);     // defensive copy
-        Comparator<Point2d> comp = new ComparePointXY();
-        Arrays.sort(sensors, comp);
+        
+        //Don't need to sort for grid algo:
+        //Comparator<Point2d> comp = new ComparePointXY();
+        //Arrays.sort(sensors, comp);
         
         createGrid();
         markSensorsInGrid();
@@ -197,12 +199,6 @@ public class AvoidCirclesInRect
         return minRow;
     }
 
-    private void addToWaveFront(int row, int col)
-    {
-        waveFront.add(new GridCell(row, col)); 
-    }
-    
-
     void markDistancesInGrid()
     {
         while (! waveFront.isEmpty()) {
@@ -234,29 +230,33 @@ public class AvoidCirclesInRect
         }
     }
     
-
+    private void addToWaveFront(int row, int col)
+    {
+        waveFront.add(new GridCell(row, col)); 
+    }
+    
     void markSensor(int row, int col) 
     {
-        if (row > rows || col > cols)
+        if (row >= rows || col >= cols)
             return;
-        markSensorRow(row    , Math.max(0, col - 3), Math.min(col + 3, cols), -1);
+        markSensorRow(row    , Math.max(0, col - 3), Math.min(col + 4, cols), -1);
         int rr = row;
         if (++rr < rows) {
-            markSensorRow(rr, Math.max(0, col - 3), Math.min(col + 3, cols), -1);
+            markSensorRow(rr, Math.max(0, col - 3), Math.min(col + 4, cols), -1);
             if (++rr < rows) {
-                markSensorRow(rr, Math.max(0, col - 2), Math.min(col + 2, cols), -1);
+                markSensorRow(rr, Math.max(0, col - 2), Math.min(col + 3, cols), -1);
                 if (++rr < rows) {
-                    markSensorRow(rr, Math.max(0, col - 1), Math.min(col + 1, cols), -1);
+                    markSensorRow(rr, Math.max(0, col - 1), Math.min(col + 2, cols), -1);
                 }
             }
         }
         rr = row;
         if (--rr >= 0) {
-            markSensorRow(rr, Math.max(0, col - 3), Math.min(col + 3, cols), -1);
+            markSensorRow(rr, Math.max(0, col - 3), Math.min(col + 4, cols), -1);
             if (--rr >= 0) {
-                markSensorRow(rr, Math.max(0, col - 2), Math.min(col + 2, cols), -1);
+                markSensorRow(rr, Math.max(0, col - 2), Math.min(col + 3, cols), -1);
                 if (--rr >= 0) {
-                    markSensorRow(rr, Math.max(0, col - 1), Math.min(col + 1, cols), -1);
+                    markSensorRow(rr, Math.max(0, col - 1), Math.min(col + 2, cols), -1);
                 }
             }
         }
@@ -264,7 +264,7 @@ public class AvoidCirclesInRect
 
     void markSensorRow(int row, int begCol, int endCol, int mark)
     {
-        for (int col = begCol; col <= endCol; col++) {
+        for (int col = begCol; col < endCol; col++) {
             grid[row][col] = mark;
         }
     }
@@ -276,13 +276,15 @@ public class AvoidCirclesInRect
         Sx.format("BEGIN %s\n", testName);
         int numWrong = 0;
         
-        Point2d r0 = new Point2d( 0.0,  0.0);
+        Point2d r0 = new Point2d( 1.0, 0.0);
         Point2d r1 = new Point2d(28.0, 14.0);
         double sensorRadius = Math.E;
         Point2d[] sensorPoints = {
-                new Point2d(25.0, 11.0),
-                new Point2d(17.0,  2.5),
-                new Point2d(11.5,  7.5),
+                new Point2d(26.0, 11.0),
+                new Point2d(25.0,  1.0),
+                new Point2d(19.0, 11.0),
+                new Point2d(17.0,  4.5),
+                new Point2d(11.5,  8.5),
                 new Point2d( 7.8,  3.5),
                 new Point2d( 5.5, 12.5),
         };
