@@ -13,6 +13,8 @@ import sprax.test.Sz;
  * ("obstacle" cells, such as might represent wall, barriers, buildings,
  * guards, or whatever, find the shortest distance and minimal path(s) 
  * from any cell to a goal cell.
+ * 
+ * TODO: Finish moving static methods to GridPath or another utility class
  * @author Sprax Lines
  */
 public class GridNav

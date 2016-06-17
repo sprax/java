@@ -8,6 +8,7 @@ import java.util.Queue;
 
 import javax.vecmath.Point2d;
 
+import sprax.sprout.PrintOne;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -46,11 +47,14 @@ public class AvoidCirclesInRect
     final Point2d corner0, corner1, sensors[];
     final double width, height, radius;
     final Rectangle2D.Double rect;
+    final int minGridPathLength;
+    final LinkedList<GridCell> minimalGridPath;
+    final Point2d minimalCoordPath[];
+    final double minGeomPathLength;
     
     double cellSize;
     int rows, cols, grid[][];
     Queue<GridCell> waveFront;
-    LinkedList<GridCell> minimalPath;
     
     /** Strategies:
      *  1) Discretize: Get an approximate solution by dividing the rectangle
@@ -119,14 +123,25 @@ public class AvoidCirclesInRect
         
         createGrid();
         markSensorsInGrid();
-        Sx.format("Sensors marked in a grid with %d rows and %d columns\n",  rows, cols);
-        Sx.putsArray(grid);
+        Sx.format("Sensors marked in a grid with %d rows and %d columns...\n",  rows, cols);
+        //Sx.putsArray(grid);
         markGoalsInGrid();
-        Sx.putsArray("Goals marked:\n", grid);
+        Sx.putsArray("Sensors and Goals marked:\n", grid);
         markDistancesInGrid();
         Sx.putsArray("Distances marked:\n", grid);
         int minRow = findMinDistanceRow();
-        minimalPath = GridPath.pathToNearestGoal(grid, rows, cols, minRow, 0);
+        minimalGridPath = GridPath.pathToNearestGoal(grid, rows, cols, minRow, 0);
+        minGridPathLength = minimalGridPath.size();
+        minimalCoordPath = new Point2d[minGridPathLength];
+        int j = 0;
+        for (GridCell cell : minimalGridPath) {
+            minimalCoordPath[j++] = new Point2d(rect.x + cell.col*cellSize, rect.y + cell.row*cellSize);
+        }
+        // Fix-up last point to be exactly on the right boundary:
+        minimalCoordPath[minGridPathLength - 1].x = corner1.x;
+        
+        // Approximate geometric length using Manhattan distance (scaled grid distance):
+        minGeomPathLength = minGridPathLength * cellSize;
     }
     
     /** 
@@ -268,7 +283,11 @@ public class AvoidCirclesInRect
             grid[row][col] = mark;
         }
     }
-    
+ 
+    /** Translate distance back into readable characters */
+    public static void printOnePoint2d(Point2d pt) {
+        Sx.format("(%2.2f, %2.2f) ", pt.x, pt.y);
+    }    
     
     public static int unit_test()
     {
@@ -290,15 +309,20 @@ public class AvoidCirclesInRect
         };
         
         AvoidCirclesInRect acir = new AvoidCirclesInRect(r0, r1, sensorPoints, sensorRadius);
-        Sx.format("Minimal distance path from left to right side of grid, length %d:\n", acir.minimalPath.size());
-        Sx.putsList(acir.minimalPath);
+        Sx.format("\nMinimal distance grid path from left to right side of grid, length in cells %d:\n"
+                , acir.minGridPathLength);
+        Sx.putsList(acir.minimalGridPath, 10);
+        Sx.format("\nMinimal distance coordinate path from left to right side, approx. geometric length %f:\n"
+                , acir.minGeomPathLength);
+        Sx.printArrayFolded(acir.minimalCoordPath, 5, AvoidCirclesInRect::printOnePoint2d);
+        Sx.puts();
 
         int rows = acir.rows;
         int cols = acir.cols;
         int distWithPath[][] = new int[rows][cols];  // All 0s
-        GridNav.addPathToArray(acir.minimalPath, distWithPath, rows, cols);        
+        GridPath.addPathToArray(acir.minimalGridPath, distWithPath, rows, cols);        
         GridPath.addNegativeCellsToGrid(acir.grid, distWithPath, rows, cols);
-        Sx.putsArray("Array with path and obstacles:\n", distWithPath, GridNav::printOneDistanceCell);
+        Sx.putsArray("Array with path and obstacles:\n", distWithPath, GridPath::printOneDistanceCell);
         
         Sz.end(testName, numWrong);
         return numWrong;
@@ -319,9 +343,9 @@ public class AvoidCirclesInRect
                 return xcomp;
             return Double.compare(pA.y, pB.y);
         }
-        
+      
     }
-
+    
     //// TEST DATA ////
 
     

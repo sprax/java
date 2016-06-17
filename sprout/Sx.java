@@ -176,11 +176,27 @@ public class Sx
     
     public static <T> void printList(List<T> L)
     {
-        int sz = L.size();
-        if (sz > 0) {
-            print(L.get(0).toString());
-            for (int j = 1; j < L.size(); j++)
-                print(" " + L.get(j));
+        if (L == null) {
+            print("[null list]");
+            return;
+        }
+        for (T item : L) {
+            print(item + " ");
+        }
+    }
+    
+    public static <T> void printList(List<T> L, int numPerLine)
+    {
+        if (L == null || numPerLine < 1) {
+            printList(L);
+            return;
+        }
+        int j = 0;
+        for (T item : L) {
+            print(item + " ");
+            if (++j % numPerLine == 0) {
+                puts();
+            }
         }
     }
     
@@ -333,6 +349,12 @@ public class Sx
         puts();
     }
     
+    public static <T> void putsList(List<T> L, int numPerLine)
+    {
+        printList(L, numPerLine);
+        puts();
+    }
+    
     public static <T> void putsList(String preLabel, List<T> L)
     {
         print(preLabel);
@@ -437,6 +459,16 @@ public class Sx
         for (int j = 0; j < A.length; )
         {
             printListInt(A[j]);
+            if (++j % numPerLine == 0)
+                puts();
+        }
+    }
+    
+    public static <T> void printArrayFolded(T A[], int numPerLine, PrintOne<T> printOne)
+    {
+        for (int j = 0; j < A.length; )
+        {
+            printOne.printOne(A[j]);
             if (++j % numPerLine == 0)
                 puts();
         }
