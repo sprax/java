@@ -1,6 +1,8 @@
 package sprax.robopaths;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.vecmath.Point2d;
 
@@ -39,6 +41,13 @@ import sprax.test.Sz;
  */
 public class AvoidCirclesInRect
 {
+    final Point2d corner0, corner1, sensors[];
+    final double width, height, radius;
+    final Rectangle2D.Double rect;
+    
+    double cellSize;
+    int rows, cols, grid[][];
+    
     /** Strategies:
      *  1) Discretize: Get an approximate solution by dividing the rectangle
      *  into a grid with cell size <= R, the radius of the sensors.  Then use
@@ -86,26 +95,135 @@ public class AvoidCirclesInRect
      *  6) Some kind of dual graph constructed from the graph of sensors.
      */
     
-    Point2d rect0, rect1, sensors[];
-    Rectangle2D.Double rect;
+
     /** Ctor */
-    public AvoidCirclesInRect(Point2d r0, Point2d r1, Point2d sensorPoints[]) {
+    public AvoidCirclesInRect(Point2d r0, Point2d r1, Point2d sensorPoints[], double sensorRadius) 
+    {
+        corner0 = r0;
+        corner1 = r1;
+        width = r1.x - r0.x;
+        height = r1.y - r0.y;
+        radius = sensorRadius;
+        if (radius <= 0.0 || width < radius || height < radius)
+            throw new IllegalArgumentException("bad dimensions");
+        rect = new Rectangle2D.Double(r0.x, r0.y, width, height);
+        sensors = Arrays.copyOf(sensorPoints, sensorPoints.length);     // defensive copy
+        Comparator<Point2d> comp = new ComparePointXY();
+        Arrays.sort(sensors, comp);
         
-        rect = new Rectangle2D.Double(r0.x, r0.y, r1.x - r0.x, r1.y - r0.y);
-        
-        
+        createGrid();
+        markSensorsInGrid();
+        markDistancesInGrid();
     }
     
+    /** 
+     * Use default grid cell size of C <= radius/3.0, which gives a minimal margin of safety.
+     * If every sensor were located in the very center of a grid cell, then C = 2*R/5 would
+     * be (barely) enough to contain a sensor inside a region 5 cells wide and tall.  But if
+     * the sensor is off-center, it's radial reach may extend beyond those five cells.  For
+     * example, if vertically centered but all the way right in the center cell, it's range
+     * would extend half way into the next cell on the right.  So instead, use * C = R/3.
+     * but approximate the sensor's circular domain by a region 7 cells across.
+     * <p>
+     * But to avoid differently sized (smaller) cells at the boundaries -- in particular, at
+     * the vertical boundaries, where blockades need to be reckoned with, let's actually use
+     * C = H/N where H = height and N is the maximum whole number s.t. height/N >= R/3.
+     * Thus N = ifloor(3*H/R).
+     * <pre> 
+     *       _______                     
+     *      _|_|_|_|_                     
+     *    _|_|_|_|_|_|_                   
+     *   |_|_|_|_|_|_|_|                  
+     *   |_|_|_|S|_|_|_|   Even if sensor S is located on right boundary of the central             
+     *   |_|_|_|_|_|_|_|   cell, its range reaches only to the right boundary of the
+     *     |_|_|_|_|_|     right-most V-centered cell.
+     *       |_|_|_|                        
+     *   <---R--|--R--->                          
+     *  </pre>
+     */
+    void createGrid() 
+    {
+        double approxCellSize = 3.0 * height / radius;
+        double vertNumCells   = Math.floor(approxCellSize);
+        double actualCellSize = height / vertNumCells;
+        double horzNumCells   = Math.ceil(width/actualCellSize);
+        rows = (int)Math.round(vertNumCells);
+        cols = (int)Math.round(horzNumCells);
+        grid = new int[rows][cols];
+        cellSize = actualCellSize;
+    }
 
+    void markSensorsInGrid() 
+    {
+        for (Point2d ss : sensors) {
+            int col = (int) Math.floor((ss.x - rect.x)/cellSize);   // remember x ~ column
+            int row = (int) Math.floor((ss.y - rect.y)/cellSize);   // remember y ~ row
+            markSensor(row, col);
+        }
+        Sx.putsArray(grid);
+    }
 
+    void markDistancesInGrid()
+    {
+        Sx.putsArray(sensors);
+        for (Point2d ss : sensors) {
+            int col = (int) Math.floor((ss.x - rect.x)/cellSize);   // remember x ~ column
+            int row = (int) Math.floor((ss.y - rect.y)/cellSize);   // remember y ~ row
+            markSensor(row, col);
+        }
+        Sx.putsArray(grid);
+    }
+        
+    void markSensor(int row, int col) {
+        if (row > rows || col > cols)
+            return;
+        markSensorRow(row    , Math.max(0, col - 3), Math.min(col + 3, cols), -1);
+        int rr = row;
+        if (++rr < rows) {
+            markSensorRow(rr, Math.max(0, col - 3), Math.min(col + 3, cols), -1);
+            if (++rr < rows) {
+                markSensorRow(rr, Math.max(0, col - 2), Math.min(col + 2, cols), -1);
+                if (++rr < rows) {
+                    markSensorRow(rr, Math.max(0, col - 1), Math.min(col + 1, cols), -1);
+                }
+            }
+        }
+        rr = row;
+        if (--rr >= 0) {
+            markSensorRow(rr, Math.max(0, col - 3), Math.min(col + 3, cols), -1);
+            if (--rr >= 0) {
+                markSensorRow(rr, Math.max(0, col - 2), Math.min(col + 2, cols), -1);
+                if (--rr >= 0) {
+                    markSensorRow(rr, Math.max(0, col - 1), Math.min(col + 1, cols), -1);
+                }
+            }
+        }
+    }
+
+    void markSensorRow(int row, int begCol, int endCol, int mark)
+    {
+        for (int col = begCol; col <= endCol; col++) {
+            grid[row][col] = mark;
+        }
+    }
+    
+    
     public static int unit_test()
     {
         String testName = AvoidCirclesInRect.class.getName() + ".unit_test";
         Sx.format("BEGIN %s\n", testName);
         int numWrong = 0;
         
+        Point2d r0 = new Point2d( 0.0,  0.0);
+        Point2d r1 = new Point2d(20.0, 10.0);
+        double sensorRadius = Math.E;
+        Point2d[] sensorPoints = {
+                new Point2d(11.5, 7.5),
+                new Point2d(5.5, 4.5),
+        };
         
-        //Rectangle2d rect = new Rectangle2d(0.0,  2.0);
+        AvoidCirclesInRect acir = new AvoidCirclesInRect(r0, r1, sensorPoints, sensorRadius);
+        
 
         
         
@@ -118,6 +236,18 @@ public class AvoidCirclesInRect
     }
 
     //// OTHER CLASSES ////
+    
+    /** compare x coordinates, then y coordinates if same x. */
+    class ComparePointXY implements Comparator<Point2d> {
+        @Override
+        public int compare(Point2d pA, Point2d pB) {
+            int xcomp = Double.compare(pA.x, pB.x);
+            if (xcomp != 0)
+                return xcomp;
+            return Double.compare(pA.y, pB.y);
+        }
+        
+    }
 
     //// TEST DATA ////
 
