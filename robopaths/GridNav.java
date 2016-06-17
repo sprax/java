@@ -7,7 +7,6 @@ import sprax.arrays.ArrayDiffs;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
-
 /**
  * Given a non-empty rectangular grid containing zero or more goal cells,
  * and other cells that can either be traversed ("empty" cells) or not
@@ -18,20 +17,6 @@ import sprax.test.Sz;
  */
 public class GridNav
 {
-    /** inner class representing a grid cell */
-    private static class Cell {
-        final int row;
-        final int col;
-        Cell(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-        @Override 
-        public String toString() {
-            return String.format("<%d, %d>", row, col);
-        }
-    }
-    
     static final char o = '.', G = 'G', X = 'X';  // Floor, Goal, Wall or Obstacle
     
     final int         cols, rows, status;
@@ -52,7 +37,7 @@ public class GridNav
         return minimumDistanceToGoal(minDst, rows, cols, row, col);
     }
 
-    public LinkedList<Cell> pathToNearestGoal(int row, int col) 
+    public LinkedList<GridCell> pathToNearestGoal(int row, int col) 
     {
         return pathToNearestGoal(minDst, rows, cols, row, col);   
     }
@@ -77,7 +62,7 @@ public class GridNav
     static int computeMinDist(final char input[][], int distance[][], int rows, int cols)
     {
         assert (input != null && input.length > 0 && input[0] != null);     
-        Queue<Cell> found = markGoals(input, distance, rows, cols); 
+        Queue<GridCell> found = markGoals(input, distance, rows, cols); 
         return markDistances(found, distance, rows, cols);
     }
     
@@ -85,9 +70,9 @@ public class GridNav
      * Takes in raw layout and builds queue of goal cells, also starting to fill in the output 
      * which is assumed to come in pre-filled with all zeros. 
      */
-    static Queue<Cell> markGoals(final char layout[][], int distance[][], int rows, int cols)
+    static Queue<GridCell> markGoals(final char layout[][], int distance[][], int rows, int cols)
     {
-        Queue<Cell> marked = new LinkedList<Cell>();
+        Queue<GridCell> marked = new LinkedList<GridCell>();
         for (int row = 0; row < rows; row++) {
             assert (layout[row] != null && layout[row].length >= cols);
             for (int col = 0; col < cols; col++) {
@@ -96,7 +81,7 @@ public class GridNav
                     distance[row][col] = -1;
                 } else if (layout[row][col] == G) {
                     distance[row][col] = 1;
-                    marked.add(new Cell(row, col));    // x = row, y = col
+                    marked.add(new GridCell(row, col));    // x = row, y = col
                 }
             }
         }
@@ -111,10 +96,10 @@ public class GridNav
      * @param cols      number of cols
      * @return   0 on success
      */
-    static int markDistances(Queue<Cell> marked, int distance[][], int rows, int cols)
+    static int markDistances(Queue<GridCell> marked, int distance[][], int rows, int cols)
     {
         while (!marked.isEmpty()) {
-            Cell old = marked.remove();
+            GridCell old = marked.remove();
             int row = old.row;
             int col = old.col;
             int dst = distance[row][col] + 1;
@@ -123,14 +108,14 @@ public class GridNav
             col--;
             if (col >= 0 && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Cell(row, col));
+                marked.add(new GridCell(row, col));
             }
             
             // East (Right)
             col += 2;
             if (col < cols && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Cell(row, col));
+                marked.add(new GridCell(row, col));
             }
             
             // North (Up)
@@ -138,14 +123,14 @@ public class GridNav
             col--;
             if (row >= 0 && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Cell(row, col));
+                marked.add(new GridCell(row, col));
             }
             
             // South (Down)
             row += 2;
             if (row < rows && distance[row][col] == 0) {
                 distance[row][col] = dst;
-                marked.add(new Cell(row, col));
+                marked.add(new GridCell(row, col));
             }
         }
         return 0;
@@ -166,12 +151,12 @@ public class GridNav
      * @param col
      * @return
      */
-    static LinkedList<Cell> pathToNearestGoal(int minDst[][], int rows, int cols, int row, int col) 
+    static LinkedList<GridCell> pathToNearestGoal(int minDst[][], int rows, int cols, int row, int col) 
     {
-        LinkedList<Cell> path = new LinkedList<>();     // empty list
+        LinkedList<GridCell> path = new LinkedList<>();     // empty list
         int dist, minDist = minimumDistanceToGoal(minDst, rows, cols, row, col);  // error checking
         while (minDist > 0) {
-            path.add(new Cell(row, col));
+            path.add(new GridCell(row, col));
             if (minDist == 1)                           // goal at row, col
                 return path;
             
@@ -231,15 +216,15 @@ public class GridNav
                     destArray[row][col] = -1;
     }
     
-    static int addPathToArray(LinkedList<Cell> path, int array[][], int rows, int cols) 
+    static int addPathToArray(LinkedList<GridCell> path, int array[][], int rows, int cols) 
     {
         return addPathToArray(path, array, rows, cols, 0);
     }
     
-    static int addPathToArray(LinkedList<Cell> path, int array[][], int rows, int cols, int markOffset) 
+    static int addPathToArray(LinkedList<GridCell> path, int array[][], int rows, int cols, int markOffset) 
     {
         int mark = path.size() + markOffset;    // path length (distance) + some constant
-        for (Cell cell : path) {
+        for (GridCell cell : path) {
             array[cell.row][cell.col] = mark--;
         }
         return 0;
@@ -256,7 +241,7 @@ public class GridNav
         Sx.putsArray("GridGoals constructor made\n", gc, GridNav::printOneDistanceCell);
         int row = 0, col = 0;
         int minDist = mg.minimumDistanceToGoal(row, col);
-        LinkedList<Cell> path = mg.pathToNearestGoal(row, col);
+        LinkedList<GridCell> path = mg.pathToNearestGoal(row, col);
         int pathSize = path.size();
         String label = String.format("Path of length %d from <%d, %d> to nearest goal: ", minDist, row, col);
         Sx.putsList(label, path);

@@ -3,6 +3,8 @@ package sprax.robopaths;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.vecmath.Point2d;
 
@@ -47,6 +49,7 @@ public class AvoidCirclesInRect
     
     double cellSize;
     int rows, cols, grid[][];
+    Queue<GridCell> waveFront;
     
     /** Strategies:
      *  1) Discretize: Get an approximate solution by dividing the rectangle
@@ -113,6 +116,7 @@ public class AvoidCirclesInRect
         
         createGrid();
         markSensorsInGrid();
+        markGoalsInGrid();
         markDistancesInGrid();
     }
     
@@ -163,18 +167,58 @@ public class AvoidCirclesInRect
         Sx.putsArray(grid);
     }
 
-    void markDistancesInGrid()
+    void markGoalsInGrid() 
     {
-        Sx.putsArray(sensors);
-        for (Point2d ss : sensors) {
-            int col = (int) Math.floor((ss.x - rect.x)/cellSize);   // remember x ~ column
-            int row = (int) Math.floor((ss.y - rect.y)/cellSize);   // remember y ~ row
-            markSensor(row, col);
+        waveFront = new LinkedList<GridCell>();
+        for (int col = cols-1, row = 0; row < rows; row++) {
+             if (grid[row][col] == 0) {    
+                 grid[row][col] = 1;
+                 addToWaveFront(row, col);               // Add only if cell is empty
+            }
         }
         Sx.putsArray(grid);
     }
-        
-    void markSensor(int row, int col) {
+
+    private void addToWaveFront(int row, int col)
+    {
+        waveFront.add(new GridCell(row, col)); 
+    }
+    
+
+    void markDistancesInGrid()
+    {
+        while (! waveFront.isEmpty()) {
+            GridCell pt = waveFront.remove();
+            int row = pt.row;
+            int col = pt.col;
+            int distance = grid[row][col] + 1;
+            
+            if (--col >= 0)                         // try West
+                markDistance(row, col, distance);
+            
+            ++col;
+            if (--row >= 0)                         // try North 
+                markDistance(row, col, distance);
+            
+            if ((row += 2) < rows)                  // try South
+                markDistance(row, col, distance);
+            
+            --row;
+            if (++col < cols)                       // try East 
+                markDistance(row, col, distance);
+        }
+    }
+
+    private void markDistance(int row, int col, int distance) {
+        if (grid[row][col] == 0) {
+            grid[row][col] = distance;
+            addToWaveFront(row, col);
+        }
+    }
+    
+
+    void markSensor(int row, int col) 
+    {
         if (row > rows || col > cols)
             return;
         markSensorRow(row    , Math.max(0, col - 3), Math.min(col + 3, cols), -1);
@@ -215,11 +259,13 @@ public class AvoidCirclesInRect
         int numWrong = 0;
         
         Point2d r0 = new Point2d( 0.0,  0.0);
-        Point2d r1 = new Point2d(20.0, 10.0);
+        Point2d r1 = new Point2d(28.0, 14.0);
         double sensorRadius = Math.E;
         Point2d[] sensorPoints = {
-                new Point2d(11.5, 7.5),
-                new Point2d(5.5, 4.5),
+                new Point2d(25.0, 10.0),
+                new Point2d(17.0,  2.5),
+                new Point2d(11.5,  7.5),
+                new Point2d( 5.5,  4.5),
         };
         
         AvoidCirclesInRect acir = new AvoidCirclesInRect(r0, r1, sensorPoints, sensorRadius);
