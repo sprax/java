@@ -115,9 +115,14 @@ public class AvoidCirclesInRect
         Arrays.sort(sensors, comp);
         
         createGrid();
+        Sx.format("Created a grid with %d rows and %d columns\n",  rows, cols);
+        Sx.putsArray(grid);
         markSensorsInGrid();
+        Sx.putsArray("Sensors marked:\n", grid);
         markGoalsInGrid();
+        Sx.putsArray("Goals marked:\n", grid);
         markDistancesInGrid();
+        Sx.putsArray("Distances marked:\n", grid);
     }
     
     /** 
@@ -164,7 +169,6 @@ public class AvoidCirclesInRect
             int row = (int) Math.floor((ss.y - rect.y)/cellSize);   // remember y ~ row
             markSensor(row, col);
         }
-        Sx.putsArray(grid);
     }
 
     void markGoalsInGrid() 
@@ -176,7 +180,6 @@ public class AvoidCirclesInRect
                  addToWaveFront(row, col);               // Add only if cell is empty
             }
         }
-        Sx.putsArray(grid);
     }
 
     private void addToWaveFront(int row, int col)
@@ -265,7 +268,8 @@ public class AvoidCirclesInRect
                 new Point2d(25.0, 10.0),
                 new Point2d(17.0,  2.5),
                 new Point2d(11.5,  7.5),
-                new Point2d( 5.5,  4.5),
+                new Point2d( 7.8,  4.5),
+                new Point2d( 5.5, 12.5),
         };
         
         AvoidCirclesInRect acir = new AvoidCirclesInRect(r0, r1, sensorPoints, sensorRadius);
