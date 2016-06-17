@@ -50,6 +50,7 @@ public class AvoidCirclesInRect
     double cellSize;
     int rows, cols, grid[][];
     Queue<GridCell> waveFront;
+    LinkedList<GridCell> minimalPath;
     
     /** Strategies:
      *  1) Discretize: Get an approximate solution by dividing the rectangle
@@ -115,14 +116,15 @@ public class AvoidCirclesInRect
         Arrays.sort(sensors, comp);
         
         createGrid();
-        Sx.format("Created a grid with %d rows and %d columns\n",  rows, cols);
-        Sx.putsArray(grid);
         markSensorsInGrid();
-        Sx.putsArray("Sensors marked:\n", grid);
+        Sx.format("Sensors marked in a grid with %d rows and %d columns\n",  rows, cols);
+        Sx.putsArray(grid);
         markGoalsInGrid();
         Sx.putsArray("Goals marked:\n", grid);
         markDistancesInGrid();
         Sx.putsArray("Distances marked:\n", grid);
+        int minRow = findMinDistanceRow();
+        minimalPath = GridPath.pathToNearestGoal(grid, rows, cols, minRow, 0);
     }
     
     /** 
@@ -180,6 +182,19 @@ public class AvoidCirclesInRect
                  addToWaveFront(row, col);               // Add only if cell is empty
             }
         }
+    }
+
+    int findMinDistanceRow() 
+    {
+        waveFront = new LinkedList<GridCell>();
+        int minRow = 0, minDist = grid[0][0];
+        for (int row = 1; row < rows; row++) {
+             if (minDist > grid[row][0]) {    
+                 minDist = grid[row][0];
+                 minRow  = row;
+            }
+        }
+        return minRow;
     }
 
     private void addToWaveFront(int row, int col)
@@ -265,17 +280,23 @@ public class AvoidCirclesInRect
         Point2d r1 = new Point2d(28.0, 14.0);
         double sensorRadius = Math.E;
         Point2d[] sensorPoints = {
-                new Point2d(25.0, 10.0),
+                new Point2d(25.0, 11.0),
                 new Point2d(17.0,  2.5),
                 new Point2d(11.5,  7.5),
-                new Point2d( 7.8,  4.5),
+                new Point2d( 7.8,  3.5),
                 new Point2d( 5.5, 12.5),
         };
         
         AvoidCirclesInRect acir = new AvoidCirclesInRect(r0, r1, sensorPoints, sensorRadius);
-        
+        Sx.format("Minimal distance path from left to right side of grid, length %d:\n", acir.minimalPath.size());
+        Sx.putsList(acir.minimalPath);
 
-        
+        int rows = acir.rows;
+        int cols = acir.cols;
+        int distWithPath[][] = new int[rows][cols];  // All 0s
+        GridNav.addPathToArray(acir.minimalPath, distWithPath, rows, cols);        
+        GridPath.addNegativeCellsToGrid(acir.grid, distWithPath, rows, cols);
+        Sx.putsArray("Array with path and obstacles:\n", distWithPath, GridNav::printOneDistanceCell);
         
         Sz.end(testName, numWrong);
         return numWrong;
