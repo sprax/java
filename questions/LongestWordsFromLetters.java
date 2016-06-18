@@ -5,10 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import sprax.files.FileUtil;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * Find the longest words in a given list of words that can be constructed 
@@ -93,7 +93,7 @@ public class LongestWordsFromLetters
         return 0;
     }
     
-    public static void main(String[] args)
+    public static ArrayList<String> useArgsOrDefaults(String[] args)
     {
         char letters[];
         String fileName, filePath;
@@ -121,6 +121,37 @@ public class LongestWordsFromLetters
         
         LongestWordsFromLetters filter = new LongestWordsFromLetters(filePath, letterCounts, offset);
         Sx.putsList(filter.longestWords);
+        return filter.longestWords;
+    }    
+    
+    public static int unit_test()
+    {
+        String testName = LongestWordsFromLetters.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+        
+        String emptyArgs[] = new String[0];
+        ArrayList<String> defaultAns = useArgsOrDefaults(emptyArgs);
+        
+        String expectAns[] = { "azotised", "bawdiest", "dystocia", "geotaxis",
+                "iceboats", "oxidates", "oxyacids", "sweatbox", "tideways" };
+        
+        if (defaultAns.size() == expectAns.length) {
+            for (int j = 0; j < expectAns.length; j++) {
+                numWrong += Sz.oneIfFalse(expectAns[j].equals(defaultAns.get(j)));
+            }
+        } else {
+            numWrong = 100;
+        }
+        
+        Sz.end(testName, numWrong);
+        return numWrong;
+    }
+    
+    public static void main(String[] args)
+    {
+        //useArgsOrDefaults(args);
+        unit_test();
     }
     
 }
