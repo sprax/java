@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import sprax.sprout.Sx;
+
 public class StoreCredit
 {
-    StoreCredit(String inputFile) throws IOException
+    static int processCaseFile(String inputFile)
     {
         System.out.format("Reading inputFile: %s\n", inputFile);
         ArrayList<String> input = readFileIntoList(inputFile);
@@ -20,9 +22,10 @@ public class StoreCredit
             assert(nItems == prices.length);
             solveCase(j + 1, credit, prices);
         }
+        return numCases;
     }
     
-    void solveCase(int caseNum, int credit, int prices[])
+    static void solveCase(int caseNum, int credit, int prices[])
     {
         HashMap<Integer, Integer> priceToIndex = new HashMap<>();
         for (int j = 0; j < prices.length; j++) {
@@ -50,7 +53,7 @@ public class StoreCredit
         return numInts;
     }
     
-    static ArrayList<String> readFileIntoList(String path) throws IOException
+    static ArrayList<String> readFileIntoList(String path)
     {
         String line;
         ArrayList<String> lines = new ArrayList<>();
@@ -58,16 +61,21 @@ public class StoreCredit
             while((line = br.readLine()) != null) {
                 lines.add(line);
             }
-        }
+        } catch (IOException iox) {
+            Sx.puts("Exception reading " + path + ":\n" + iox);
+        } 
         return lines;
     }
     
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
-        String fileSpec = "src/sprax/questions/hashmap/StoreCreditSmall.txt";
+        String fileSpec;
         if (args.length > 0)
             fileSpec = args[0];
-        StoreCredit sc = new StoreCredit(fileSpec);
+        else
+            fileSpec = "src/sprax/questions/hashmap/StoreCreditSmall.txt";
+            
+        processCaseFile(fileSpec);
     }
     
 }

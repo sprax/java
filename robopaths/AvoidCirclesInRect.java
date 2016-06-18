@@ -8,7 +8,6 @@ import java.util.Queue;
 
 import javax.vecmath.Point2d;
 
-import sprax.sprout.PrintOne;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -28,18 +27,18 @@ import sprax.test.Sz;
  * from start to end as described above. 
  * Note: all coordinates are represented as floating point numbers 
  * (choose type float or double).<br>
- * <code>
- *    Example:                                    (x1, y1)<br>
- *    |----------------------------------------------|    <br> 
- *    |....................O.......O.................|end <br>
- *    |......O...............O.......................|    <br>
- *    |........................O........O............|    <br>
- *    |start.........O...............................|    <br>
- *    |...................O................O.........|    <br>
- *    |..........O.................O.................|    <br>
- *    |----------------------------------------------|    <br> 
+ * <blockquote><pre>
+ *    Example:                                    (x1, y1)
+ *    |----------------------------------------------|    
+ *    |....................O.......O.................|end 
+ *    |......O...............O.......................|    
+ *    |........................O........O............|    
+ *    |start.........O...............................|    
+ *    |...................O................O.........|    
+ *    |..........O.................O.................|    
+ *    |----------------------------------------------|    
  * (x0, y0)
- * </code>
+ * </pre></blockquote>
  * @author Sprax Lines
  */
 public class AvoidCirclesInRect
@@ -286,7 +285,7 @@ public class AvoidCirclesInRect
  
     /** Translate distance back into readable characters */
     public static void printOnePoint2d(Point2d pt) {
-        Sx.format("(%2.2f, %2.2f) ", pt.x, pt.y);
+        Sx.format("(%5.2f, %5.2f) ", pt.x, pt.y);
     }    
     
     public static int unit_test()
@@ -311,7 +310,7 @@ public class AvoidCirclesInRect
         AvoidCirclesInRect acir = new AvoidCirclesInRect(r0, r1, sensorPoints, sensorRadius);
         Sx.format("\nMinimal distance grid path from left to right side of grid, length in cells %d:\n"
                 , acir.minGridPathLength);
-        Sx.putsList(acir.minimalGridPath, 10);
+        Sx.putsList(acir.minimalGridPath, 5);
         Sx.format("\nMinimal distance coordinate path from left to right side, approx. geometric length %f:\n"
                 , acir.minGeomPathLength);
         Sx.printArrayFolded(acir.minimalCoordPath, 5, AvoidCirclesInRect::printOnePoint2d);
