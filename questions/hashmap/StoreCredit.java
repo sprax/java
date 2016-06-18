@@ -64,7 +64,7 @@ public class StoreCredit
     
     public static void main(String[] args) throws IOException
     {
-        String fileSpec = "src/sprax/questions/StoreCredit.txt";
+        String fileSpec = "src/sprax/questions/hashmap/StoreCreditSmall.txt";
         if (args.length > 0)
             fileSpec = args[0];
         StoreCredit sc = new StoreCredit(fileSpec);
