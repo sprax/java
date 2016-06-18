@@ -1,4 +1,4 @@
-package sprax.questions;
+package sprax.questions.hashmap;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
