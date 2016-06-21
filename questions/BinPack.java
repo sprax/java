@@ -7,6 +7,11 @@
 
 package sprax.questions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import sprax.numbers.Fibonacci;
+import sprax.numbers.Primes;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -29,56 +34,61 @@ public class BinPack
      * The items array will be unchanged.
      */
     public static boolean canPack(int[] bins, int[] items) {
-        boolean[] used = new boolean[items.length];
-        return canPackRecursive(bins, items, used);
+        boolean[] packed = new boolean[items.length];
+        return canPackRecursive(bins, items, packed);
     }
     
     /**
      * @param bins
      * @param items
-     * @param used
+     * @param packed
      * @return
      */
-    static boolean canPackRecursive(int[] bins, int[] items, boolean[] used) {
+    static boolean canPackRecursive(int[] bins, int[] items, boolean[] packed) {
         boolean allUsed = true;
-        for (boolean b : used) {
+        for (boolean b : packed) {
             allUsed &= b;
         }
         if (allUsed){
             return true;
         }
         for (int i = 0; i < items.length; i++) {
-            if (!used[i]) {
+            if (!packed[i]) {
                 // Exhaustive: check all remaining solutions that start with item[i] packed in some bin[j]
-                used[i] = true;
+                packed[i] = true;
                 for (int j = 0; j < bins.length; j++) {
                     if (bins[j] >= items[i]) {
-                        bins[j] = bins[j] - items[i];
-                        if(canPackRecursive(bins, items, used)){
+                        bins[j] -= items[i];
+                        if(canPackRecursive(bins, items, packed)){
                             return true;
                         }
                         bins[j] = bins[j] + items[i];
                     }
                 }
-                used[i] = false;
+                packed[i] = false;
             }
         }
         return false;
     }
     
-    public static int test_canAllocate(int bins[], int items[], int verbose, boolean expected)
+    public static int test_canPack(int bins[], int items[], int verbose, boolean expected)
     {
         if (verbose > 0) {
             Sx.puts("\n\t  test_canAllocate:");
             Sx.putsArray("bins before:    ", bins);
             Sx.putsArray("items to pack:  ", items);
         }
-        boolean result = canPack(bins, items);
+        // Test the lower-level function:
+        boolean[] packed = new boolean[items.length];
+        boolean result = canPackRecursive(bins, items, packed);
         if (verbose > 0) {
             Sx.format("canPack?  %s\n", result);
             Sx.putsArray("bins leftover:  ", bins);
-            if (! result)                               // TODO: Actual difference?
-                Sx.putsArray("not all packed: ", items);
+            if (! result) {
+                Sx.print("not all packed: ");
+                Sx.printFilteredArrayFalse(items, packed);
+                Sx.puts();
+            }
         }
         return Sz.oneIfDiff(result, expected);
     }
@@ -95,11 +105,17 @@ public class BinPack
         Sx.puts();
         
         int tasks[] = {18, 4, 8, 4, 6, 6, 8, 8};
-        numWrong += test_canAllocate(servers, tasks, 1, true);
+        numWrong += test_canPack(servers, tasks, 1, true);
         
         int limits[] = {1, 3};
         int needs[] = {4};
-        numWrong += test_canAllocate(limits, needs, 1, false);
+        numWrong += test_canPack(limits, needs, 1, false);
+        
+        
+        int blocks[] = {};
+        int allocs[] = Primes.primesInRangeIntArray(2, 100);
+        numWrong += test_canPack(blocks, allocs, 1, false);
+        
         
         Sz.end(testName, numWrong);
         return numWrong;
@@ -109,18 +125,39 @@ public class BinPack
     {
         unit_test();
     }
-    
-    
-    /**
-     * Ex: 
-Servers capacity limits: 8, 16, 8, 32 
-Tasks capacity needs: 18, 4, 8, 4, 6, 6, 8, 8 
-For this example, the program should say 'true'. 
-
-Ex2: 
-Server capacity limits: 1, 3 
-Task capacity needs: 4 
-For this example, program should return false. 
-     */
-    
 }
+
+
+class FibonacciMemoized32
+{
+    public static final int COUNT_FIB32 = 46;
+
+    private static int fibCache[] = new int[COUNT_FIB32];
+    static {
+        fibCache[1] = 1;
+    }
+    
+    public int fib(int n) {
+        return fibonacci(n);
+    }
+    
+    public static int fibonacci(int n) {
+        if (n >= nSoFar) {
+            fibCache[n] = fibonacci(n-1) + fibonacci(n-2);
+        }
+        return fibCache[n];
+    }
+    
+    
+    public long fib(int n) 
+    {
+        long prev1 = 0L, prev2 = 1L;
+        for(int i = 0; i < n; i++) {
+            long savePrev1 = prev1;
+            prev1 = prev2;
+            prev2 = savePrev1 + prev2;
+        }
+        return prev1;
+    }
+}
+

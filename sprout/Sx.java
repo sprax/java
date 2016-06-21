@@ -40,6 +40,10 @@ public class Sx
     {
         System.out.println();
     }
+    public static void putss()
+    {
+        System.out.println("\n");
+    }
     
     public static void puts(String string)
     {
@@ -454,11 +458,39 @@ public class Sx
             printListInt(A[j]);
     }
     
+    public static void printFilteredArrayTrue(int A[], boolean filter[])
+    {
+        if (A.length > filter.length)
+            throw new IllegalArgumentException("boolean filter too short");
+        for (int j = 0; j < A.length; j++)
+            if (filter[j])
+                printListInt(A[j]);
+    }
+    
+    public static void printFilteredArrayFalse(int A[], boolean filter[])
+    {
+        if (A.length > filter.length)
+            throw new IllegalArgumentException("boolean filter too short");
+        for (int j = 0; j < A.length; j++)
+            if (!filter[j])
+                printListInt(A[j]);
+    }
+    
     public static void printArrayFolded(int A[], int numPerLine)
     {
         for (int j = 0; j < A.length; )
         {
             printListInt(A[j]);
+            if (++j % numPerLine == 0)
+                puts();
+        }
+    }
+    
+    public static void printArrayFoldedCsv(int A[], int numPerLine)
+    {
+        for (int j = 0; j < A.length; )
+        {
+            format("%d, ", A[j]);
             if (++j % numPerLine == 0)
                 puts();
         }

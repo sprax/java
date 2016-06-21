@@ -84,6 +84,12 @@ class TestFibonacci
         for (int j = size; --j >= 0; ) {
             Sx.format(" %d", fibs[j]);
         }
+        for (int j = 0; j < size; j++) {
+            Sx.format("%d, ", fibs[j]);
+            if (j % 7 == 0)
+                Sx.puts();
+        }
+        
         Sx.puts();
         return totTime;
     }
@@ -93,20 +99,21 @@ class TestFibonacci
         String testName = TestFibonacci.class.getName() + ".unit_test";  
         Sz.begin(testName);
         
-        int size = 93;  // Limit for long
+        int size = 93;  // Limit for 64-bit long
         test_time_firstN(new FibonacciIterate(),  size);
         test_time_firstN(new FibonacciMemoized(), size);
 
         if (lvl > 1) {
-            size = 42;
+            size = 42;  // Limit for 32-bit int
             test_time_firstN(new FibonacciRecurse(),  size);
             test_time_firstN(new FibonacciIterate(),  size);
             test_time_firstN(new FibonacciMemoized(), size);
         }        
         
+        
         Sz.end(testName, 0);
         return 0;
     }
     
-    public static void main(String[] args) { unit_test(1); }
+    public static void main(String[] args) { unit_test(2); }
 }

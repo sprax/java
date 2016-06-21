@@ -125,6 +125,15 @@ public class Primes
 		return primes;
 	}
 
+    public static int[] primesInRangeIntArray(int lo, int hi) {
+        ArrayList<Integer> integers = primesInRangeSieve(lo, hi);
+        int ints[] = new int[integers.size()];
+        int j = 0;
+        for (int intj : integers)
+            ints[j++] = intj;
+        return ints;
+    }
+	
 	
 	static int test_primesInRange(int lo, int hi)
 	{
