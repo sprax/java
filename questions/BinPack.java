@@ -112,7 +112,7 @@ public class BinPack
         numWrong += test_canPack(limits, needs, 1, false);
         
         
-        int blocks[] = {};
+        int blocks[] = FibonacciInt32.fib32Range(0, 20);
         int allocs[] = Primes.primesInRangeIntArray(2, 100);
         numWrong += test_canPack(blocks, allocs, 1, false);
         
@@ -127,37 +127,4 @@ public class BinPack
     }
 }
 
-
-class FibonacciMemoized32
-{
-    public static final int COUNT_FIB32 = 46;
-
-    private static int fibCache[] = new int[COUNT_FIB32];
-    static {
-        fibCache[1] = 1;
-    }
-    
-    public int fib(int n) {
-        return fibonacci(n);
-    }
-    
-    public static int fibonacci(int n) {
-        if (n >= nSoFar) {
-            fibCache[n] = fibonacci(n-1) + fibonacci(n-2);
-        }
-        return fibCache[n];
-    }
-    
-    
-    public long fib(int n) 
-    {
-        long prev1 = 0L, prev2 = 1L;
-        for(int i = 0; i < n; i++) {
-            long savePrev1 = prev1;
-            prev1 = prev2;
-            prev2 = savePrev1 + prev2;
-        }
-        return prev1;
-    }
-}
 
