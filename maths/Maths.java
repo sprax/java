@@ -70,27 +70,27 @@ public abstract class Maths
         
         numCases++;
         ans = max3Math(1, -2, 3);
-        numWrong += Sz.oneWrong(ans, 3);
+        numWrong += Sz.oneIfDiff(ans, 3);
         
         numCases++;
         ans = max3Apache(1, -2, 3);
-        numWrong += Sz.oneWrong(ans, 3);
+        numWrong += Sz.oneIfDiff(ans, 3);
         
         numCases++;
         ans = max3Compare(1, -2, 3);
-        numWrong += Sz.oneWrong(ans, 3);
+        numWrong += Sz.oneIfDiff(ans, 3);
         
         numCases++;
         ans = min3Math(1, -2, 3);
-        numWrong += Sz.oneWrong(ans, -2);
+        numWrong += Sz.oneIfDiff(ans, -2);
         
         numCases++;
         ans = min3Apache(1, -2, 3);
-        numWrong += Sz.oneWrong(ans, -2);
+        numWrong += Sz.oneIfDiff(ans, -2);
         
         numCases++;
         ans = min3Compare(1, -2, 3);
-        numWrong += Sz.oneWrong(ans, -2);
+        numWrong += Sz.oneIfDiff(ans, -2);
         
         Sz.ender(testName, numCases, numWrong);;
         return numWrong;

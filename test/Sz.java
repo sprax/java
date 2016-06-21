@@ -9,9 +9,9 @@ import sprax.sprout.Sx;
 public class Sz 
 {
     public static int oneIfFalse(boolean result) { return result ? 0 : 1; }
-    public static int oneWrong(boolean result, boolean expected) { return result == expected ? 0 : 1; }
-    public static int oneWrong(int result, int expected) { return result == expected ? 0 : 1; }
-    public static int oneWrong(String result, String expected) { return result.equals(expected) ? 0 : 1; }
+    public static int oneIfDiff(boolean result, boolean expected) { return result == expected ? 0 : 1; }
+    public static int oneIfDiff(int result, int expected) { return result == expected ? 0 : 1; }
+    public static int oneIfDiff(String result, String expected) { return result.equals(expected) ? 0 : 1; }
 
     public static int showWrong(int result, int expected)
     {
@@ -46,10 +46,10 @@ public class Sz
 
         int numWrong = 0;
         numWrong += oneIfFalse(true);
-        numWrong += oneWrong(true, true);
-        numWrong += oneWrong(false, false);
-        numWrong += oneWrong(0, 0);
-        numWrong += oneWrong(-1, 1 - 2);
+        numWrong += oneIfDiff(true, true);
+        numWrong += oneIfDiff(false, false);
+        numWrong += oneIfDiff(0, 0);
+        numWrong += oneIfDiff(-1, 1 - 2);
 
         end(testName, numWrong);
         return numWrong;

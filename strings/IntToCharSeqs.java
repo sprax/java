@@ -113,10 +113,10 @@ public class IntToCharSeqs {
     {
         int result = numCharSequencesFromInt(input);
         Sx.format("%d => %d\n", input, result);
-        int numWrong = Sz.oneWrong(result, expected);
+        int numWrong = Sz.oneIfDiff(result, expected);
         
         result = toCharSequences(input);
-        numWrong += Sz.oneWrong(result, expected);
+        numWrong += Sz.oneIfDiff(result, expected);
         
         return numWrong == 0;
     }

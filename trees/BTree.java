@@ -233,13 +233,13 @@ public class BTree
         reverse(bt);
         int height = printBreadthFirstWithSpaces(bt);
         int depth = depth(bt);
-        numWrong += Sz.oneWrong(height, depth + 1);
+        numWrong += Sz.oneIfDiff(height, depth + 1);
         
         BTree st = makeSymmetric(0, bt);
         printBreadthFirstWithSpaces(st);
         
         boolean minHeap = isMinHeap(st);
-        numWrong += Sz.oneWrong(minHeap, true);
+        numWrong += Sz.oneIfDiff(minHeap, true);
         
         Sz.end(testName, numWrong);
         return numWrong;

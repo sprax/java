@@ -118,8 +118,8 @@ public class LongestGreaterSubstring
         //String result = longestGreaterSubstring(str);
         String result = longestGreaterSubstring(str);
         String resKMP = longestGreaterSubstringKMP(str);
-        int numWrong = Sz.oneWrong(result, expected);
-        numWrong    += Sz.oneWrong(result, resKMP);
+        int numWrong = Sz.oneIfDiff(result, expected);
+        numWrong    += Sz.oneIfDiff(result, resKMP);
         Sx.format("'%s' ==> '%s' =?= '%s'\n", str, result, resKMP);
         return numWrong;
     }

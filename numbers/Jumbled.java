@@ -56,13 +56,13 @@ public class Jumbled
         Sz.begin(testName);
         int numWrong = 0;
     
-        numWrong += Sz.oneWrong(isJumbled(  0), true);
-        numWrong += Sz.oneWrong(isJumbled( -1), true);
-        numWrong += Sz.oneWrong(isJumbled(  1), true);
-        numWrong += Sz.oneWrong(isJumbled(-98), true);
-        numWrong += Sz.oneWrong(isJumbled( 89), true);
-        numWrong += Sz.oneWrong(isJumbled( 90), false);
-        numWrong += Sz.oneWrong(isJumbled(100), true);
+        numWrong += Sz.oneIfDiff(isJumbled(  0), true);
+        numWrong += Sz.oneIfDiff(isJumbled( -1), true);
+        numWrong += Sz.oneIfDiff(isJumbled(  1), true);
+        numWrong += Sz.oneIfDiff(isJumbled(-98), true);
+        numWrong += Sz.oneIfDiff(isJumbled( 89), true);
+        numWrong += Sz.oneIfDiff(isJumbled( 90), false);
+        numWrong += Sz.oneIfDiff(isJumbled(100), true);
 
         int maxNum = 100;
         Sx.format("All jumbled numbers J: 0 < J < %d:\n", maxNum);
