@@ -460,6 +460,8 @@ public class Sx
     
     public static void printFilteredArrayTrue(int A[], boolean filter[])
     {
+        if (A == null || filter == null)
+            throw new IllegalArgumentException("null");            
         if (A.length > filter.length)
             throw new IllegalArgumentException("boolean filter too short");
         for (int j = 0; j < A.length; j++)
@@ -469,6 +471,8 @@ public class Sx
     
     public static void printFilteredArrayFalse(int A[], boolean filter[])
     {
+        if (A == null || filter == null)
+            throw new IllegalArgumentException("null");
         if (A.length > filter.length)
             throw new IllegalArgumentException("boolean filter too short");
         for (int j = 0; j < A.length; j++)
@@ -476,6 +480,29 @@ public class Sx
                 printListInt(A[j]);
     }
     
+    /**
+     * Print the elements in A indexed by the entries in index.
+     * ANEX: Almost No Errors or Exceptions
+     * 
+     * @param A value array
+     * @param index index array
+     */
+    public static int putsIndexedArray(String label, int A[], int index[])
+    {
+        if (label != null && !label.isEmpty())
+            print(label);
+        if (A == null || index == null)
+            throw new IllegalArgumentException("null");
+        int sum = 0;
+        for (int val, j = 0; j < index.length; j++) {
+            val = A[index[j]];
+            printListInt(val);
+            sum += val;
+        }
+        puts();
+        return sum;
+    }
+
     public static void printArrayFolded(int A[], int numPerLine)
     {
         for (int j = 0; j < A.length; )

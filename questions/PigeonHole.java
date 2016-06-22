@@ -31,17 +31,28 @@ public class PigeonHole
     }
 
     /**
-     * 
      * @param array
      * @return array of indices of the subset of values whose sum is a multiple of N,
      * where N is the length of the input array.
+     * NIECE: No Input Error Checking/Exceptions.
      */
     public static int[] subsetWhoseSumIsMultipleOfArrayLen(int array[])
     {
-        int N = array.length;
-        int sumsOfFirstN[] = new int[N];
+        
+        return subsetWhoseSumIsMultipleOfArrayLen(array, array.length);
+    }
+
+    /**
+     * @param array
+     * @return array of indices of the subset of values whose sum is a multiple of N,
+     * where N may or may not be the length of the input array.
+     * NIECE: No Input Error Checking/Exceptions.
+     */
+    public static int[] subsetWhoseSumIsMultipleOfArrayLen(int array[], int N)
+    {
+        int partialSumModN[] = new int[N];
         HashMap<Integer, Integer> diffMap = new HashMap<>();
-        int nxt, mod, sum = 0;
+        int mod, sum = 0;
         for (int j = 0; j < N; j++) {
             mod = array[j] % N;
             if (mod == 0) {
@@ -57,14 +68,26 @@ public class PigeonHole
                 return subset;
             }
             else {
-                nxt = (sum + mod) % N;            
-                sumsOfFirstN[j] = nxt;
-                diffMap.put(N - nxt, j);
+                sum = (sum + mod) % N;            
+                partialSumModN[j] = sum;
+                diffMap.put(N - sum, j);
             }
         }
         return new int[] {};
     }
     
+    
+    public static int test_subsetWhoseSumIsMultipleOfArrayLen(int tst[], int N, boolean expected)
+    {
+        int sub[] = subsetWhoseSumIsMultipleOfArrayLen(tst, N);
+        Sx.putsArray("Testing:  ", tst, "  to find a subset whose sum is a multiple of " + N);
+        Sx.putsArray("SubIndex: ", sub);
+        int sum = Sx.putsIndexedArray("SubArray: ", tst, sub);
+        int mod = sum % N;
+        Sx.format("Sum & Mod: %d %% %d = %d\n", sum, N, mod);
+        boolean result = (sub.length > 0);
+        return Sz.oneIfDiff(result, expected);
+    }
     
     public static int unit_test()
     {
@@ -72,7 +95,12 @@ public class PigeonHole
         Sz.begin(testName);
         int numWrong = 0;
         
+        int tst[] = { 2, 1, 3, 37 };
+        int N = tst.length;
+        numWrong += test_subsetWhoseSumIsMultipleOfArrayLen(tst, N, true);
 
+        N = N * 5;
+        numWrong += test_subsetWhoseSumIsMultipleOfArrayLen(tst, N, true);
         
         Sz.end(testName, numWrong);
         return numWrong;
