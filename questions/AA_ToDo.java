@@ -10,16 +10,18 @@ package sprax.questions;
  * Family Trees
  * Map problem: where to hold a reunion to minimize collective cost.
  * LanguageId from ML  supervised learning
- * Remember Bhattacharyya distance from pattern classification?
- * 
  * random stream<T> from array<T>
  * linked-hash-set for max-N counts?    backed by balanced tree?
+ * Fix Fibonacci memoized to use iteratove on ranges?
  * 
  * find duplicate lines or sentences (with fuzzy strings/fuzzy sets)
  * 
  * Given an array of length N and an integer K, sort the array as much as possible
  * such that no element travels more than k positions to its left - an element 
  * however can travel as much as it likes to its right.
+ * 
+ * BEGUN:
+ * Remember Bhattacharyya distance from pattern classification?
  * 
  * DONE:
  * TrafficLight

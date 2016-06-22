@@ -30,7 +30,7 @@ public class Sz
     }
 
     public static void end(String testName, int numWrong) {
-        Sx.format("END   %s,  wrong %d,  %s\n", testName, numWrong, Sz.passFail(numWrong));  
+        Sx.format("\nEND   %s,  wrong %d,  %s\n", testName, numWrong, Sz.passFail(numWrong));  
     }
 
     public static void ender(String testName, int numCases, int numWrong) {
