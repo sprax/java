@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import sprax.files.FileUtil;
 import sprax.sprout.Sx;
@@ -39,17 +40,29 @@ public class PigeonHole
     {
         int N = array.length;
         int sumsOfFirstN[] = new int[N];
-        int mod, sum = 0;
+        HashMap<Integer, Integer> diffMap = new HashMap<>();
+        int nxt, mod, sum = 0;
         for (int j = 0; j < N; j++) {
             mod = array[j] % N;
             if (mod == 0) {
                 return new int[] {j};
             }
-            sumsOfFirstN[j] = sum + mod;
+            else if (diffMap.containsKey(mod)) {
+                int firstSumIndex = diffMap.get(mod);
+                int subset[] = new int[firstSumIndex + 2];
+                for (int k = 0; k <= firstSumIndex; k++) {
+                    subset[k] = k;
+                }
+                subset[firstSumIndex + 1] = j;
+                return subset;
+            }
+            else {
+                nxt = (sum + mod) % N;            
+                sumsOfFirstN[j] = nxt;
+                diffMap.put(N - nxt, j);
+            }
         }
-        
-        
-        return null;
+        return new int[] {};
     }
     
     
