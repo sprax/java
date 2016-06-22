@@ -1,13 +1,7 @@
 package sprax.questions;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
-import sprax.files.FileUtil;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -15,7 +9,9 @@ import sprax.test.Sz;
  * Given an array (or list) of N integers, 
  * (1) find a non-empty subset whose sum is a multiple of N. 
  * (2) find a non-empty subset whose sum is a multiple of 2N. 
- * Compare the solutions of the two questions
+ * Compare the solutions of the two questions.
+ * Possibly a Google interview or Codejam question.
+ * Solution by Sprax Lines  2016.06.22
  */
 public class PigeonHole
 {
@@ -31,29 +27,37 @@ public class PigeonHole
     }
 
     /**
+     * Finds a subset of the array whose sum is a multiple of the array's length N.
      * @param array
      * @return array of indices of the subset of values whose sum is a multiple of N,
      * where N is the length of the input array.
      * NIECE: No Input Error Checking/Exceptions.
      */
-    public static int[] subsetWhoseSumIsMultipleOfArrayLen(int array[])
+    public static int[] indexArrayOfSubsetWhoseSumIsMultipleOfArrayLen(int array[])
     {
-        
-        return subsetWhoseSumIsMultipleOfArrayLen(array, array.length);
+        return indexArrayOfSubsetWhoseSumIsMultipleOfN(array, array.length);
     }
 
     /**
+     * Finds a subset of the array whose sum is a multiple of the specified N.
+     * If N <= array.length, then a solution must exist by the pigeon-hole principle.
+     * Complexity: Linear in size of input array: O(N) where N = array.length, and O(N)
+     * in additional space.
+     * NIECE: No Input Error Checking/Exceptions.
+     * 
      * @param array
      * @return array of indices of the subset of values whose sum is a multiple of N,
-     * where N may or may not be the length of the input array.
-     * NIECE: No Input Error Checking/Exceptions.
+     * where N may or may not be the length of the input array.  If none found, returns
+     * an empty array.
      */
-    public static int[] subsetWhoseSumIsMultipleOfArrayLen(int array[], int N)
+    public static int[] indexArrayOfSubsetWhoseSumIsMultipleOfN(int array[], int N)
     {
-        int partialSumModN[] = new int[N];
+        assert(array != null && N > 0);
+        int size = array.length;
+        int partialSumModN[] = new int[size];
         HashMap<Integer, Integer> diffMap = new HashMap<>();
         int mod, sum = 0;
-        for (int j = 0; j < N; j++) {
+        for (int j = 0; j < size; j++) {
             mod = array[j] % N;
             if (mod == 0) {
                 return new int[] {j};
@@ -79,7 +83,7 @@ public class PigeonHole
     
     public static int test_subsetWhoseSumIsMultipleOfArrayLen(int tst[], int N, boolean expected)
     {
-        int sub[] = subsetWhoseSumIsMultipleOfArrayLen(tst, N);
+        int sub[] = indexArrayOfSubsetWhoseSumIsMultipleOfN(tst, N);
         Sx.putsArray("Testing:  ", tst, "  to find a subset whose sum is a multiple of " + N);
         Sx.putsArray("SubIndex: ", sub);
         int sum = Sx.putsIndexedArray("SubArray: ", tst, sub);
@@ -102,13 +106,23 @@ public class PigeonHole
         N = N * 5;
         numWrong += test_subsetWhoseSumIsMultipleOfArrayLen(tst, N, true);
         
+        N = 12;
+        numWrong += test_subsetWhoseSumIsMultipleOfArrayLen(tst, N, false);
+        
+        int svn[] = { 2, 2, 2, 4, 4, 6, 6 };
+        N = svn.length;
+        numWrong += test_subsetWhoseSumIsMultipleOfArrayLen(svn, N, true);        
+        
+        int nin[] = { 5, 11, 11, 19, 19, 13, 13, 53, 57 };
+        N = nin.length * 2;
+        numWrong += test_subsetWhoseSumIsMultipleOfArrayLen(nin, N, true);        
+        
         Sz.end(testName, numWrong);
         return numWrong;
     }
     
     public static void main(String[] args)
     {
-        //useArgsOrDefaults(args);
         unit_test();
     }
     
