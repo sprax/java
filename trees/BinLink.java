@@ -32,40 +32,46 @@ public class BinLink
     public BinLink right() { return mRight; }
     
     //public BinLink() { }                                      // default constructor
-    public BinLink(int d) { mKey = d; }                         // key-only constructor
-    public BinLink(int key, BinLink left, BinLink right) {     // complete constructor
+    BinLink(int d) { mKey = d; }                                // key-only constructor
+    public BinLink(int key, BinLink left, BinLink right) {      // complete constructor
         mKey  = key;
         mLeft  = left;
         mRight = right;
     }
-  
-  public char toLetter() {
-    return (char)(mKey % 26 + 'A');
-  }
-  
-  public char toChar() {
-    return (char)(mKey % (255 - 'A') + 'A');
-  }
-  
-  public char toHexDigit() {
-    int dig = mKey % 16;
-    if (dig < 0)
-      dig += 16;
-    if (dig < 10)
-      return (char)(dig + '0');
-    else 
-      return (char)(dig + ('A' - 10));
-  }
-  
-  void printSpacedChar() {
-    System.out.print(" " + toChar());
-  }   
-  
-  
-  void printSpacedHex() {
-    System.out.print(" " + toHexDigit());
-  }   
-  
+ 
+    @Override
+    public
+    String toString() {
+        return String.format("[%d  L:%s  R:%s]", mKey, (mLeft == null ? "#" : mLeft.mKey), (mRight == null ? "nil" : mRight.mKey));
+    }
+    
+    public char toLetter() {
+        return (char)(mKey % 26 + 'A');
+    }
+    
+    public char toChar() {
+        return (char)(mKey % (255 - 'A') + 'A');
+    }
+    
+    public char toHexDigit() {
+        int dig = mKey % 16;
+        if (dig < 0)
+            dig += 16;
+        if (dig < 10)
+            return (char)(dig + '0');
+        else 
+            return (char)(dig + ('A' - 10));
+    }
+    
+    void printSpacedChar() {
+        System.out.print(" " + toChar());
+    }   
+    
+    
+    void printSpacedHex() {
+        System.out.print(" " + toHexDigit());
+    }   
+    
   public int getNumNodes() {
     return 1 + getNumDescendents();
   }

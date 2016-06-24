@@ -44,11 +44,12 @@ public class TreeFactory<T extends BinLink>
     
     /**
      * growGlobalCountingBinTreeRecurse creates a binary tree in pre-order:
-     * 0 A
-     * 1 B I
-     * 2 C F J M
-     * 3 D E G H K L N O
-     * 
+     * <pre>
+     * 0           A
+     * 1       B       I
+     * 2     C   F   J   M
+     * 3    D E G H K L N O
+     * </pre>
      * @param depth
      * @param n
      * @return
