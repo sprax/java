@@ -5,6 +5,13 @@ import java.util.Queue;
 
 import sprax.sprout.Sx;
 
+/**
+ * Supposedly a Google interview question: https://www.careercup.com/question?id=5671198293753856
+ * Given a BST and a number x, find two nodes in the BST whose sum is equal to x.
+ * You can not use extra memory like converting BST into one array and then solve
+ *  this like 2sum.
+ */
+
 /** 
  * Search any BST for two nodes whose keys sum to N, using no additional space.
  * binary search tree: for any node N, N.left.val < N.val < N.right.val unless null.
