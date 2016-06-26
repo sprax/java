@@ -1,7 +1,5 @@
 package sprax.test;
 
-import sprax.sprout.Sx;
-
 /**
  * static utility methods for testing, debugging, etc.
  *
@@ -26,15 +24,15 @@ public class Sz
     }
 
     public static void begin(String testName) {
-        Sx.format("BEGIN %s\n", testName);  
+        System.out.format("BEGIN %s\n", testName);  
     }
 
     public static void end(String testName, int numWrong) {
-        Sx.format("\nEND   %s,  wrong %d,  %s\n", testName, numWrong, Sz.passFail(numWrong));  
+        System.out.format("END   %s,  wrong %d,  %s\n\n", testName, numWrong, Sz.passFail(numWrong));  
     }
 
     public static void ender(String testName, int numCases, int numWrong) {
-        Sx.format("END   %s,  right %d,  wrong %d, %s\n"
+        System.out.format("END   %s,  right %d,  wrong %d, %s\n\n"
                 , testName, numCases - numWrong, numWrong, Sz.passFail(numWrong));  
     }
 

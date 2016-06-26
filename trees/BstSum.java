@@ -1,9 +1,8 @@
 package sprax.trees;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
+import sprax.arrays.ArrayFactory;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
  * Supposedly a Google interview question: https://www.careercup.com/question?id=5671198293753856
@@ -22,7 +21,7 @@ import sprax.sprout.Sx;
  * Strategy A (non-negative keys only?): Traverse the BST as if it were any BT and for any node with key <= N, 
  * say key == M, do a BST search for another node with key == N - M. 
  * 
- * Strategy B: Find the smaller node first, then the larger one: Find a node with key < N/2, 
+ * Strategy B: Like (A) but find the smaller node first, then the larger one: Find a node with key < N/2, 
  * say key == M; then search (only to the right) for a node with key == N - M. 
  * 
  * Strategy C (any integers): 
@@ -84,27 +83,48 @@ public class BstSum
     }
     
     
-    public static void unit_test(int lvl)
+    public static int test_findTwoNodesThatSumToN(int sum, int array[])
     {
         BinSearchTree bst = new BinSearchTree();
-        int vals21[] = { 10, 5, 15, 2, 7, 12, 17,  1, 4, 6, 8, 11, 14, 16, 18, 0, 3, 9, 13, 19, 20 };
-        for (int n : vals21) {
+        for (int n : array) {
             bst.insert(n);
         }
-        
+        if (array.length < 26)
+            bst.printBreadthFirstQueueLevelSpaced();
+        return test_findTwoNodesThatSumToN(sum, bst);
+    }
+    
+    public static int test_findTwoNodesThatSumToN(int sum, BinSearchTree bst)
+    {
         BinLink[] twoNodes = new BinLink[2];
-        int sum = 13;
         boolean foundTwo = findTwoNodesThatSumToN(sum, twoNodes, bst);
         if (foundTwo) {
+            Sx.format("These two nodes sum to %d\n", sum);            
             Sx.puts(twoNodes[0]);
             Sx.puts(twoNodes[1]);
         } else {
-            Sx.puts("Not found");
+            Sx.format("No two nodes sum to %d\n", sum);
         }
         
-        
+        return 0;
     }
     
+    public static int unit_test(int lvl)
+    {
+        String testName = BstSum.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
+        
+        int sum = 13;
+        int array[] = { 11, 5, 15, 2, 7, 12, 17,  1, 4, 6, 8, 10, 14, 16, 18, 0, 3, 9, 13, 19, 20 };
+        numWrong += test_findTwoNodesThatSumToN(sum, array);
+        
+        array = ArrayFactory.makeRandomIntArray(40, -99, 99, 0);
+        numWrong += test_findTwoNodesThatSumToN(-sum, array);
+        
+        Sz.end(testName, numWrong);
+        return numWrong;    
+    }
     
     public static void main(String[] args) {
         unit_test(1);
