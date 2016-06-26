@@ -1,9 +1,7 @@
 package sprax.arrays;
 
-import java.util.Arrays;
-import java.util.Random;
-
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class ArrayFactory<T>
 {
@@ -86,53 +84,6 @@ public class ArrayFactory<T>
       return AA;
     }
     
-    public static int[] makeRandomIntArray(int size, int minVal, int maxVal, long seed)
-    {
-        if (size < 1 || minVal > maxVal)
-            throw new IllegalArgumentException("input");
- 
-        int A[] = new int[size];
-        Arrays.fill(A, minVal);
-        int maxInc = maxVal - minVal + 1;
-        Random rng = new Random(seed);
-        for (int j = 0; j < size; j++) {
-            A[j] += rng.nextInt(maxInc);
-        }
-        return A;
-    }
-    
-    public static Integer[] makeRandomIntegerArray(int size, int minVal, int maxVal, long seed)
-    {
-        if (size < 1 || minVal > maxVal)
-            throw new IllegalArgumentException("input");
- 
-        Integer A[] = new Integer[size];
-        Arrays.fill(A, minVal);
-        int maxInc = maxVal - minVal + 1;
-        Random rng = new Random(seed);
-        for (int j = 0; j < size; j++) {
-            A[j] += rng.nextInt(maxInc);
-        }
-        return A;
-    }
-    
-    /**** FIXME: generic factory pattern, infer type from an argument
-    public static <T extends Number> T[] makeRandomArray(int size, int minVal, int maxVal, long seed)
-    {
-        if (size < 1 || minVal > maxVal)
-            throw new IllegalArgumentException("input");
- 
-        T A[] = new T[size];
-        Arrays.fill(A, minVal);
-        int maxInc = maxVal - minVal + 1;
-        Random rng = new Random(seed);
-        for (int j = 0; j < size; j++) {
-            A[j] += (T) rng.nextInt(maxInc);
-        }
-        return A;
-    }
-    ****/
-    
     /*************************************************************************
      * float array factory <br>
      */
@@ -160,7 +111,8 @@ public class ArrayFactory<T>
     public static int unit_test(int lvl) 
     {
         String  testName = ArrayFactory.class.getName() + ".unit_test";
-        Sx.puts(testName + " BEGIN");    
+        Sz.begin(testName);
+        int numWrong = 0;
         
         int rows = 6, cols = 5;
         int AA[][] = new int[rows][cols];
@@ -183,8 +135,8 @@ public class ArrayFactory<T>
         newarray[1][1]=400;
         System.out.println(array[1][1]);
         
-        Sx.puts(testName + " END");    
-        return 0;
+        Sz.end(testName, numWrong);   
+        return numWrong;
     }
     
     public static void main(String[] args) { unit_test(1); }
