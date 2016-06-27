@@ -55,6 +55,27 @@ public class CountZeros2D
         return count;
     }
     
+    public static int countZerosBothSorted(int array[][])
+    {
+        assert(array != null && array[0] != null);      // GIGO: not checking much.
+        int count = 0, endRowZeros = array[0].length;
+        for (int j = 0; j < array.length; j++) {
+            for (int k = 0; k < endRowZeros; k++) {
+                if (array[j][k] == 0) {
+                    count++;
+                }
+                else {
+                    if (k == 0) {
+                        return count;   // no more zeros in matrix
+                    }
+                    endRowZeros = k;
+                    break;              // no more zeros in this row
+                }
+            }
+        }
+        return count;
+    }
+    
     
     public static int unit_test()
     {
