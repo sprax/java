@@ -6,7 +6,7 @@ import java.util.Random;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
-public class RandomArray<T>
+public class RandomArray
 {
      
     public static int[] makeRandomIntArray(int size, int minVal, int maxVal, long seed)
