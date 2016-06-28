@@ -1,7 +1,9 @@
 package sprax.questions;
 
 import java.util.HashMap;
+import java.util.Random;
 
+import sprax.arrays.RandomArray;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -82,6 +84,19 @@ public class CountZeros2D
         String testName = CountZeros2D.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;        
+        
+        int rows = 40, cols = 40, minVal = 0, maxVal = 1;
+        long seed = System.currentTimeMillis();
+        Random rng = new Random(seed);       
+        int array[][] = RandomArray.makeBiSortedRandomIntArray2d(rows, cols, minVal, maxVal, rng);
+        Sx.format("Input array, %d rows X %d columns:\n", rows, cols);
+        Sx.putsArray(array);
+        int countNaive = countZerosNonSortedNaive(array);
+        int countSortR = countZerosRowsSorted(array);
+        int countSortB = countZerosBothSorted(array);
+        Sx.format("Count of zeros: naive %d, row-sorted %d, bi-sorted %d\n", countNaive, countSortR, countSortB);
+        
+        
         
         Sz.end(testName, numWrong);
         return numWrong;
