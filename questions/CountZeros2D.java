@@ -1,6 +1,5 @@
 package sprax.questions;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import sprax.arrays.RandomArray;
