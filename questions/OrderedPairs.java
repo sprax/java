@@ -18,67 +18,50 @@ import sprax.test.Sz;
  * Possibly a Google interview or CodeJam question.
  * Solution by Sprax Lines 2016.06.28
  */
-public class PairsToList
+public class OrderedPairs
 {
-    public List<String> reconstruct(String[][] itinerary) {
-        HashMap<String, String> graph = new HashMap<>();
-        HashSet<String> relation = new HashSet<>();
+    /** input: array of ordered pairs of strings; output: list of strings */
+    public List<String> arrayPairsToList(String[][] itinerary) 
+    {
+        HashMap<String, String> pairMap = new HashMap<>();
         for (String[] it : itinerary) {
-            graph.put(it[0], it[1]);
-            relation.add(it[1]);
+            pairMap.put(it[0], it[1]);
         }
-        
-        String start = "";
-        for (String[] it : itinerary) {
-            if (!relation.contains(it[0])) {
-                start = it[0];
-            }
-        }
-        if ("".equals(start)) {
-            return new ArrayList<String>();
-        }
-        List<String> rst = new ArrayList<>();
-        rst.add(start);
-        while (graph.containsKey(start)) {
-            start = graph.get(start);
-            rst.add(start);
-        }
-        return rst;
+        return mapOfPairsToList(pairMap);
     }
     
-    public static List<String> fromMap(Map<String, String> art) {
+    public static List<String> mapOfPairsToList(Map<String, String> pairMap)
+    {
         String startpoint = "";
-        for (Map.Entry<String, String> en : art.entrySet()) {
-            if (!art.containsValue(en.getKey())) {
-                startpoint = en.getKey();
+        for (Map.Entry<String, String> entry : pairMap.entrySet()) {
+            if (!pairMap.containsValue(entry.getKey())) {
+                startpoint = entry.getKey();
                 break;
             }
         }
-        
         ArrayList<String> ord = new ArrayList<>();
         ord.add(startpoint);
-        for (int i = 0; i < art.size(); i++) {
-            ord.add(art.get(startpoint));
-            startpoint = art.get(startpoint);
+        for (int i = 0; i < pairMap.size(); i++) {
+            startpoint = pairMap.get(startpoint);
+            ord.add(startpoint);
         }
         return ord;
     }
     
     public static int unit_test() {
-        String testName = PairsToList.class.getName() + ".unit_test";
+        String testName = OrderedPairs.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         
         Map<String, String> art = new HashMap<String, String>();
-     
+        
         art.put("MUC", "LHR");
         art.put("CDG", "MUC");
         art.put("SFO", "SJC");
         art.put("LHR", "SFO");
         
-        List<String> airportsFromMap = fromMap(art);
+        List<String> airportsFromMap = mapOfPairsToList(art);
         Sx.putsList(airportsFromMap);
-        
         
         Sz.end(testName, numWrong);
         return numWrong;
