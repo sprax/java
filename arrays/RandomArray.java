@@ -133,12 +133,28 @@ class ZeroArrayComp implements Comparator<int[]>
 {
     @Override
     public int compare(int[] A, int[] B) {
-        int firstNonZeroA = indexOfFirstNonZero(A);
-        int firstNonZeroB = indexOfFirstNonZero(B);
+        int firstNonZeroA = indexOfFirstNonZeroValueBinSearch(A);
+        int firstNonZeroB = indexOfFirstNonZeroValueBinSearch(B);
         return firstNonZeroB - firstNonZeroA;
     }
     
-    int indexOfFirstNonZero(int[] array) {
+    int indexOfFirstNonZeroValueBinSearch(int[] array) 
+    {
+        int lo = 0, hi = array.length - 1, md;
+        while (lo < hi) {
+            md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
+            if (array[md] > 0)
+                hi = md - 1;
+            else
+                lo = md + 1;
+        }
+        if (array[lo] > 0)
+            return lo;
+        else
+            return lo + 1;
+    }
+    
+    int indexOfFirstNonZeroNaive(int[] array) {
         int index;
         for (index = 0; index < array.length; index++)
             if (array[index] != 0)

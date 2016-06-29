@@ -1,9 +1,11 @@
 package sprax.sorts;
 
 import java.util.Comparator;
+import java.util.Random;
 
 import sprax.arrays.ArrayFactory;
 import sprax.arrays.RandomArray;
+import sprax.arrays.RandomArrayT;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -204,7 +206,8 @@ public class SortUtil
     
     public static int test_sort_random_int_array(SortInt sorter, int size, int radius, long seed, int verbose)
     {
-        int iA[] = RandomArray.makeRandomIntArray(size, -radius, radius, seed);
+        Random rng = new Random(seed);
+        int iA[] = RandomArray.makeRandomIntArray(size, -radius, radius, rng);
         if (verbose > 0) {
             Sx.format("test_sort_random_int_array: %s (size %d, radius %d, seed %d)\n"
                     , sorter.getClass().getSimpleName(), size, radius, seed);
@@ -218,7 +221,8 @@ public class SortUtil
     
     public static int test_sort_randomIntegerArray(SortT<Integer> sorter, int size, int radius, long seed, int verbose)
     {
-        Integer[] iA = RandomArray.makeRandomIntegerArray(size, -radius, radius, seed);
+        Random rng = new Random(seed);
+        Integer[] iA = RandomArrayT.makeRandomIntegerArray(size, -radius, radius, rng);
         if (verbose > 0) {
             Sx.format("test_sort_random_int_array: %s (size %d, radius %d, seed %d)\n"
                     , sorter.getClass().getSimpleName(), size, radius, seed);

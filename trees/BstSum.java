@@ -1,6 +1,8 @@
 package sprax.trees;
 
-import sprax.arrays.ArrayFactory;
+import java.util.Random;
+
+import sprax.arrays.RandomArray;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -119,7 +121,8 @@ public class BstSum
         int array[] = { 11, 5, 15, 2, 7, 12, 17,  1, 4, 6, 8, 10, 14, 16, 18, 0, 3, 9, 13, 19, 20 };
         numWrong += test_findTwoNodesThatSumToN(sum, array);
         
-        array = ArrayFactory.makeRandomIntArray(40, -99, 99, 0);
+        Random rng = new Random(0);
+        array = RandomArray.makeRandomIntArray(40, -99, 99, rng);
         numWrong += test_findTwoNodesThatSumToN(-sum, array);
         
         Sz.end(testName, numWrong);

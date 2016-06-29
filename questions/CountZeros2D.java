@@ -85,7 +85,7 @@ public class CountZeros2D
         Sz.begin(testName);
         int numWrong = 0;        
         
-        int rows = 40, cols = 40, minVal = 0, maxVal = 1;
+        int rows = 42, cols = 37, minVal = 0, maxVal = 1;
         long seed = System.currentTimeMillis();
         Random rng = new Random(seed);       
         int array[][] = RandomArray.makeBiSortedRandomIntArray2d(rows, cols, minVal, maxVal, rng);
@@ -95,7 +95,6 @@ public class CountZeros2D
         int countSortR = countZerosRowsSorted(array);
         int countSortB = countZerosBothSorted(array);
         Sx.format("Count of zeros: naive %d, row-sorted %d, bi-sorted %d\n", countNaive, countSortR, countSortB);
-        
         
         
         Sz.end(testName, numWrong);
