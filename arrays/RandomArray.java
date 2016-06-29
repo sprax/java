@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
+import sprax.search.BinarySearch;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -20,6 +21,21 @@ public class RandomArray
         int maxInc = maxVal - minVal + 1;
         for (int j = 0; j < size; j++) {
             A[j] += rng.nextInt(maxInc);
+        }
+        return A;
+    }
+    
+    /** makes an array consisting of a random number of 0s followed by random numbers in the specified range */
+    public static int[] makeZeroFillRandomIntArray(int size, int minVal, int maxVal, Random rng)
+    {
+        if (size < 1 || minVal > maxVal)
+            throw new IllegalArgumentException("input");
+ 
+        int A[] = new int[size];
+        int numZeros = rng.nextInt(size);
+        int maxToAdd = maxVal - minVal + 1;
+        for (int j = numZeros; j < size; j++) {
+            A[j] = minVal + rng.nextInt(maxToAdd);
         }
         return A;
     }
@@ -65,43 +81,26 @@ public class RandomArray
             array[j] = makeRandomIntArray(cols, minVal, maxVal, rng);
             Arrays.sort(array[j]);
         }
-        ZeroArrayComp comp = new ZeroArrayComp();
+        ZeroStartArrayComp comp = new ZeroStartArrayComp();
         Arrays.sort(array, comp);
         return array;
     }
-    
-    public static Integer[] makeRandomIntegerArray(int size, int minVal, int maxVal, long seed)
+        
+    public static int[][] makeZeroFillBiSortedRandomIntArray2d(int rows, int cols, int maxVal, Random rng)
     {
-        if (size < 1 || minVal > maxVal)
+        if (rows < 1 || cols < 1 || maxVal < 1)
             throw new IllegalArgumentException("input");
- 
-        Integer A[] = new Integer[size];
-        Arrays.fill(A, minVal);
-        int maxInc = maxVal - minVal + 1;
-        Random rng = new Random(seed);
-        for (int j = 0; j < size; j++) {
-            A[j] += rng.nextInt(maxInc);
+         
+        int array[][] = new int[rows][];
+        for (int j = 0; j < rows; j++) {
+            array[j] = makeZeroFillRandomIntArray(cols, 1, maxVal, rng);
+            //Arrays.sort(array[j]); // don't sort
         }
-        return A;
+        ZeroStartArrayComp comp = new ZeroStartArrayComp();
+        Arrays.sort(array, comp);
+        return array;
     }
-    
-    /**** FIXME: generic factory pattern, infer type from an argument
-    public static <T extends Number> T[] makeRandomArray(int size, int minVal, int maxVal, long seed)
-    {
-        if (size < 1 || minVal > maxVal)
-            throw new IllegalArgumentException("input");
- 
-        T A[] = new T[size];
-        Arrays.fill(A, minVal);
-        int maxInc = maxVal - minVal + 1;
-        Random rng = new Random(seed);
-        for (int j = 0; j < size; j++) {
-            A[j] += (T) rng.nextInt(maxInc);
-        }
-        return A;
-    }
-    ****/
-    
+        
       
     public static int unit_test(int lvl) 
     {
@@ -129,29 +128,13 @@ public class RandomArray
     public static void main(String[] args) { unit_test(1); }
 }
 
-class ZeroArrayComp implements Comparator<int[]>
+class ZeroStartArrayComp implements Comparator<int[]>
 {
     @Override
     public int compare(int[] A, int[] B) {
-        int firstNonZeroA = indexOfFirstNonZeroValueBinSearch(A);
-        int firstNonZeroB = indexOfFirstNonZeroValueBinSearch(B);
+        int firstNonZeroA = BinarySearch.indexOfFirstNonZeroValue(A);
+        int firstNonZeroB = BinarySearch.indexOfFirstNonZeroValue(B);
         return firstNonZeroB - firstNonZeroA;
-    }
-    
-    int indexOfFirstNonZeroValueBinSearch(int[] array) 
-    {
-        int lo = 0, hi = array.length - 1, md;
-        while (lo < hi) {
-            md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
-            if (array[md] > 0)
-                hi = md - 1;
-            else
-                lo = md + 1;
-        }
-        if (array[lo] > 0)
-            return lo;
-        else
-            return lo + 1;
     }
     
     int indexOfFirstNonZeroNaive(int[] array) {
@@ -161,5 +144,4 @@ class ZeroArrayComp implements Comparator<int[]>
                 break;
         return index;
     }
-    
 }

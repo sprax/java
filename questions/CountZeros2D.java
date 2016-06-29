@@ -88,14 +88,27 @@ public class CountZeros2D
         int rows = 42, cols = 37, minVal = 0, maxVal = 1;
         long seed = System.currentTimeMillis();
         Random rng = new Random(seed);       
-        int array[][] = RandomArray.makeBiSortedRandomIntArray2d(rows, cols, minVal, maxVal, rng);
+        int arrayA[][] = RandomArray.makeBiSortedRandomIntArray2d(rows, cols, minVal, maxVal, rng);
         Sx.format("Input array, %d rows X %d columns:\n", rows, cols);
-        Sx.putsArray(array);
-        int countNaive = countZerosNonSortedNaive(array);
-        int countSortR = countZerosRowsSorted(array);
-        int countSortB = countZerosBothSorted(array);
+        Sx.putsArray(arrayA);
+        int countNaive = countZerosNonSortedNaive(arrayA);
+        int countSortR = countZerosRowsSorted(arrayA);
+        int countSortB = countZerosBothSorted(arrayA);
         Sx.format("Count of zeros: naive %d, row-sorted %d, bi-sorted %d\n", countNaive, countSortR, countSortB);
+        numWrong += Sz.oneIfDiff(countNaive, countSortR);
+        numWrong += Sz.oneIfDiff(countNaive, countSortB);
         
+        // Restart the RNG
+        rng = new Random(seed);       
+        int arrayB[][] = RandomArray.makeZeroFillBiSortedRandomIntArray2d(rows, cols, maxVal, rng);
+        Sx.format("Input array, %d rows X %d columns:\n", rows, cols);
+        Sx.putsArray(arrayB);
+        countNaive = countZerosNonSortedNaive(arrayB);
+        countSortR = countZerosRowsSorted(arrayB);
+        countSortB = countZerosBothSorted(arrayB);
+        Sx.format("Count of zeros: naive %d, row-sorted %d, bi-sorted %d\n", countNaive, countSortR, countSortB);
+        numWrong += Sz.oneIfDiff(countNaive, countSortR);
+        numWrong += Sz.oneIfDiff(countNaive, countSortB);
         
         Sz.end(testName, numWrong);
         return numWrong;

@@ -7,8 +7,31 @@ import sprax.sorts.SortUtil;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
-public class BinarySearch<T extends Comparable<T>>
+public class BinarySearch
 {  
+    
+    public static int indexOfFirstNonZeroValue(int[] sorted) 
+    {
+        int lo = 0, hi = sorted.length - 1;
+        // special case:
+        if (sorted[lo] > 0)
+            return lo;
+        else if (sorted[hi] == 0)
+            return hi + 1;
+        
+        for (int md; lo < hi; ) {
+            md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
+            if (sorted[md] > 0)
+                hi = md - 1;
+            else
+                lo = md + 1;
+        }
+        if (sorted[lo] > 0)
+            return lo;
+        else
+            return hi + 1;
+    }
+    
     /** 
      * binary search for an index for the value v in a sorted array A,
      * that is, find k s.t. v == A[k].  Obviously, v must be the value
