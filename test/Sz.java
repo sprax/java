@@ -1,5 +1,7 @@
 package sprax.test;
 
+import sprax.sprout.Sx;
+
 /**
  * static utility methods for testing, debugging, etc.
  *

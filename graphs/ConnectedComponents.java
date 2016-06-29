@@ -59,7 +59,7 @@ public class ConnectedComponents<V extends Vertex>
         id = new int[numVerts];
         size = new int[numVerts];
         for (V v : graph.getVerts()) {
-            if (!marked[v.mData]) {
+            if (!marked[v.mValue]) {
                 dfs(graph, v);
                 count++;
             }
@@ -69,11 +69,11 @@ public class ConnectedComponents<V extends Vertex>
     // depth-first search
     private void dfs(Graph<V> G, V v)
     {
-        marked[v.mData] = true;
-        id[v.mData] = count;
+        marked[v.mValue] = true;
+        id[v.mValue] = count;
         size[count]++;
         for (V w : G.getEdges(v)) {
-            if (!marked[w.mData]) {
+            if (!marked[w.mValue]) {
                 dfs(G, w);
             }
         }
