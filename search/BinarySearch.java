@@ -12,7 +12,12 @@ public class BinarySearch
     
     public static int indexOfFirstNonZeroValue(int[] sorted) 
     {
-        int lo = 0, hi = sorted.length - 1;
+        return indexOfFirstNonZeroValue(sorted, sorted.length - 1);
+    }
+    
+    public static int indexOfFirstNonZeroValue(int[] sorted, int size) 
+    {
+        int lo = 0, hi = size - 1;
         // special case:
         if (sorted[lo] > 0)
             return lo;
