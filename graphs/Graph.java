@@ -12,22 +12,7 @@ import java.util.Set;
 import sprax.containers.Reversed;
 import sprax.sprout.Sx;
 
-class Vertex
-{
-    int mData;
-    
-    Vertex(int data)
-    {
-        mData = data;
-    }
-    
-    int getData()
-    {
-        return mData;
-    }
-};
-
-public class Graph<V extends Vertex>
+public class Graph<V>
 {
     int            mNumEdges;
     Set<V>         mVerts;
@@ -212,7 +197,7 @@ public class Graph<V extends Vertex>
     
     boolean findAndShowVertPath(V vertA, V vertB, boolean bMarking)
     {
-        Sx.format("DFS Vert Path from %d to %d\n", vertA.getData(), vertB.getData());
+        Sx.format("DFS Vert Path from %d to %d\n", vertA, vertB);
         LinkedList<V> path = new LinkedList<V>();
         boolean found = false;
         if (bMarking)
@@ -224,7 +209,7 @@ public class Graph<V extends Vertex>
             if (!path.isEmpty()) {
                 // iterate path in reverse
                 for (V vert : Reversed.reversed(path)) {
-                    Sx.puts(" : " + vert.getData());
+                    Sx.puts(" : " + vert);
                 }
             }
         } else {

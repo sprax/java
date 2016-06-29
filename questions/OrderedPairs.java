@@ -32,21 +32,27 @@ public class OrderedPairs
     
     public static List<String> mapOfPairsToList(Map<String, String> pairMap)
     {
-        String startpoint = "";
+        String first = "";
         for (Map.Entry<String, String> entry : pairMap.entrySet()) {
             if (!pairMap.containsValue(entry.getKey())) {
-                startpoint = entry.getKey();
+                first = entry.getKey();
                 break;
             }
         }
-        ArrayList<String> ord = new ArrayList<>();
-        ord.add(startpoint);
+        
+        // Avoid cycles by iterating up to size, not: while(pairMap.containsKey(first))
+        ArrayList<String> order = new ArrayList<>();
+        order.add(first);
         for (int i = 0; i < pairMap.size(); i++) {
-            startpoint = pairMap.get(startpoint);
-            ord.add(startpoint);
+            first = pairMap.get(first);
+            order.add(first);
         }
-        return ord;
+        return order;
     }
+    
+    Graph<String>
+    
+    
     
     public static int unit_test() {
         String testName = OrderedPairs.class.getName() + ".unit_test";
