@@ -2,27 +2,39 @@ package sprax.search;
 
 import sprax.arrays.ArrayAlgo;
 import sprax.selectors.Medians;
-import sprax.shuffles.Shuffler;
 import sprax.sorts.SortUtil;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 public class BinarySearch
 {  
+    /** threshold size for actually doing a binary search vs. naive sequential checking */
+    public final static int SMALL_SIZE = 11;
     
     public static int indexOfFirstNonZeroValue(int[] sorted) 
     {
-        return indexOfFirstNonZeroValue(sorted, sorted.length - 1);
+        return indexOfFirstNonZeroValue(sorted, 0, sorted.length);
     }
     
-    public static int indexOfFirstNonZeroValue(int[] sorted, int size) 
+    public static int indexOfFirstNonZeroValue(int[] sorted, int beg, int end) 
     {
-        int lo = 0, hi = size - 1;
-        // special case:
+        int lo = beg, hi = end - 1;
+        
+        // special case for ends:
         if (sorted[lo] > 0)
             return lo;
         else if (sorted[hi] == 0)
             return hi + 1;
+        
+        // special case for small index range -- just count:
+        if (beg - end < SMALL_SIZE) {
+            int j = beg;
+            for (; j < end; j++) {
+                if (sorted[j] != 0)
+                    break;
+            }
+            return j;
+        }
         
         for (int md; lo < hi; ) {
             md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
@@ -32,6 +44,30 @@ public class BinarySearch
                 lo = md + 1;
         }
         if (sorted[lo] > 0)
+            return lo;
+        else
+            return hi + 1;
+    }
+    
+    
+    public static int indexOfFirstNonZeroValueSquareDiag(int[][] sorted, int sidesSize) 
+    {
+        int lo = 0, hi = sidesSize - 1;
+        
+        // special case:
+        if (sorted[lo][lo] > 0)
+            return lo;
+        else if (sorted[hi][hi] == 0)
+            return hi + 1;
+        
+        for (int md; lo < hi; ) {
+            md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
+            if (sorted[md][md] > 0)
+                hi = md - 1;
+            else
+                lo = md + 1;
+        }
+        if (sorted[lo][lo] > 0)
             return lo;
         else
             return hi + 1;
@@ -50,8 +86,8 @@ public class BinarySearch
     {
         for (int md, lo = 0, hi = A.length - 1; lo <= hi;)
         {
-            md = (hi + lo) >> 1;  // average of first and last indices
-            if (A[md] < val)
+            md = (hi + lo) >> 1;    // average of first and last indices, same as lo + (hi - lo)/2
+            if (A[md] < val)        // proof: lo + (hi - lo)/2 = (2*lo + hi - lo)/2 = (lo + hi)/2
                 lo = md + 1;        // raise the floor
             else if (A[md] > val)
                 hi = md - 1;        // lower the ceiling
