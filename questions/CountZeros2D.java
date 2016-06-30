@@ -170,7 +170,7 @@ public class CountZeros2D
         }
         
         int count = 0;
-        int offset = offsetToFirstNonZeroValueSquareDiag(array, rowBeg, colBeg, sideSize);
+        int offset = BinarySearch.offsetToFirstNonZeroValueSquareDiag(array, rowBeg, colBeg, sideSize);
         count += offset*offset;
         if (0 < offset && offset < sideSize) {
             count += countZerosBothSortedBinSearchRectDiag(array, rowBeg, colBeg + offset, offset, sideSize - offset);
@@ -178,42 +178,6 @@ public class CountZeros2D
         }
         return count;
     }
-  
-    /**
-     * returns the diagonal offset to the first non-zero array value, starting from (row, col) = (rowBeg, colBeg)
-     * @param sorted    matrix of non-negative integers with all 0s at the beginnings of rows and each row having
-     *                  no more leading zeros than the previous one.  If the array is sorted in both rows and 
-     *                  columns, it will meet these criteria, but it does not have to be sorted.  In other words,
-     *                  the zeros must all be above or left of all non-zeros, but the non-zeros can be in any
-     *                  order at all among themselves.  
-     * @param rowBeg
-     * @param colBeg
-     * @param sideSize  size of the sides of the square sub-matrix inside sorted[][]
-     * @return
-     */
-    public static int offsetToFirstNonZeroValueSquareDiag(int[][] sorted, int rowBeg, int colBeg, int sideSize)
-    {
-        int lo = 0, hi = sideSize - 1;
-        
-        // special case:
-        if (sorted[lo + rowBeg][lo + colBeg] > 0)
-            return lo;
-        else if (sorted[hi + rowBeg][hi + colBeg] == 0)
-            return hi + 1;
-        
-        for (int md; lo < hi; ) {
-            md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
-            if (sorted[md + rowBeg][md + colBeg] > 0)
-                hi = md - 1;
-            else
-                lo = md + 1;
-        }
-        if (sorted[lo + rowBeg][lo + colBeg] > 0)
-            return lo;
-        else
-            return hi + 1;
-    }
-    
     
    
     public static int test_all_against_naive(int array[][], int rows, int cols)

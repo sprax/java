@@ -50,7 +50,7 @@ public class BinarySearch
     }
     
     
-    public static int indexOfFirstNonZeroValueSquareDiag(int[][] sorted, int sidesSize) 
+    public static int offsetToFirstNonZeroValueSquareDiag(int[][] sorted, int sidesSize) 
     {
         int lo = 0, hi = sidesSize - 1;
         
@@ -72,6 +72,42 @@ public class BinarySearch
         else
             return hi + 1;
     }
+    
+    /**
+     * returns the diagonal offset to the first non-zero array value, starting from (row, col) = (rowBeg, colBeg)
+     * @param sorted    matrix of non-negative integers with all 0s at the beginnings of rows and each row having
+     *                  no more leading zeros than the previous one.  If the array is sorted in both rows and 
+     *                  columns, it will meet these criteria, but it does not have to be sorted.  In other words,
+     *                  the zeros must all be above or left of all non-zeros, but the non-zeros can be in any
+     *                  order at all among themselves.  
+     * @param rowBeg
+     * @param colBeg
+     * @param sideSize  size of the sides of the square sub-matrix inside sorted[][]
+     * @return
+     */
+    public static int offsetToFirstNonZeroValueSquareDiag(int[][] sorted, int rowBeg, int colBeg, int sideSize)
+    {
+        int lo = 0, hi = sideSize - 1;
+        
+        // special case:
+        if (sorted[lo + rowBeg][lo + colBeg] > 0)
+            return lo;
+        else if (sorted[hi + rowBeg][hi + colBeg] == 0)
+            return hi + 1;
+        
+        for (int md; lo < hi; ) {
+            md = (hi + lo) >> 1;        // same as lo + (hi - lo)/2
+            if (sorted[md + rowBeg][md + colBeg] > 0)
+                hi = md - 1;
+            else
+                lo = md + 1;
+        }
+        if (sorted[lo + rowBeg][lo + colBeg] > 0)
+            return lo;
+        else
+            return hi + 1;
+    }
+    
     
     /** 
      * binary search for an index for the value v in a sorted array A,
