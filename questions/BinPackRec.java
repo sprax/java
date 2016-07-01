@@ -72,9 +72,9 @@ public class BinPackRec implements IBinPack
                         bins[k] -= items[j];
                         
                         int tmp = bins[k];
-                        boolean swapped = false;
+                        //boolean swapped = false;
                         if (bins[k] < items[0]) {
-                            swapped = true;
+                            //swapped = true;
                             bins[k] = bins[--numUsableBins];
                             bins[numUsableBins] = tmp;      
                         }
