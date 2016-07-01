@@ -42,7 +42,7 @@ public class LongestWordsFromLetters
     LongestWordsFromLetters(String inputFile, int letterCounts[], int firstLetterOffset)
     {
         if (inputFile == null || letterCounts == null)
-            throw new IllegalAccessError("null");
+            throw new IllegalArgumentException("null");
         
         this.wordFile = inputFile;
         this.letterCounts = letterCounts;
@@ -93,7 +93,7 @@ public class LongestWordsFromLetters
         return 0;
     }
     
-    public static ArrayList<String> useArgsOrDefaults(String[] args)
+    static ArrayList<String> useArgsOrDefaults(String[] args)
     {
         char letters[];
         String fileName, filePath;
@@ -150,8 +150,7 @@ public class LongestWordsFromLetters
     
     public static void main(String[] args)
     {
-        //useArgsOrDefaults(args);
-        unit_test();
+        useArgsOrDefaults(args);
     }
     
 }
