@@ -1,6 +1,7 @@
 package sprax.bits;
 
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 public class BitsAlgo 
 {
@@ -163,9 +164,9 @@ public class BitsAlgo
     public static int unit_test() 
     {
         String testName =  BitsAlgo.class.getName() + ".unit_test";
-        Sx.format("BEGIN %s\n", testName);
-
+        Sz.begin(testName);
         int numWrong = 0;
+
         numWrong += test_firstUniqueLetter("aababcabcdabcdeabcdefabcdefzabcdefga");
         numWrong += test_firstUniqueLetter("ZYXWV !@#$%^&*() UTU VWXYZ");
         numWrong += test_firstUniqueLetter("aababcabcdabcdeabcdefabcdefzZYXWVUTUVWXYZabcydefga");
@@ -197,7 +198,7 @@ public class BitsAlgo
         Sx.format("Short.MAX_VALUE: %d  %d\n", maxShort, (int)maxShort);
         Sx.format("Short.MIN_VALUE: %d  %d\n", minShort, (int)minShort);
 
-        Sx.format("END %s,  wrong answers: %d, %s\n", testName, numWrong, (numWrong == 0 ? "PASS" : "FAIL"));
+        Sz.end(testName, numWrong);
         return numWrong;
     }
 
