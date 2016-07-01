@@ -49,13 +49,18 @@ public class ShortestWordsContainingLettersFilter implements StringFilter
             return true;
         if (len < totalLetterCount)
             return true;
-        int tempLetterCounts[] = Arrays.copyOf(letterCounts, letterCounts.length);
-        for (int j = 0; j < len; j++) {
-            int letterIndex = word.charAt(j) - firstLetterOffset;
-            if (--tempLetterCounts[letterIndex] < 0)
+        
+        char wordLetterArray[] = word.toCharArray();
+        int wordLetterCounts[] = new int[letterCounts.length];
+        for (char ch : wordLetterArray) {
+            wordLetterCounts[ch - firstLetterOffset]++;
+        }
+        
+        for (int j = 0; j < letterCounts.length; j++) {
+            if (wordLetterCounts[j] < letterCounts[j])
                 return true;
         }
-        // At this point, we know len >= longestWordLen
+        // At this point, we know len <= shortestWordLen
         if (shortestWordLen > len) {
             shortestWordLen = len;
             shortestWords.clear();
@@ -64,14 +69,13 @@ public class ShortestWordsContainingLettersFilter implements StringFilter
         return true;
     }
     
-    static int test_example_letters()
+    static int test_letters(char letters[], String expect[])
     {
         int numWrong = 0;
         
         String fileName = "words.txt";
         String filePath = FileUtil.getTextFilePath(fileName);
 
-        char letters[] = { 'a', 'd', 'e', 'r', 's', 'w' };
         
         int letterCounts[] = new int[26];
         int offset = 'a';
@@ -80,12 +84,14 @@ public class ShortestWordsContainingLettersFilter implements StringFilter
         }
         
         ShortestWordsContainingLettersFilter filter = new ShortestWordsContainingLettersFilter(letterCounts, offset);      
+        
+        Sx.putsArray("Searching " + filePath + " for words containing:", letters);
         FileLineFilter.filterFile(filePath, filter);
         ArrayList<String> result = filter.shortestWords;
-        Sx.putsList(filter.shortestWords);
-        
-        String expect[] = { "dewars", "waders" };
-      
+
+        Sx.format("Found %d words of shortest length %d:\n", result.size(), filter.shortestWordLen);
+        Sx.putsList(result);
+              
         if (result.size() == expect.length) {
             for (int j = 0; j < expect.length; j++) {
                 numWrong += Sz.oneIfFalse(expect[j].equals(result.get(j)));
@@ -103,7 +109,13 @@ public class ShortestWordsContainingLettersFilter implements StringFilter
         Sz.begin(testName);
         int numWrong = 0;
         
-        numWrong += test_example_letters();
+        char lettersA[] = { 'a', 'd', 'e', 'i', 'r', 's', 'w' };
+        String expectA[] = { "bawdries", "dishware", "rawhides", "sideward", "tawdries" };
+        numWrong += test_letters(lettersA, expectA);
+        
+        char lettersB[] = { 'x', 's', 'r', 'q', 'e' };
+        String expectB[] = { "exchequers", "quixotries" };
+        numWrong += test_letters(lettersB, expectB);
         
         Sz.end(testName, numWrong);
         return numWrong;
