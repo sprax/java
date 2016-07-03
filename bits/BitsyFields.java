@@ -38,7 +38,7 @@ public class BitsyFields
 
      * ==================================================================
      */
-
+    
     public Character firstUniqueCharBruteForce(String str, char[] allChars)
     {
         int j, count, length = str.length();
@@ -55,8 +55,8 @@ public class BitsyFields
         }
         return null;
     }
-
-
+    
+    
     /** 
      * Easy-reading version
      */
@@ -73,7 +73,7 @@ public class BitsyFields
     /** 
      * Easy-reading version
      */
-    public static Character firstUniqueChar(String str)
+    public static Character firstUniqueCharBit(String str)
     {   
         int posUpper = indexOfFirstUniqueCharInRange(str, 'A', 'Z');
         int posLower = indexOfFirstUniqueCharInRange(str, 'a', 'z');
@@ -82,7 +82,7 @@ public class BitsyFields
             return str.charAt(posFirst);
         return null;
     }
-
+    
     /**
      * Overly optimized version?
      * @param str
@@ -100,7 +100,7 @@ public class BitsyFields
         int pos = Math.min(posUpper, posLower);
         return str.charAt(pos);  
     }
-
+    
     public static Character firstUniqueLowerCaseLetter(String str)
     {   
         int pos = indexOfFirstUniqueCharInRange(str, 'a', 'z');
@@ -108,7 +108,7 @@ public class BitsyFields
             return null;
         return str.charAt(pos);
     }
-
+    
     public static Character firstUniqueUpperCaseLetter(String str)
     {   
         int pos = indexOfFirstUniqueCharInRange(str, 'A', 'Z');
@@ -116,8 +116,8 @@ public class BitsyFields
             return null;
         return str.charAt(pos);
     }  
-
-
+    
+    
     /**
      * Returns the index of the first unique character in the input string that is
      * also in the input range, or Integer.MAX_VALUE if there is no such character.
@@ -131,11 +131,11 @@ public class BitsyFields
     {   
         if (str == null)
             throw new IllegalArgumentException("invalid string arg: " + str);
-
+        
         int rangeSize = rangeMax - rangeMin + 1;
         if (rangeSize < 1 || rangeSize > 64)
             throw new IllegalArgumentException("invalid range size: " + rangeSize);
-
+        
         int length = str.length();
         long maskOnce = 0;  // indicates char appeared at least once
         long maskMore = 0;  // indicates char appeared at least twice
@@ -174,11 +174,11 @@ public class BitsyFields
     {   
         if (str == null)
             throw new IllegalArgumentException("invalid string arg: " + str);
-
+        
         int rangeSize = rangeMax - rangeMin + 1;
         if (rangeSize < 1 || rangeSize > 64)
             throw new IllegalArgumentException("invalid range size: " + rangeSize);
-
+        
         int length = str.length();
         BitSet maskOnce = new BitSet(rangeSize);  // indicates char appeared at least once
         BitSet maskMore = new BitSet(rangeSize);  // indicates char appeared at least twice
@@ -197,19 +197,19 @@ public class BitsyFields
             char ch = str.charAt(j);
             int idx = ch - rangeMin;
             if (0 <= idx && idx < rangeSize) {
-                 if ((maskMore.get(idx)) == false)
+                if ((maskMore.get(idx)) == false)
                     return j;
             }
         }
         return Integer.MAX_VALUE;
     }
-
+    
     public static int test_firstUniqueLetter(String str) 
     {
         int wrong = 0;
         Character chrReg = firstUniqueLetter(str);
         Character chrOpt = firstUniqueLetter_overlyOptimized(str);
-        Character chrBit = firstUniqueChar(str);
+        Character chrBit = firstUniqueCharBit(str);
         if (chrReg != chrOpt || chrReg != chrBit) {
             wrong = 1;
             Sx.print("Error: ");
@@ -217,27 +217,27 @@ public class BitsyFields
         Sx.format("firstUniqueLetter(%s) -> %s | %s | \n", str, chrReg, chrOpt, chrBit);
         return wrong;
     }
-
+    
     public static int unit_test() 
     {
         String testName =  BitsyFields.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
-
+        
         
         numWrong += test_firstUniqueLetter("aababcabcdabcdeabcdefabcdefzabcdefga");
         numWrong += test_firstUniqueLetter("ZYXWV !@#$%^&*() UTU VWXYZ");
         numWrong += test_firstUniqueLetter("aababcabcdabcdeabcdefabcdefzZYXWVUTUVWXYZabcydefga");
         numWrong += test_firstUniqueLetter("abcdefABCDEF-1234567890_FEDCBAfedcbax");
         numWrong += test_firstUniqueLetter("b");
-
+        
         Sx.puts(" 63 >>  3 == " + ( 63 >>  3));
         Sx.puts("-63 >>  3 == " + (-63 >>  3));
         Sx.puts(" 63 >>> 3 == " + ( 63 >>> 3));
         Sx.puts("-63 >>> 3 == " + (-63 >>> 3));
         Sx.puts("~63 >>> 3 == " + (~63 >>> 3));
         Sx.puts("(INT_MAX - 63) >>> 2 == " + ((Integer.MAX_VALUE - 63) >>> 2));
-
+        
         char hi4 = 8 + 4 + 2 + 1;
         char lo4 =     4 +     1;
         char ch8 = (char)((hi4 << 4) + lo4);
@@ -245,21 +245,21 @@ public class BitsyFields
                 , hi4, lo4, (hi4 << 4), lo4, ch8);
         Sx.format("hi4  lo4: (hi4 << 4) + lo4 = ch8 (d): %d %d: (%d) + %d = %d\n"
                 , (int)hi4, (int)lo4, (int)(hi4 << 4), (int)lo4, (int)ch8);
-
+        
         char maxChar = Character.MAX_VALUE;
         char minChar = Character.MIN_VALUE;
         Sx.format("Character.MAX_VALUE: %c  %d\n", maxChar, (int)maxChar);
         Sx.format("Character.MIN_VALUE: %c  %d\n", minChar, (int)minChar);
-
+        
         Short maxShort = Short.MAX_VALUE;
         Short minShort = Short.MIN_VALUE;
         Sx.format("Short.MAX_VALUE: %d  %d\n", maxShort, (int)maxShort);
         Sx.format("Short.MIN_VALUE: %d  %d\n", minShort, (int)minShort);
-
+        
         Sz.end(testName, numWrong);
         return numWrong;
     }
-
+    
     public static void main(String[] args)
     {
         unit_test();
