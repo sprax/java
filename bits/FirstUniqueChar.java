@@ -219,7 +219,7 @@ public class FirstUniqueChar
     
     public static int unit_test() 
     {
-        String testName =  BitsyFields.class.getName() + ".unit_test";
+        String testName =  BitSort.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         

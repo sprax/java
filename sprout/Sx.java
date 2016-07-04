@@ -189,6 +189,12 @@ public class Sx
         }
     }
     
+    public static <T> void printList(String label, List<T> L, int numPerLine)
+    {
+        print(label);
+        printList(L, numPerLine);
+    }
+    
     public static <T> void printList(List<T> L, int numPerLine)
     {
         if (L == null || numPerLine < 1) {
@@ -197,7 +203,7 @@ public class Sx
         }
         int j = 0;
         for (T item : L) {
-            print(item + " ");
+            print(" " + item);
             if (++j % numPerLine == 0) {
                 puts();
             }
@@ -351,6 +357,12 @@ public class Sx
     {
         printList(L);
         puts();
+    }
+    
+    public static <T> void putsList(String preLabel, List<T> L, int numPerLine)
+    {
+        print(preLabel);
+        putsList(L, numPerLine);
     }
     
     public static <T> void putsList(List<T> L, int numPerLine)
