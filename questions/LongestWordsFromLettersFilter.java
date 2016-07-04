@@ -2,6 +2,7 @@ package sprax.questions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import sprax.files.FileUtil;
 import sprax.sprout.Sx;
@@ -13,7 +14,7 @@ import sprax.test.Sz;
  * argument the name of a plain text file that contains one word per line.
  * The remaining arguments define the list of legal letters. A letter may not
  * appear in any single word more times than it appears in the list of letters
- * (e.g., the input letters ‘a a b c k’ can make ‘back’ and ‘cab’ but not ‘abba’).
+ * (e.g., the input letters ï¿½a a b c kï¿½ can make ï¿½backï¿½ and ï¿½cabï¿½ but not ï¿½abbaï¿½).
  * 
  * <pre>
  * Here's an example of how it should work:
@@ -97,17 +98,13 @@ public class LongestWordsFromLettersFilter implements StringFilter
         
         String expect[] = { "azotised", "bawdiest", "dystocia", "geotaxis",
                 "iceboats", "oxidates", "oxyacids", "sweatbox", "tideways" };
-      
-        if (result.size() == expect.length) {
-            for (int j = 0; j < expect.length; j++) {
-                numWrong += Sz.oneIfFalse(expect[j].equals(result.get(j)));
-            }
-        } else {
-            numWrong = 100;
-        }
+        
+        numWrong += Sz.compareListAndArray(result, expect);
         
         return numWrong;
     }
+    
+
     
     public static int unit_test()
     {

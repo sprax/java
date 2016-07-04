@@ -40,7 +40,7 @@ public class BitSort
     {
         List<Integer> list = new ArrayList<>();
         int idx = sortedNumbers.nextSetBit(beg);
-        while (idx < end) {
+        while (0 <= idx && idx < end) {
             list.add(idx);
             idx = sortedNumbers.nextSetBit(idx + 1);
         }
@@ -54,6 +54,8 @@ public class BitSort
         int array[] = new int[size];
         for (int idx = 0, j = 0; j < size; j++, idx++) {
             idx = sortedNumbers.nextSetBit(idx);
+            if (idx == -1)
+                break;
             array[j] = beg + idx;
         }
         return array;
@@ -74,6 +76,8 @@ public class BitSort
         int array[] = bs.toArray(beg, end);
         Sx.putsList("toList:     ", list, 0);
         Sx.putsArray("toArray:  ", array);
+        
+        numWrong += Sz.compareListAndArray(list, array);
             
         Sz.end(testName, numWrong);
         return numWrong;

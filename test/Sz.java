@@ -1,5 +1,7 @@
 package sprax.test;
 
+import java.util.List;
+
 import sprax.sprout.Sx;
 
 /**
@@ -36,6 +38,47 @@ public class Sz
     public static void ender(String testName, int numCases, int numWrong) {
         System.out.format("END   %s,  right %d,  wrong %d, %s\n\n"
                 , testName, numCases - numWrong, numWrong, Sz.passFail(numWrong));  
+    }
+    
+    public static <T> int compareListAndArray(List<T> list, T[] array)
+    {
+        int numWrong, numToCompare;
+        if (array.length > list.size()) {
+            numToCompare = list.size();
+            numWrong = array.length - numToCompare;
+        }
+        else if (list.size() > array.length) {
+            numToCompare = array.length;
+            numWrong = list.size() - numToCompare;
+        } else {
+            numToCompare = array.length;
+            numWrong = 0;
+        }
+        for (int j = 0; j < numToCompare; j++) {
+            numWrong += Sz.oneIfFalse(array[j].equals(list.get(j)));
+        }
+        return numWrong;        
+    }
+
+    
+    public static int compareListAndArray(List<Integer> list, int[] array)
+    {
+        int numWrong, numToCompare;
+        if (array.length > list.size()) {
+            numToCompare = list.size();
+            numWrong = array.length - numToCompare;
+        }
+        else if (list.size() > array.length) {
+            numToCompare = array.length;
+            numWrong = list.size() - numToCompare;
+        } else {
+            numToCompare = array.length;
+            numWrong = 0;
+        }
+        for (int j = 0; j < numToCompare; j++) {
+            numWrong += Sz.oneIfFalse(array[j] == list.get(j));
+        }
+        return numWrong;        
     }
 
 

@@ -12,7 +12,7 @@ package sprax.questions;
  * LanguageId from ML  supervised learning
  * random stream<T> from array<T>
  * linked-hash-set for max-N counts?    backed by balanced tree?
- * Fix Fibonacci memoized to use iteratove on ranges?
+ * Fix Fibonacci memoized to use iterative on ranges?
  * 
  * find duplicate lines or sentences (with fuzzy strings/fuzzy sets)
  * 
@@ -37,15 +37,13 @@ public class AA_ToDo {
     
     
     /**
-     * You are given the toplogical information of a terrain in the following format - There are n points ( x_i , y_i ) and for each point (x_i , y_i ) the altitude h_i is given. 
-
-For any rectangle (axis parallel) defined by the x-y coordinates of 
-the corner points, we must answer the query about which is the highest altitude point lying within the rectangle. 
-
-Implement this using a range-query data-structure that answers such a 
-query in O( log^2 n) time
-
-
+     * You are given the topological information of a terrain in the following format - 
+     * There are n points ( x_i , y_i ) and for each point (x_i , y_i ) the altitude h_i is given. 
+     * For any rectangle (axis parallel) defined by the x-y coordinates of 
+     * the corner points, we must answer the query about which is the highest altitude point 
+     * lying within the rectangle. 
+     * 
+     * Implement this using a range-query data-structure that answers such a query in O( log^2 n) time
      */
 
 /*
