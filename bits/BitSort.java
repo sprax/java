@@ -14,14 +14,14 @@ import sprax.test.Sz;
  */
 public class BitSort 
 {
-    public final int size;
+    public final int rangeSize;
     public final BitSet sortedNumbers;
     
-    BitSort(int[] numbers)
+    BitSort(int[] numbers, int rangeSize)
     {
         assert(numbers != null);        // GIGO: checking not much.
-        size = numbers.length;
-        sortedNumbers = new BitSet(size);
+        this.rangeSize = rangeSize;
+        sortedNumbers = new BitSet(rangeSize);
         sortInput(numbers);
     }
     
@@ -69,9 +69,10 @@ public class BitSort
         int numWrong = 0;
         
         int testArray[] = { 1, 4, 7, 11, 17, 18, 20, 29, 32 };
+        int rangeSize = 40;
         Sx.putsArray("testArray:", testArray);
         int beg = 0, end = 30;
-        BitSort bs = new BitSort(testArray);
+        BitSort bs = new BitSort(testArray, rangeSize);
         List<Integer> list = bs.toList(beg, end);
         int array[] = bs.toArray(beg, end);
         Sx.putsList("toList:     ", list, 0);
