@@ -1,5 +1,5 @@
 /*
- * Median
+https://www.careercup.com/question?id=5760148355153920 * Median
  * 
  * Copyright (c) 2001, 2002, 2003 Marco Schmidt.
  * All rights reserved.
@@ -25,6 +25,7 @@ public class BinPack implements IBinPack
     public boolean canPack(int[] bins, int[] items) {
         return canPackNaive(bins, items);
     }    
+
     /** 
      * Can the space requirements specified by items be packed into the specified bins?
      * Recursive without sorting, adapted from:

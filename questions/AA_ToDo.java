@@ -37,6 +37,28 @@ public class AA_ToDo {
     
     
     /**
+     * You are given a range [first, last], initially white. You need to paint it black. 
+     * For this purpose you have a set of triples [(f, l, cost), ...] - where each triple
+     * means that you can paint range [f, l] for `cost` coins (limitations: 
+     * cost is floating point >= 0, f, l, first, last are integers). 
+     * Find minimum cost needed to paint the whole range [first, last] or return -1 if it's impossible 
+     * Example:
+     * <pre>
+     * [first, last] = [0, 5] and set of triples is
+     * [[0, 5, 10], [0, 4, 1], [0, 2,5], [2, 5, 1]]
+     * 
+     * Clearly the answer is to take [0, 4, 1] and [2, 5, 1] - the total cost will be 2. 
+     * 
+     * Another example:
+     * 
+     * [first, last] = [0, 5]
+     * triples are [[1,4, 10], [2, 5, 6]]
+     * answer is -1, because it's impossible to color whole range.
+     * 
+     * Possible Google interview or Code Jam question:
+     * https://www.careercup.com/question?id=5760148355153920
+     * </pre>
+     * 
      * You are given the topological information of a terrain in the following format - 
      * There are n points ( x_i , y_i ) and for each point (x_i , y_i ) the altitude h_i is given. 
      * For any rectangle (axis parallel) defined by the x-y coordinates of 
@@ -45,6 +67,7 @@ public class AA_ToDo {
      * 
      * Implement this using a range-query data-structure that answers such a query in O( log^2 n) time
      */
+    int none;
 
 /*
 A white cell has been given. Every second, the white cell gets divided into 
