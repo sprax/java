@@ -79,6 +79,27 @@ public class LinearCover
         return totalCost;
     }
     
+    /**
+     * Algorithm: Sort the covering segments, primarily by their last points, then
+     * map each segment end points to the minimum total cost to get there so far.
+     * Complexity: O(NlogN) for the sorting, then O(N * M) for the mapping, where M
+     * is the mean number of segments overlapping each other, for a worst-case of O(N^2).
+     * 
+     * TODO: Heuristically, it might seem better (if more greedy) to iterate 
+     * over the main map in key-descending order, as in longest-reach-first, but
+     * looking at the geometry, it's really the same in either order.  It is possible
+     * to iterate the sub-map in descending order (just obtain it using 
+     * minCostMap.descendingMap().subMap(...)), but that definitely does not help
+     * in the general or random case.  The only ordering that would help there would 
+     * be to iterate over the qualifying segments in ascending order of cost, so that
+     * the first cost found is always the minimum cost, but that would require another
+     * sort.  The keys have to be sorted to obtain the subMap. 
+     * 
+     * @param beg   Beginning of the main segment to cover
+     * @param end   End (inclusive) of the segment to cover
+     * @param segments  Array of segments to use for covering the main one
+     * @return
+     */
     public static float costToCoverOrMaxVal(int beg, int end, Segment segments[])
     {
         float totalCost = Float.MAX_VALUE;
