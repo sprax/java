@@ -39,7 +39,7 @@ public class Graph<V>
     /**
      * Construct new graph with no edges. Any vertices in verts will be add3ed.
      */
-    Graph(ArrayList<V> verts)
+    public Graph(ArrayList<V> verts)
     {
         if (verts != null && verts.size() > 0)
             mVerts = new HashSet<V>(verts); // defensive copy
@@ -49,12 +49,12 @@ public class Graph<V>
         mMarks = new HashSet<V>();
     }
     
-    int getNumEdges()
+    public int getNumEdges()
     {
         return mNumEdges;
     }
     
-    int getNumVerts()
+    public int getNumVerts()
     {
         return mVerts.size();
     }
@@ -62,7 +62,7 @@ public class Graph<V>
     /**
      * Returns the graph's set of vertices
      */
-    Set<V> getVerts()
+    public Set<V> getVerts()
     {
         return mVerts;
     }
@@ -70,7 +70,7 @@ public class Graph<V>
     /**
      * get the set of vertices adjacent to the specified vertex
      */
-    Set<V> getEdges(V vert)
+    public Set<V> getEdges(V vert)
     {
         return mEdges.get(vert);
     }
@@ -78,7 +78,7 @@ public class Graph<V>
     /**
      * get the set of vertices adjacent to the specified vertex
      */
-    Set<V> adj(V vert)
+    public Set<V> adj(V vert)
     {
         return getEdges(vert);
     }
