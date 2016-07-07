@@ -1,7 +1,6 @@
 package sprax.arrays;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Random;
 
 import sprax.sprout.Sx;
