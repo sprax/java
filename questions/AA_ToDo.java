@@ -6,6 +6,13 @@ package sprax.questions;
 
 /**
  * TODO:
+ * revive Kalman filter project
+ * Also revive HMM
+ * branch and bound for something simpler...
+ * SLAM sensors
+ * Robot motion through moving field of obstacles
+ * Map-to-graph program, visual or otherwise
+ * Edge-following from old NeXT machine project?
  * re-factor Poppers and add ML at least for guiding heuristic search
  * Family Trees
  * Map problem: where to hold a reunion to minimize collective cost.
