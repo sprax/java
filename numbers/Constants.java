@@ -5,24 +5,44 @@ package sprax.numbers;
  * @author sprax
  */
 
-import java.util.Arrays;
-
-import org.apache.commons.lang3.EnumUtils;
-
-import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 public class Constants 
 {
     //// constants of type int
-    public final static int Fibonaccis[] = {
-                                    1, 1, 2, 3, 5, 8, 13,
-                                    21, 34, 55, 89, 144, 233, 377,
-                                    610, 987, 1597, 2584, 4181, 6765, 10946,
-                                    17711, 28657, 46368, 75025, 121393, 196418, 317811,
-                                    514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465,
-                                    14930352, 24157817, 39088169, 63245986, 102334155, 165580141
-                                    }; // compare to int java.lang.Integer.MAX_VALUE = 2147483647 [0x7fffffff]
+    
+    public static final int FIBONACCIS[] = {
+        1, 1, 2, 3, 5, 8, 13,
+        21, 34, 55, 89, 144, 233, 377,
+        610, 987, 1597, 2584, 4181, 6765, 10946,
+        17711, 28657, 46368, 75025, 121393, 196418, 317811,
+        514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465,
+        14930352, 24157817, 39088169, 63245986, 102334155, 165580141
+    }; // compare to int java.lang.Integer.MAX_VALUE = 2147483647 [0x7fffffff]
+    
+    /** A highly composite number (HCN) is a positive integer with more divisors
+     *  than any smaller positive integer. 
+     */
+    public static final long HIGHLY_COMPOSITES[] = {
+        1, 2, 4, 6, 12, 24, 36, 48, 60, 120, 180, 240, 360, 720, 840, 1260, 1680, 2520, 5040, 7560
+    };
+    
+    /**
+     * A perfect number is an integer that is the sum of its positive proper divisors 
+     * (all divisors except itself).
+     */
+    public static final long PERFECT_NUMBERS[] = {
+        6, 28, 496, 8128, 33550336, 
+        // 8589869056, 
+        // 137438691328,
+        // 2305843008139952128,
+        // 2658455991569831744654692615953842176,
+        // 191561942608236107294793378084303638130997321548169216
+    };
+    
+    
+    // public static final long MAX_64BIT_SIGNED = 9223372036854775807;    // 2**63 − 1
+    public static final long MAX_LONG = Long.MAX_VALUE;
     
     //// constants of type double
     static public final double EULERS = Math.E; // 2.71828182845904523536028747135266249775724709369995
