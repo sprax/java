@@ -14,6 +14,7 @@ public class Sz
     public static int oneIfDiff(boolean result, boolean expected) { return result == expected ? 0 : 1; }
     public static int oneIfDiff(int result, int expected) { return result == expected ? 0 : 1; }
     public static int oneIfDiff(float result, float expected) { return result == expected ? 0 : 1; }
+    public static int oneIfDiff(double result, double expected) { return result == expected ? 0 : 1; }
     public static int oneIfDiff(String result, String expected) { return result.equals(expected) ? 0 : 1; }
 
     public static int showWrong(int result, int expected)
