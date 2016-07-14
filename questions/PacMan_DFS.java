@@ -1,8 +1,6 @@
 package sprax.questions;
 
 
-/** NIECE: No Input Error Checking/Exceptions */
-
 /**********************************************
 AI has a lot of problems that involve searches.In this track you will learn most of the search techniques used in AI.
 
@@ -83,6 +81,71 @@ Sample Input
 %.-----------------%  
 %%%%%%%%%%%%%%%%%%%%
 
+Game 2:
+25 13
+3 1
+27 28
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%------------%%------------%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%.%%%%-%%%%%-%%-%%%%%-%%%%-%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%--------------------------%
+%-%%%%-%%-%%%%%%%%-%%-%%%%-%
+%-%%%%-%%-%%%%%%%%-%%-%%%%-%
+%------%%----%%----%%------%
+%%%%%%-%%%%%-%%-%%%%%-%%%%%%
+%%%%%%-%%%%%-%%-%%%%%-%%%%%%
+%%%%%%-%------------%-%%%%%%
+%%%%%%-%-%%%%--%%%%-%-%%%%%%
+%--------%--------%--------%
+%%%%%%-%-%%%%%%%%%%-%-%%%%%%
+%%%%%%-%------------%-%%%%%%
+%%%%%%-%-%%%%%%%%%%-%-%%%%%%
+%------------%%------------%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%---%%----------------%%---%
+%%%-%%-%%-%%%%%%%%-%%-%%-%%%
+%%%-%%-%%-%%%%%%%%-%%-%%-%%%
+%------%%----%%----%%------%
+%-%%%%%%%%%%-%%-%%%%%%%%%%-%
+%------------P-------------%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Game 3:
+25 13
+3 1
+27 28
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%------------%%------------%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%.%%%%-%%%%%-%%-%%%%%-%%%%-%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%--------------------------%
+%-%%%%-%%-%%%%%%%%-%%-%%%%-%
+%-%%%%-%%-%%%%%%%%-%%-%%%%-%
+%------%%----%%----%%------%
+%%%%%%-%%%%%-%%-%%%%%-%%%%%%
+%%%%%%-%%%%%-%%-%%%%%-%%%%%%
+%%%%%%-%------------%-%%%%%%
+%%%%%%-%-%%%%--%%%%-%-%%%%%%
+%--------%--------%--------%
+%%%%%%-%-%%%%%%%%%%-%-%%%%%%
+%%%%%%-%------------%-%%%%%%
+%%%%%%-%-%%%%%%%%%%-%-%%%%%%
+%------------%%------------%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%-%%%%-%%%%%-%%-%%%%%-%%%%-%
+%---%%----------------%%---%
+%%%-%%-%%-%%%%%%%%-%%-%%-%%%
+%%%-%%-%%-%%%%%%%%-%%-%%-%%%
+%------%%----%%----%%------%
+%-%%%%%%%%%%-%%-%%%%%%%%%%-%
+%------------P-------------%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 Sample Output
 
 In this example, PacMan is at the position(3, 9) and the food is at the position(5, 1).
@@ -96,28 +159,32 @@ import java.awt.Point;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class PacMan_DFS {
-    
+public class PacMan_DFS 
+{    
     static final char VISITED = 'V';
     static final char OBSTACLE = '%';
     
+    /** 
+     * DFS search for PacMan food pellet.
+     * NIECE: No Input Error Checking/Exceptions
+     */
     static void dfs(int rows, int colsc, int pacman_r, int pacman_c, int food_r, int food_c, String[] grid)
     {
         char[][] visited = new char[rows][colsc];
         int nodesVisited = 0;
-        
-        //Sx.putsStringArray("grid:", grid);
-        
         Stack<Point> stack = new Stack<Point>();
+        ArrayList<Point> path = new ArrayList<Point>();
         stack.push(new Point(pacman_r, pacman_c));
         int row, col;
+        
         while (! stack.isEmpty()) {
             Point point = stack.pop();
             nodesVisited++;
                
             row = point.x;
             col = point.y;
-            System.out.format("(%d, %d)\n", row, col);
+            //System.out.format("%d %d\n", row, col);
+            path.add(point);
             
             if (row == food_r && col == food_c) {
                 // System.out.format("Found food at %d, %d\n", row, col);
@@ -156,10 +223,25 @@ public class PacMan_DFS {
                 stack.push(new Point(row, col));
             }   
         }
+        // Entire DFS "tree"
         // System.out.format("Nodes visited: ");
-        System.out.println(nodesVisited-1);
+        System.out.println(nodesVisited); 
+        for (Point point : path) {
+            row = point.x;
+            col = point.y;
+            System.out.format("%d %d\n", row, col);
+        }
         
+        // Only the winning path:
+        System.out.println(nodesVisited-1); 
+        for (Point point : path) {
+            row = point.x;
+            col = point.y;
+            System.out.format("%d %d\n", row, col);
+        }
     }
+    
+
     
     static boolean canVisit(int row, int col, String[] grid, char[][] visited) {
         if (row < 0 || row >= grid.length || col < 0 || col >= visited[0].length)
