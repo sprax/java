@@ -58,12 +58,16 @@ public class Constants
         Sz.begin(testName);
         int numWrong = 0;
                 
-        double E_diff = EULERS - Math.exp(1.0);
-        numWrong += Sz.oneIfDiff(E_diff, 0.0);
+        double diff = EULERS - Math.exp(1.0);
+        numWrong += Sz.oneIfDiff(diff, 0.0);
 
         double goldenRatio = (1.0 + Math.sqrt(5.0)) / 2.0;
-        double G_diff = GOLDEN_RATIO - goldenRatio;
-        numWrong += Sz.oneIfDiff(G_diff, 0.0);
+        diff = goldenRatio - GOLDEN_RATIO;
+        numWrong += Sz.oneIfDiff(diff, 0.0);
+
+        double goldenRecip = (1.0 - Math.sqrt(5.0)) / 2.0;
+        diff = goldenRecip - GOLDEN_RECIP;
+        numWrong += Sz.oneIfDiff(diff, 0.0);
 
         Sz.end(testName, numWrong);
         return numWrong;
