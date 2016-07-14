@@ -61,9 +61,13 @@ A node is marked explored only when the node is popped out of the stack.
  (E)in the first line.Starting from the source node, 'P' (including it), 
  print all the nodes(r, c) expanded using DFS each node in a new line(r, c) until the food node is explored.
 
-E r c r1 c1 ....
+E 
+r c 
+r1 c1 
+....
 
-Then, print the distance 'D' between the source 'P' and the destination '.' calculated using DFS.
+Then, print the distance 'D' between the source 'P' and the destination '.' 
+calculated using DFS.
 
 D + 1 lines follow, each line having a node encountered between 'P' and '.' both included.
 D + 1 lines essentially representing the path between source and the destination.
@@ -156,6 +160,7 @@ both included is printed in the next 33 lines.
 *******************************************************/
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -163,6 +168,16 @@ public class PacMan_DFS
 {    
     static final char VISITED = 'V';
     static final char OBSTACLE = '%';
+    
+    static class Step 
+    {
+        Point here;
+        Step prev;
+        Step(int row, int col, Step prev) {
+            this.here = new Point(row, col);
+            this.prev = prev;
+        }
+    }
     
     /** 
      * DFS search for PacMan food pellet.
@@ -172,19 +187,19 @@ public class PacMan_DFS
     {
         char[][] visited = new char[rows][colsc];
         int nodesVisited = 0;
-        Stack<Point> stack = new Stack<Point>();
-        ArrayList<Point> path = new ArrayList<Point>();
-        stack.push(new Point(pacman_r, pacman_c));
+        Stack<Step> stack = new Stack<Step>();
+        ArrayList<Step> tree = new ArrayList<Step>();
+        stack.push(new Step(pacman_r, pacman_c, null));
         int row, col;
         
         while (! stack.isEmpty()) {
-            Point point = stack.pop();
+            Step step = stack.pop();
             nodesVisited++;
                
-            row = point.x;
-            col = point.y;
+            row = step.here.x;
+            col = step.here.y;
             //System.out.format("%d %d\n", row, col);
-            path.add(point);
+            tree.add(step);
             
             if (row == food_r && col == food_c) {
                 // System.out.format("Found food at %d, %d\n", row, col);
@@ -197,7 +212,7 @@ public class PacMan_DFS
             row--;
             if (canVisit(row, col, grid, visited)) {
                 visited[row][col] = VISITED;
-                stack.push(new Point(row, col));
+                stack.push(new Step(row, col, step));
             }
             
             // LEFT:
@@ -205,14 +220,14 @@ public class PacMan_DFS
             col--;
             if (canVisit(row, col, grid, visited)) {
                 visited[row][col] = VISITED;
-                stack.push(new Point(row, col));
+                stack.push(new Step(row, col, step));
             }
             
             // RIGHT
             col += 2;
             if (canVisit(row, col, grid, visited)) {
                 visited[row][col] = VISITED;
-                stack.push(new Point(row, col));
+                stack.push(new Step(row, col, step));
             }
             
             // DOWN
@@ -220,28 +235,32 @@ public class PacMan_DFS
             row++;
             if (canVisit(row, col, grid, visited)) {
                 visited[row][col] = VISITED;
-                stack.push(new Point(row, col));
+                stack.push(new Step(row, col, step));
             }   
         }
         // Entire DFS "tree"
         // System.out.format("Nodes visited: ");
+        assert(nodesVisited == tree.size());
         System.out.println(nodesVisited); 
-        for (Point point : path) {
-            row = point.x;
-            col = point.y;
+        for (Step step : tree) {
+            row = step.here.x;
+            col = step.here.y;
             System.out.format("%d %d\n", row, col);
         }
         
         // Only the winning path:
-        System.out.println(nodesVisited-1); 
-        for (Point point : path) {
+        ArrayList<Point> path = new ArrayList<Point>();
+        for (Step step = tree.get(nodesVisited - 1); step != null; step = step.prev) {
+            path.add(step.here);
+        }
+        System.out.println(path.size() - 1); 
+        for (int j = path.size(); --j >= 0; ) {
+            Point point = path.get(j);
             row = point.x;
             col = point.y;
             System.out.format("%d %d\n", row, col);
         }
     }
-    
-
     
     static boolean canVisit(int row, int col, String[] grid, char[][] visited) {
         if (row < 0 || row >= grid.length || col < 0 || col >= visited[0].length)
