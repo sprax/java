@@ -307,11 +307,20 @@ public class Sx
         return numChars;
     }
     
+    public static void putsStringArray(String label, String[] ss)
+    {
+        puts(label);
+        for (String str : ss)
+            puts(str);
+        puts();
+    }
+    
     public static void putsArray(char A[], int numSpaces, int numChars)
     {
         printArray(A, numSpaces, numChars);
         puts();
     }
+    
     
     public static void printSubArray(char A[], int start, int end)
     {

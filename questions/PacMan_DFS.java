@@ -14,7 +14,11 @@ The first line contains 2 space separated integers which is the position of the 
 The second line contains 2 space separated integers which is the position of the food.
 The third line of the input contains 2 space separated integers indicating the size of the rows and columns respectively.The largest grid size is 30x30.
 
-This is followed by row(r) lines each containing column(c) characters.A wall is represented by the character '%' (ascii value 37), PacMan is represented by UpperCase alphabet 'P' (ascii value 80), empty spaces which can be used by PacMan for movement is represented by the character '-' (ascii value 45) and food is represented by the character '.' (ascii value 46)
+This is followed by row(r) lines each containing column(c) characters.
+A wall is represented by the character '%' (ascii value 37), 
+PacMan is represented by UpperCase alphabet 'P' (ascii value 80), 
+empty spaces which can be used by PacMan for movement is represented by the character '-' (ascii value 45)
+and food is represented by the character '.' (ascii value 46)
 
 You have to mark the nodes explored while populating it into the stack and not when its expanded.
 
@@ -24,7 +28,8 @@ Note
 
 Populating Stack
 
-In order to maintain uniformity across submissions, please follow the below mentioned order in pushing nodes to stack.If a node has all the 4 adjacent neighbors.Then,
+In order to maintain uniformity across submissions, please follow the below mentioned order in pushing nodes to stack.
+If a node has all the 4 adjacent neighbors.  Then,
 
 UP is inserted first into the stack, followed by LEFT, followed by RIGHT and then by DOWN.
 
@@ -42,15 +47,28 @@ Constraints
 
 Output Format
 
-Each cell in the grid is represented by its position in the grid(r, c).PacMan can move only UP, DOWN, LEFT or RIGHT.Your task is to print all the nodes that you encounter while printing DFS tree.While populating the stack, the following convention must be followed.
+Each cell in the grid is represented by its position in the grid(r, c).
+PacMan can move only UP, DOWN, LEFT or RIGHT.
+Your task is to print all the nodes that you encounter while searching the DFS tree.
+While populating the stack, the following convention must be followed.
 
-% %-- -
+% 
+%--
+ -
 In the above cell, LEFT and UP are invalid moves.You can either go RIGHT or DOWN.RIGHT is pushed first followed by DOWN.
 
-Print the number of nodes explored(a node is marked explored only when the node is popped out of the stack) (E)in the first line.Starting from the source node, 'P' (including it), print all the nodes(r, c) expanded using DFS each node in a new line(r, c) until the food node is explored.
+Print the number of nodes explored.
+
+A node is marked explored only when the node is popped out of the stack.
+ (E)in the first line.Starting from the source node, 'P' (including it), 
+ print all the nodes(r, c) expanded using DFS each node in a new line(r, c) until the food node is explored.
 
 E r c r1 c1 ....
-Then, print the distance 'D' between the source 'P' and the destination '.' calculated using DFS.D + 1 lines follow, each line having a node encountered between 'P' and '.' both included.D + 1 lines essentially representing the path between source and the destination.
+
+Then, print the distance 'D' between the source 'P' and the destination '.' calculated using DFS.
+
+D + 1 lines follow, each line having a node encountered between 'P' and '.' both included.
+D + 1 lines essentially representing the path between source and the destination.
 
 Sample Input
 
@@ -65,10 +83,7 @@ Sample Input
 %.-----------------%  
 %%%%%%%%%%%%%%%%%%%%
 
-
 Sample Output
-
-sample output
 
 In this example, PacMan is at the position(3, 9) and the food is at the position(5, 1).
 DFS tree is printed starting from(3, 9) until the food node is expanded.
@@ -77,36 +92,102 @@ All the nodes encountered between(3, 9) and(5, 1)
 both included is printed in the next 33 lines.
 *******************************************************/
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
+import java.awt.Point;
+import java.util.Scanner;
+import java.util.Stack;
 
 public class PacMan_DFS {
-    static void dfs(int r, int c, int pacman_r, int pacman_c, int food_r, int food_c, String[] grid){
-        //Your logic here
-    }
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-
-
-        int pacman_r = in.nextInt();
-        int pacman_c = in.nextInt();
-
-        int food_r = in.nextInt();
-        int food_c = in.nextInt();
-
-        int r = in.nextInt();
-        int c = in.nextInt();
-
-        String grid[] = new String[r];
-
-        for (int i = 0; i < r; i++) {
-            grid[i] = in.next();
+    
+    static final char VISITED = 'V';
+    static final char OBSTACLE = '%';
+    
+    static void dfs(int rows, int colsc, int pacman_r, int pacman_c, int food_r, int food_c, String[] grid)
+    {
+        char[][] visited = new char[rows][colsc];
+        int nodesVisited = 0;
+        
+        //Sx.putsStringArray("grid:", grid);
+        
+        Stack<Point> stack = new Stack<Point>();
+        stack.push(new Point(pacman_r, pacman_c));
+        int row, col;
+        while (! stack.isEmpty()) {
+            Point point = stack.pop();
+            nodesVisited++;
+               
+            row = point.x;
+            col = point.y;
+            System.out.format("(%d, %d)\n", row, col);
+            
+            if (row == food_r && col == food_c) {
+                // System.out.format("Found food at %d, %d\n", row, col);
+                break;
+            }
+            
+            // UP is inserted first, LEFT is inserted second, then RIGHT, and DOWN.
+            
+            // UP:
+            row--;
+            if (canVisit(row, col, grid, visited)) {
+                visited[row][col] = VISITED;
+                stack.push(new Point(row, col));
+            }
+            
+            // LEFT:
+            row++;
+            col--;
+            if (canVisit(row, col, grid, visited)) {
+                visited[row][col] = VISITED;
+                stack.push(new Point(row, col));
+            }
+            
+            // RIGHT
+            col += 2;
+            if (canVisit(row, col, grid, visited)) {
+                visited[row][col] = VISITED;
+                stack.push(new Point(row, col));
+            }
+            
+            // DOWN
+            col--;
+            row++;
+            if (canVisit(row, col, grid, visited)) {
+                visited[row][col] = VISITED;
+                stack.push(new Point(row, col));
+            }   
         }
-
-        dfs(r, c, pacman_r, pacman_c, food_r, food_c, grid);
+        // System.out.format("Nodes visited: ");
+        System.out.println(nodesVisited-1);
+        
+    }
+    
+    static boolean canVisit(int row, int col, String[] grid, char[][] visited) {
+        if (row < 0 || row >= grid.length || col < 0 || col >= visited[0].length)
+            return false;
+        return (grid[row].charAt(col) != OBSTACLE && visited[row][col] != VISITED);
+    }
+    
+    public static void main(String[] args) {
+        
+        try (Scanner in = new Scanner(System.in)) {
+            
+            int pacman_r = in.nextInt();
+            int pacman_c = in.nextInt();
+            
+            int food_r = in.nextInt();
+            int food_c = in.nextInt();
+            
+            int r = in.nextInt();
+            int c = in.nextInt();
+            
+            String grid[] = new String[r];
+            
+            for (int i = 0; i < r; i++) {
+                grid[i] = in.next();
+            }
+            
+            dfs(r, c, pacman_r, pacman_c, food_r, food_c, grid);
+        }
     }
 }
 
