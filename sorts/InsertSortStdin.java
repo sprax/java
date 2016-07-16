@@ -3,8 +3,8 @@
  *************************************************************************/
 package sprax.sorts;
 
-import java.io.*;
-import java.util.*;
+import java.util.Scanner;
+
 import sprax.test.Sz;
 
 public class InsertSortStdin<T extends Comparable<T>> implements SortInt
@@ -29,6 +29,28 @@ public class InsertSortStdin<T extends Comparable<T>> implements SortInt
         printArray(ar);
     }
     
+    public static int insertionSortArrayCountShifts(int[] ar)
+    {       
+        int shifts = 0;
+        for (int j = 1; j < ar.length; j++)
+            shifts += insertSortHeadCountShifts(ar, j);
+        return shifts;
+    }  
+    
+    public static int insertSortHeadCountShifts(int[] ar, int idx) {
+        int val = ar[idx];
+        int shifts = 0;
+        while (--idx >= 0 && val < ar[idx]) {
+            ar[idx+1] = ar[idx];
+            shifts++;
+        }
+        ar[idx+1] = val;
+        //printArray(ar);
+        return shifts;
+    }
+    
+    
+    
     public static void sortStdin() 
     {
         try (Scanner in = new Scanner(System.in)) {
@@ -37,7 +59,8 @@ public class InsertSortStdin<T extends Comparable<T>> implements SortInt
             for(int i=0;i<s;i++){
                 ar[i]=in.nextInt(); 
             }
-            insertionSortArray(ar);    
+            int shifts = insertionSortArrayCountShifts(ar);
+            System.out.println(shifts);
         }    
     }
     
