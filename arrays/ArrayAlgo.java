@@ -90,6 +90,24 @@ public class ArrayAlgo
 		arr[beg] = arr[end];
 		arr[end] = temp;
 	}
+	
+	public static void reverseArray(char[] arr)
+	{
+		if (arr == null || arr.length < 2)
+			return;
+		for (int beg = 0, end = arr.length; --end > beg; ++beg)
+		{
+			arraySwap(arr,  beg, end);
+		}	
+	}
+
+	private static void arraySwap(char[] arr, int beg, int end) 
+	{
+		char tmp = arr[beg];
+		arr[beg] = arr[end];
+		arr[end] = tmp;
+	}
+	
 
 	public static <T> void arrayListSwap(ArrayList<T> list, int j, int k) 
 	{
@@ -114,13 +132,7 @@ public class ArrayAlgo
 		array[j] = array[k];
 		array[k] = tmp;
 	}
-
-	public static void arraySwap(char[] A, int i, int j) {
-		char temp = A[i];
-		A[i] = A[j];
-		A[j] = temp;
-		return;
-	}
+	
 
 	public static <T> void reverseArray(T array[]) 
 	{
@@ -130,15 +142,7 @@ public class ArrayAlgo
 			array[beg] = temp;
 		}
 	}     
-
-	public static void reverseArray(char array[]) 
-	{
-		for (int beg = 0, end = array.length; --end > beg; beg++) {
-			char temp  = array[end];
-			array[end] = array[beg];
-			array[beg] = temp;
-		}
-	}      
+ 
 
 	/**
 	 * Reverses the sub-array array[beg, end), that is, the part of array
