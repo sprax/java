@@ -10,51 +10,59 @@ import sprax.test.Sz;
  */
 public class BinSearchGuess 
 {
+    static Random RNG = new Random(System.currentTimeMillis());
+
+    int theNumber;
+  
     public static void main(String[] args) { unit_test(); }
 
-    public static int unit_test() {
+    public static int unit_test() 
+    {
         String testName = BinSearchGuess.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         
-        
-        int result = guessNumber(RANGE);
-        int expected = NUMBER;
-        Sx.format("NUMBER = %2d  %2d = result\n", expected, result);
-        
-        
-        for (int j = 0; j < 12; j++)
-            numWrong += test_guessNumber();
+        BinSearchGuess bng = new BinSearchGuess();
+                
+        numWrong += test_guessNumber(bng, 1, 1);
+        numWrong += test_guessNumber(bng, 1, 2);
+        numWrong += test_guessNumber(bng, 2, 2);
+        numWrong += test_guessNumber(bng, 1, 3);
+        numWrong += test_guessNumber(bng, 2, 3);
+        numWrong += test_guessNumber(bng, 3, 3);
+        numWrong += test_guessNumber(bng, Integer.MAX_VALUE - 1, Integer.MAX_VALUE);
 
+        for (int j = 0; j < 12; j++) {
+            int number = 1 + RNG.nextInt(Integer.MAX_VALUE);
+            numWrong += test_guessNumber(bng, number, number+1);
+        }
+        
         Sz.end(testName, numWrong);
         return numWrong;
     }
-    
-    private static int NUMBER = 1702766719;
-    private static int RANGE = Integer.MAX_VALUE - 1;
-
-    private static Random RNG = new Random(System.currentTimeMillis());
-    
-    public static int test_guessNumber()
+        
+    public static int test_guessNumber(BinSearchGuess bng, int num, int maxNum)
     {
-        NUMBER = RNG.nextInt(100);
-        int result = guessNumber(NUMBER + 1);
-        int expected = NUMBER;
-        Sx.format("NUMBER = %2d  %2d = result\n", NUMBER, result);
-        return Sz.showWrong(result, expected);
+        int expect = bng.theNumber = num;
+        
+        int result = bng.guessNumber(maxNum);
+        Sx.format("Expect %2d  %2d result\n", expect, result);
+        return Sz.showWrong(result, expect);
     }
 
-    static int guess(int x) {
-        return Integer.compare(NUMBER, x);
+    int guess(int x) {
+        return Integer.compare(theNumber, x);
     }
     
-    public static int guessNumber(int n) 
+    public int guessNumber(int n) 
     {
         if (n < 1)
             throw new IllegalArgumentException("n < 1");
-        int lo = 0, hi = n;
+        int lo = 1, hi = n;
         while(true) {
-            int md = (lo + 1)/2 + hi/2;
+            if (lo == hi)
+                return lo;
+            int md = lo/2 + hi/2;
             int ic = guess(md);
             if (ic > 0)
                 lo = md + 1;
