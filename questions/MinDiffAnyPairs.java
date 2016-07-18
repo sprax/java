@@ -21,7 +21,7 @@ import sprax.test.Sz;
 
  * </pre>
  */
-public class MinDiffPairs
+public class MinDiffAnyPairs
 {
     static class DiffPair implements Comparable<DiffPair>
     {
@@ -67,41 +67,24 @@ public class MinDiffPairs
         }
     }
 
-    public static DiffPair[] scanDiffPairArray() 
-    {    
-        try (Scanner in = new Scanner(System.in)) {
-            
-            int numEntries = in.nextInt() / 2;		// N ints => N/2 pairs
-            DiffPair dp[] = new DiffPair[numEntries];
-            for (int j = 0; j < numEntries; j++) {
-            	int xx = in.nextInt();
-            	int yy = in.nextInt();
-            	dp[j] = new DiffPair(xx, yy);
-            }
-            return dp;
-        } catch(Throwable ex)
-        {
-        	System.out.println("scanIntArray returning empty array; caught:\n" + ex);
-        	return new DiffPair[0];
-        }
-    }
 
-    public static int showMinDiffPairs(DiffPair diffPairs[])
+    public static int showMinDiffAnyPairs(final int array[])
     {
+    	Arrays.sort(array);
     	ArrayList<DiffPair> dpList = new ArrayList<>();
     	int minDiff = Integer.MAX_VALUE;
-    	for (DiffPair dp : diffPairs) {
-    		int diff = dp.absDiff;
+    	for (int j = 1; j < array.length; j++) {
+    		int diff = array[j] - array[j-1];
     		if (minDiff < diff)
     			continue;
     		if (minDiff > diff) {
     			minDiff = diff;
     			dpList.clear();
     		}
+    		DiffPair dp = new DiffPair(array[j-1], array[j]);
     		dpList.add(dp);
     	}
-    	Collections.sort(dpList);
-    	// dpList.sort(CompDiffPair::compare);
+
     	for (DiffPair dp : dpList)
     		System.out.format("%d %d ", dp.xx, dp.yy);
     	System.out.println();
@@ -111,12 +94,12 @@ public class MinDiffPairs
     
     public static int unit_test(int level)
     {
-        String testName = MinDiffPairs.class.getName() + ".unit_test";
+        String testName = MinDiffAnyPairs.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         
-        DiffPair[] dpArray = scanDiffPairArray();
-        showMinDiffPairs(dpArray);
+        int array[] = scanIntArray();
+        showMinDiffAnyPairs(array);
         
         Sz.end(testName, numWrong);
         return numWrong;
