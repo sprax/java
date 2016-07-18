@@ -1,8 +1,4 @@
 /*
-https://www.careercup.com/question?id=5760148355153920 * Median
- * 
- * Copyright (c) 2001, 2002, 2003 Marco Schmidt.
- * All rights reserved.
  */
 
 package sprax.questions;

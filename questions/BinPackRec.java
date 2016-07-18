@@ -1,8 +1,4 @@
 /*
- * Median
- * 
- * Copyright (c) 2001, 2002, 2003 Marco Schmidt.
- * All rights reserved.
  */
 
 package sprax.questions;
