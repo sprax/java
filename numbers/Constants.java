@@ -49,6 +49,11 @@ public class Constants
     static public final double GOLDEN_RATIO = 1.618033988749894848204586834365638117720;
     static public final double GOLDEN_RECIP = 1.0 / GOLDEN_RATIO;
     static public final double PI = Math.PI;
+    static public final double NAT_LOG_2 = Math.log(2.0); // Note:  log2(x) = log(x)/log(2)
+    static public final double LOG_2_RECIP = 1.0/Math.log(2.0); // Note:  log2(x) = log(x) * (1/log(2))
+    
+    
+
 
 
 
