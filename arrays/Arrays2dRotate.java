@@ -78,7 +78,6 @@ public class Arrays2dRotate
                 { 16, 17, 18, 19, 20 },
                 { 21, 22, 23, 24, 25 },
         };
-        
         int iB[][] = {
                 {  6,  7,  2,  3,  4 },
                 { 11, 12,  7,  8,  5 },
@@ -87,10 +86,21 @@ public class Arrays2dRotate
                 { 22, 23, 24, 25, 20 },
         };
         
-        Sx.putsArray("Original  2D array:\n", iA);
+        Sx.putsArray("Original square 2D array:\n", iA);
         rotateClockwise(iA);
-        Sx.putsArray("RotatedCW 2D array:\n", iA);
+        Sx.putsArray("Clockwise-rotated 5x5 2D array:\n", iA);
         numWrong += ArrayDiffs.sumOfSquaredDifferences(iA, iB);
+        
+        rotateClockwise(iA, 2, 1, 3);
+        Sx.putsArray("Now with clockwise-rotated sub-array (row 2, col 1, size 3):\n", iA);
+        int iC[][] = {
+                {  6,  7,  2,  3,  4 },
+                { 11, 12,  7,  8,  5 },
+                { 16, 18, 17, 13, 10 },
+                { 21, 23, 19,  9, 15 },
+                { 22, 24, 25, 14, 20 },
+        };
+        numWrong += ArrayDiffs.sumOfSquaredDifferences(iA, iC);
 
 		Sz.end(testName, numWrong);
 		return numWrong;
