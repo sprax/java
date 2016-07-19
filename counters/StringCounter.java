@@ -10,8 +10,8 @@ class StringCount implements Comparable<StringCount>
 	public static final AscendingStringCountsComp sAscendingStringCountsComp = new AscendingStringCountsComp();
 	public static final DescendingStringCountsComp sDescendingStringCountsComp = new DescendingStringCountsComp();
 
-	String mString;
-	int	mCount;
+	protected String mString;
+	protected int	mCount;
 	
 	StringCount(String q, int c)
 	{
@@ -44,7 +44,7 @@ class StringCount implements Comparable<StringCount>
 	public String toString()
 	{
 		return "(" + mString + " : " + mCount + ")";
-	}	
+	}
 }
 
 class AscendingStringCountsComp implements Comparator<StringCount>
