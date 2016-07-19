@@ -31,6 +31,7 @@ public class BinSearchGuess
         numWrong += test_guessNumber(bng, 2, 3);
         numWrong += test_guessNumber(bng, 3, 3);
         numWrong += test_guessNumber(bng, Integer.MAX_VALUE - 1, Integer.MAX_VALUE);
+        numWrong += test_guessNumber(bng, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         for (int j = 0; j < 12; j++) {
             int number = 1 + RNG.nextInt(Integer.MAX_VALUE);
@@ -54,9 +55,8 @@ public class BinSearchGuess
         return Integer.compare(theNumber, x);
     }
     
-    public int guessNumber(int n) 
-    {
-        if (n < 1)
+    public int guessNumber(int n) {
+         if (n < 1)
             throw new IllegalArgumentException("n < 1");
         int lo = 1, hi = n;
         while(true) {

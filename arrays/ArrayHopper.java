@@ -1,9 +1,13 @@
 package sprax.arrays;
 
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /**
- * Question:
+ * Array Hopper Problem:
+ * Question: Find the minimum number of steps to reach the end of array from start 
+ * Each array value give the max size of the next step, but you can also use a smaller
+ * step.  Usually the arrays are specified to be non-negative.
  * Answers:
  */
 public abstract class ArrayHopper
@@ -39,7 +43,6 @@ abstract class ArrayHopperWithAuxArray extends ArrayHopper
         mMinHops = new int[inputArray.length];
     }
 }
-
 
 
 /** 
@@ -157,27 +160,30 @@ class ArrayHopperDP extends ArrayHopperWithAuxArray
 
 class ArrayHopperTest
 {   
-	public static int test_ArrayHopper(ArrayHopper arrayHopper, int[] iA)
+	public static int test_ArrayHopper(ArrayHopper arrayHopper, int[] iA, int expectedMinNumHops)
 	{
 		String className = arrayHopper.getClass().getSimpleName();
 		int minNumHops = arrayHopper.countHops(iA);
 		Sx.format("%s.countHops(...) returned %d\t", className, minNumHops);
 		arrayHopper.showCounts();
-		return 0;
+		return Sz.showWrong(minNumHops, expectedMinNumHops);
 	}
 
-	public static void testHoppers(ArrayHopper[] hoppers, int[] iA)
+	public static int testHoppers(ArrayHopper[] hoppers, int[] iA, int expectedMinNumHops)
 	{
+	    int numWrong = 0;
 		for (ArrayHopper hopper : hoppers)
 		{
-	        test_ArrayHopper(hopper, iA);
+	        numWrong += test_ArrayHopper(hopper, iA, expectedMinNumHops);
 		}
+		return numWrong;
 	}
 	
 	public static int unit_test(int lvl) 
 	{
 		String  testName = ArrayHopper.class.getName() + ".unit_test";
-		Sx.puts(testName + " BEGIN");    
+		Sz.begin(testName);
+		int numWrong = 0;
 
         int iA[] = { 1, 2, 2, 0, 3, 0, 0, 2 }; // expected answer: 6
         int iB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
@@ -191,16 +197,16 @@ class ArrayHopperTest
 		ArrayHopper hoppers[] = { hopperGRF, hopperRBF, hopperNDP };
 
         Sx.putsArray("iA: ", iA);
-        testHoppers(hoppers, iA);
+        numWrong += testHoppers(hoppers, iA, 5);
 
         Sx.putsArray("iB: ", iB);
-        testHoppers(hoppers, iB);
+        numWrong += testHoppers(hoppers, iB, 2);
         
         Sx.putsArray("iC: ", iC);
-        testHoppers(hoppers, iC);
+        numWrong += testHoppers(hoppers, iC, 4);
 
-		Sx.puts(testName + " END");    
-		return 0;
+        Sz.end(testName, numWrong);
+		return numWrong;
 	}
 
 	public static void main(String[] args) { unit_test(1); }    

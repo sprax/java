@@ -7,7 +7,8 @@ package sprax.maths;
 import java.util.Arrays;
 
 /**
- * Minimal numbers of coins to make a sum, making change with odd denominations, dynamic programming.
+ * Minimal numbers of coins to make a sum, making change with odd denominations, 
+ * dynamic programming.
  */
 public abstract class MinimalCoins
 {

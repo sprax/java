@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-public class TreeMapCounter
+public class SortHashMapEntriesCounter
 {
     
     public static void main(String a[]) {
