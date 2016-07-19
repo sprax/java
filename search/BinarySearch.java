@@ -2,7 +2,7 @@ package sprax.search;
 
 import java.util.Arrays;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.selectors.Medians;
 import sprax.sorts.SortUtil;
 import sprax.sprout.Sx;
@@ -471,7 +471,7 @@ int main () {
             answers[j] = binarySearchLowerBoundDbl(sorted, value);
             Sx.format("%d   %f  ->  %d\n", j, value, answers[j]);
         }
-        ArrayAlgo.reverseArray(answers);
+        Arrays1d.reverseArray(answers);
         boolean descending = SortUtil.verifyIsNonDecreasing(answers, nValues);
         if (descending)
             return 0;

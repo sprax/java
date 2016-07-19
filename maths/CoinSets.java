@@ -113,7 +113,7 @@ class RecursiveSubCoinSets extends CoinSets
         if (sum < 0)
             return 0;
         
-        // If there are no coins and n is greater than 0, then no solution exist
+        // If there are no coins and n is greater than 0, then no solution exists
         if (subLength <= 0 && sum >= 1)
             return 0;
         
@@ -164,8 +164,8 @@ class DynamicCoinSets extends CoinSets
  * Dynamic programming O(MN) where M = number of denominations, N = sum
  *
  * Uses lazily cached results of a dynamic programming algorithm. Run time:
- * O(MN) where M = sum, N = denominations (num different coin values) Memory:
- * O(M) where M = max sum allowed. For US coins, M = 100 makes sense.
+ * O(MN) where M = sum, N = denominations (number of different coin values).
+ * Memory: O(M) where M = max sum allowed. For US coins, M = 100 makes sense.
  */
 class CachedDynamicCoinSets extends CoinSets
 {

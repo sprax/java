@@ -2,7 +2,7 @@ package sprax.maths;
 
 import java.util.Random;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -54,8 +54,8 @@ public class RandomNumbers
 			histogram[rand7fromRand5()]++;
 		}
 		Sx.putsArray("Historgram: ", histogram);
-		double mean = ArrayAlgo.mean(histogram);
-		double sdev = ArrayAlgo.stddev(histogram);
+		double mean = Arrays1d.mean(histogram);
+		double sdev = Arrays1d.stddev(histogram);
 		Sx.format("Mean and StdDev:  %f  %f\n", mean, sdev);
 		return 0;
 	}

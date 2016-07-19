@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.arrays.ArrayIter;
 import sprax.heaps.MaxHeap;
 import sprax.heaps.MinHeap;
@@ -429,7 +429,7 @@ public class SaveMax
         
         Sx.puts("saveMax using minHeap:");
         saved = Arrays.copyOf(savedMin5, savedMin5.length);
-        ArrayAlgo.reverseArray(saved);
+        Arrays1d.reverseArray(saved);
         MinHeap<Integer> minHeap = new MinHeap<Integer>(saved);
         Sx.putsArray(saved, " heapify and add 8");
         saveMax(minHeap, 8);

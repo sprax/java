@@ -3,7 +3,7 @@ package sprax.random;
 import java.util.Random;
 
 import sprax.test.Sz;
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.sprout.Sx;
 
 /**

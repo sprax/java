@@ -1,6 +1,6 @@
 package sprax.lists;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.sprout.Sx;
 
 public class SinLinkSort
@@ -399,8 +399,8 @@ public class SinLinkSort
         String strA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String stra = strA.toLowerCase();
         char[] chrZ = strA.toCharArray();
-        ArrayAlgo.reverseArray(chrZ);
-        ArrayAlgo.reverseArray(chrZ);
+        Arrays1d.reverseArray(chrZ);
+        Arrays1d.reverseArray(chrZ);
         SinList sinListA, sinListB;
         sinListA = SinList.fromString("JLPQRSTVW");
         // sinListA = SinList.fromString("01236789ACEKMOQR");

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.containers.Merges;
 import sprax.sprout.Sx;
 
@@ -423,7 +423,7 @@ public class Medians
         } else {
             for (int j = 0, end = 25 / 2; j < end; j++) {
                 JJ[0][0] = BIG_VAL;
-                ArrayAlgo.youngify(JJ, 0, 0, 5, 5, BIG_VAL);
+                Arrays1d.youngify(JJ, 0, 0, 5, 5, BIG_VAL);
                 Sx.putsArray("youngify " + j + ":\n", JJ);
             }
         }
@@ -461,7 +461,7 @@ public class Medians
         int end = (size - 1) / 2;
         for (int j = 0; j < end; j++) {
             AA[0][0] = bigVal;
-            ArrayAlgo.youngify(AA, 0, 0, nRows, nCols, bigVal);
+            Arrays1d.youngify(AA, 0, 0, nRows, nCols, bigVal);
             //S.debugArray(1, "After youngify " + j + ":\n", AA);
         }
         // System.out.format("0RD: %d %d %d\n", AA[0][0], AA[0][1], AA[1][0]);
@@ -498,7 +498,7 @@ public class Medians
         int ms[] = new int[9], q = 0;
         for (int j = 0; j < times; j++) {
             q = 0;
-            int AA[][] = ArrayAlgo.makeRandomRowColSortedArray(nRows, nCols, minVal, maxInc, seed);
+            int AA[][] = Arrays1d.makeRandomRowColSortedArray(nRows, nCols, minVal, maxInc, seed);
             minVal = AA[0][0];
             maxVal = AA[nRows - 1][nCols - 1];
             
@@ -928,7 +928,7 @@ public class Medians
     {
         if (AA == null) {
             int sqr = 7;
-            AA = ArrayAlgo.makeRandomRowColSortedArray(sqr, sqr, 100, 10, 1);
+            AA = Arrays1d.makeRandomRowColSortedArray(sqr, sqr, 100, 10, 1);
         }
         int nRows = AA.length, nCols = AA[0].length, size = nRows * nCols;
         int minVal = AA[0][0];

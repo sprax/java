@@ -1,6 +1,6 @@
 package sprax.shuffles;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.series.RunningMaxTest;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
@@ -111,7 +111,7 @@ public class Shuffles {
     {
         String testName = RunningMaxTest.class.getName() + ".unit_test";
         Sz.begin(testName);
-        Sx.puts(ArrayAlgo.class.getName() + ".unit_test");  
+        Sx.puts(Arrays1d.class.getName() + ".unit_test");  
         int numWrong = 0;
 
         numWrong += test_nonRandomShuffle();

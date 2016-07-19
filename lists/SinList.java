@@ -2,7 +2,7 @@ package sprax.lists;
 
 import java.util.Arrays;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.sprout.Sx;
 
 /**
@@ -1135,10 +1135,10 @@ public class SinList
         String strA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String stra = strA.toLowerCase();
         char[] chrZ = strA.toCharArray();
-        ArrayAlgo.reverseArray(chrZ);
+        Arrays1d.reverseArray(chrZ);
         String strZ = new String(chrZ);
         char[] chrz = stra.toCharArray();
-        ArrayAlgo.reverseArray(chrZ);
+        Arrays1d.reverseArray(chrZ);
         String strz = new String(chrz);
         String strZz = strZ + "-" + strz;
         

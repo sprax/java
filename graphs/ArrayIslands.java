@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.sprout.Sx;
 
 /**
@@ -185,7 +185,7 @@ public class ArrayIslands
     
     public static int unit_test(int level)
     {
-        String testName = ArrayAlgo.class.getName() + ".unit_test";
+        String testName = Arrays1d.class.getName() + ".unit_test";
         Sx.puts(testName + " BEGIN\n");
         
         int errors = test_ArrayIslands();

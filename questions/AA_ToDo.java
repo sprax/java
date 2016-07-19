@@ -1,5 +1,162 @@
 package sprax.questions;
 
+/*
+guard
+team
+song
+song
+song
+guard
+think
+song
+wallet
+think
+
+
+class WordOrd implements Comparable<WordOrd>
+{
+    public final Sting word;
+    public final int ord;   // original order index
+    WordOrd(String word, int ord) {
+        this.word = word;
+        this.ord = ord;
+}
+
+@Override
+int compare(WordOrd wA, WordOrd wB) {
+    return String.Compare(wA.word, wA.word);
+}
+}
+
+
+ArrayList<WordOrd> wordOrds = new ArrayList<>();
+
+try { BufferedReader reader = new BufferedReader(new FileReader(fileName)) {
+    String word;
+    int ord = 0;
+while (word = reader.readLine()) != null) {
+    list.add(new WordOrd(word, ord++));
+    }
+} catch (Exception ex) {
+    // error and return
+}
+
+
+
+guard
+team
+song
+song
+song
+guard
+think
+song
+wallet
+think
+
+
+class WordOrd implements Comparable<WordOrd>
+{
+    public final Sting word;
+    public final int ord;   // original order index
+    WordOrd(String word, int ord) {
+        this.word = word;
+        this.ord = ord;
+}
+
+@Override
+int compare(WordOrd wA, WordOrd wB) {
+    return String.Compare(wA.word, wA.word);
+}
+}
+
+
+ArrayList<WordOrd> wordOrds = new ArrayList<>();
+
+try { BufferedReader reader = new BufferedReader(new FileReader(fileName)) {
+    String word;
+    int ord = 0;
+while (word = reader.readLine()) != null) {
+    list.add(new WordOrd(word, ord++));
+    }
+} catch (Exception ex) {
+    // error and return
+}
+
+
+Collections.sort(WordOrds); // must be stable
+WordOrd uniqWordOrds[] = new WordOrd[wordOrds.size()];
+WordOrd prev = wordOrds.get(0);
+uniqWordOrds[0] = prev;
+int uniqCount = 1;
+
+guard
+team
+song
+song
+song
+guard
+think
+song
+wallet
+think
+
+
+class WordOrd implements Comparable<WordOrd>
+{
+    public final Sting word;
+    public final int ord;   // original order index
+    WordOrd(String word, int ord) {
+        this.word = word;
+        this.ord = ord;
+}
+
+@Override
+int compare(WordOrd wA, WordOrd wB) {
+    return String.Compare(wA.word, wA.word);
+}
+}
+
+
+ArrayList<WordOrd> wordOrds = new ArrayList<>();
+
+try { BufferedReader reader = new BufferedReader(new FileReader(fileName)) {
+    String word;
+    int ord = 0;
+while (word = reader.readLine()) != null) {
+    list.add(new WordOrd(word, ord++));
+    }
+} catch (Exception ex) {
+    // error and return
+}
+
+
+Collections.sort(WordOrds); // must be stable
+WordOrd uniqWordOrds[] = new WordOrd[wordOrds.size()];
+WordOrd prev = wordOrds.get(0);
+uniqWordOrds[0] = prev;
+int uniqCount = 1;
+for (int j = 1; j < wordOrds.size(); j++) {
+    WordOrd curr = wordOrds.get(j);
+      if (!  curr.word.equals(prev.word))
+        uniqWordOrds[uniqCount++] = curr;
+}
+
+
+Class CompOrder; // not here!
+
+Arrays.sort(uniqWordOrds, 0, uniqCount, compOrd);
+
+// uniqWords is now sorder by the ord field and has no duplicates!
+String uniqWords[] = new String[uniqCount];
+for (int j = 0; j < uniqCounts; j++) {
+    uniqWords[j] = uniqWordOrds[j].word;
+}
+
+
+
+
+ */
 
 /** NIECE: No Input Error Checking/Exceptions */
 

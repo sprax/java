@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import sprax.arrays.ArrayAlgo;
+import sprax.arrays.Arrays1d;
 import sprax.sprout.Sx;
 
 public class InferDictionaryOrder
@@ -411,7 +411,7 @@ public class InferDictionaryOrder
         
         for (ArrayList<Character> list : sortedChains)
         {
-            ArrayAlgo.reverseListInPlace(list);
+            Arrays1d.reverseListInPlace(list);
         }
         return sortedChains;
     }
@@ -510,7 +510,7 @@ public class InferDictionaryOrder
         }
         for (ArrayList<Character> list : sortedChains)
         {
-            ArrayAlgo.reverseListInPlace(list);
+            Arrays1d.reverseListInPlace(list);
         }
         return sortedChains;
     }
