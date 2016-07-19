@@ -77,7 +77,7 @@ public class Interleave
 
 	public static int unit_test(int level) 
 	{
-		String  testName = ArrayAlgo.class.getName() + ".unit_test";  
+		String  testName = Arrays1d.class.getName() + ".unit_test";  
 		Sx.puts(testName + " BEGIN");  
 
 		int stat = test_interleave();

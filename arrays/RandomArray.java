@@ -111,9 +111,9 @@ public class RandomArray
         long seed = System.currentTimeMillis();
         Random rng = new Random(seed);
         int[] array = makeRandomIntArray(200, -99, 99, rng);
-        double mean = ArrayAlgo.mean(array);
-        double stdd = ArrayAlgo.stddev(array);
-        double svar = ArrayAlgo.variance(array);
+        double mean = Arrays1d.mean(array);
+        double stdd = Arrays1d.stddev(array);
+        double svar = Arrays1d.variance(array);
         double dvar = stdd * stdd;
         
         Sx.printArrayFolded(array, 40);

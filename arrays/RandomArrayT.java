@@ -50,7 +50,7 @@ public class RandomArrayT
         long seed = System.currentTimeMillis();
         Random rng = new Random(seed);
         Integer[] array = makeRandomIntegerArray(200, -99, 99, rng);
-        double mean = ArrayAlgo.mean(array);
+        double mean = Arrays1d.mean(array);
         Sx.format("mean %f\n", mean);
         //double stdd = ArrayAlgo.stddev(array);
         //double svar = ArrayAlgo.variance(array);

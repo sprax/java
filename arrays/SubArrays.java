@@ -252,7 +252,7 @@ public class SubArrays
     
     public static int unit_test(int level) 
     {
-        Sx.puts(ArrayAlgo.class.getName() + ".unit_test");  
+        Sx.puts(Arrays1d.class.getName() + ".unit_test");  
         int stat = 0;
         
         Integer[] duh = { 1, 2, 3};
