@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import sprax.arrays.Arrays1d;
+import sprax.arrays.Arrays2d;
 import sprax.arrays.ArrayIterInt;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
@@ -438,7 +439,7 @@ public class Merges
         int minVal = 1000;
         int maxInc = 19;
         long seed = System.currentTimeMillis();
-        int AA[][] = Arrays1d.makeRandomRowColSortedArray(nRows, nCols, minVal, maxInc, seed);
+        int AA[][] = Arrays2d.makeRandomRowColSortedArray(nRows, nCols, minVal, maxInc, seed);
         
         final int times = 5;
         long pr[] = new long[times], startTime;
@@ -486,7 +487,7 @@ public class Merges
         int minVal = 1000;
         int maxInc = 19;
         long seed = System.currentTimeMillis();
-        int AA[][] = Arrays1d.makeRandomRowColSortedArray(nRows, nCols, minVal, maxInc, seed);
+        int AA[][] = Arrays2d.makeRandomRowColSortedArray(nRows, nCols, minVal, maxInc, seed);
         
         final int times = 5;
         long pr[] = new long[times], startTime;
@@ -581,7 +582,7 @@ public class Merges
         mergeArraysPq(XY);
         mergeArraysPq(YX);
         
-        Arrays1d.test_makeRandomRowColSortedArray();
+        Arrays2d.test_makeRandomRowColSortedArray();
         test_timeNwayMergesRowColSortedArray(64, 1 << 12);
         
         double dd = 1000;

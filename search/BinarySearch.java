@@ -416,7 +416,7 @@ int main () {
         int iMod = binarySearchEquals(SS, modVal);
         int iMed = binarySearchEquals(SS, medVal);
         int iTst = Arrays.binarySearch(SS, medVal);
-        Sx.format("mine %d,  libs %d\n", args);
+        Sx.format("mine %d,  libs %d\n", iMed, iTst);
         int iMid = binarySearchEquals(SS, midVal);
         int iMmo = binarySearchEquals(SS, mmoVal);
         int iMax = binarySearchEquals(SS, maxVal);

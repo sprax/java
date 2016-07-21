@@ -84,7 +84,7 @@ public class Arrays1d
 		}	
 	}
 
-	private static void arraySwap(int[] arr, int beg, int end) 
+	public static void arraySwap(int[] arr, int beg, int end) 
 	{
 		int temp = arr[beg];
 		arr[beg] = arr[end];
