@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import sprax.files.FileUtil;
+import sprax.files.TextFileReader;
 import sprax.files.TextFileToStringCollection;
 import sprax.files.TextFilters;
 import sprax.test.Sz;
@@ -14,9 +15,11 @@ import sprax.test.Sz;
 class EnTextCounter
 {
     public static final int ALPHABET_SIZE = 26;
-    
+    public static final int MAX_SIZED_LEN = 3;
     public final String fileName;
-    Map<String, Integer> WordCounts = new HashMap<>();
+    Map<String, Integer> wordCounts = new HashMap<>();
+    ArrayList<ArrayList<String>> sizedWords;
+    
     int lowerLetterCounts[];
     int upperLetterCounts[];
 
@@ -26,16 +29,26 @@ class EnTextCounter
 
     EnTextCounter(String fileName) {
         this.fileName = fileName;
-        test_textFileToWords(fileName);
+        String path = FileUtil.getTextFilePath(fileName);
+        ArrayList<String> lowerWords = TextFileReader.readFileIntoArrayListOfLowerCaseWordsStr(path);
+        sizedWords = new ArrayList<ArrayList<String>>(MAX_SIZED_LEN);
+        for (String word : lowerWords) {
+            int count = 0;
+            if (wordCounts.containsKey(word)) {
+                count = wordCounts.get(word);
+                wordCounts.put(word, ++count);
+            }
+            else {
+                wordCounts.put(word, 1);
+                int len = word.length();
+                if (len > 3)
+                    continue;
+                sizedWords.get(len).add(word);
+            }
+        }
+        
     }
 
-    static int test_textFileToWords(String fileName) 
-    {
-        String path = FileUtil.getTextFilePath(fileName);
-        List<String> text = TextFileToStringCollection.load(new ArrayList<String>(), path);
-        String lines[] = new String[text.size()]; 
-        return TextFilters.test_toLowerCaseLetterWords(text.toArray(lines));
-    }
 }
 
 public class SubCipher 
