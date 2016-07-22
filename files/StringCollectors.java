@@ -90,6 +90,64 @@ abstract class LowerCaseWordCollector<T extends Collection<char[]>> implements
     }
 }
 
+abstract class WordCollectorStr<T extends Collection<String>> implements
+        StringCollectorInterface<T>
+{
+    protected final T mCollector; // The constructor sets the collector member (like a const ref in
+                                  // C++)
+    
+    WordCollectorStr(T t)
+    { 
+        // The collector must be passed in, since the unknown type T cannot
+        mCollector = t; // be instantiated; that is, mCollector = new T() cannot compile.
+    }
+    
+    @Override
+    public T getCollector()
+    { 
+        // public accessor; do not define setCollector.
+        return mCollector;
+    }
+    
+    @Override
+    public boolean addString(String str)
+    {
+        // Return true IFF the set did not already contain this string
+        char chrs[] = str.toCharArray();
+        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, chrs, chrs.length);
+        return numAdded > 0;
+    }
+    
+    /**
+     * Extracts "words" -- that is, word-boundary delimited strings -- from a char array, converting
+     * them to lower case. These "words" are not checked against any dictionary or rules, other than
+     * being delimited by the beginning or end of the array or by non-word-forming characters, such
+     * as whitespace or punctuation.
+     * 
+     * @param beg Ignored
+     * @param end Words in <code>chr</code> are extracted up to this index.
+     * @deprecated // TODO: reorganize: distinguish addLine and addWord, no more addString?
+     */
+    @Override
+    public boolean addString(char[] chr, int beg, int end)
+    {
+        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, chr, end - beg));
+        return numAdded > 0;
+    }
+    
+    @Override
+    public boolean contains(final String str)
+    {
+        return mCollector.contains(str);
+    }
+    
+    @Override
+    public int size()
+    {
+        return mCollector.size();
+    }
+}
+
 abstract class LowerCaseWordCollectorStr<T extends Collection<String>> implements
         StringCollectorInterface<T>
 {
@@ -97,19 +155,22 @@ abstract class LowerCaseWordCollectorStr<T extends Collection<String>> implement
                                   // C++)
     
     LowerCaseWordCollectorStr(T t)
-    { // The collector must be passed in, since the unknown type T cannot
+    { 
+        // The collector must be passed in, since the unknown type T cannot
         mCollector = t; // be instantiated; that is, mCollector = new T() cannot compile.
     }
     
     @Override
     public T getCollector()
-    { // public accessor; do not define setCollector.
+    { 
+        // public accessor; do not define setCollector.
         return mCollector;
     }
     
     @Override
     public boolean addString(String str)
-    { // Return true IFF the set did not already contain this string
+    { 
+        // Return true IFF the set did not already contain this string
         return TextFilters.collectLowerCaseLetterWords(mCollector, str);
     }
     
@@ -216,6 +277,14 @@ class ArrayListLowerCaseWordCollector extends LowerCaseWordCollector<ArrayList<c
     public ArrayListLowerCaseWordCollector()
     {
         super(new ArrayList<char[]>());
+    }
+}
+
+class ArrayListWordCollectorStr extends WordCollectorStr<ArrayList<String>>
+{
+    public ArrayListWordCollectorStr()
+    {
+        super(new ArrayList<String>());
     }
 }
 

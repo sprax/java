@@ -33,11 +33,20 @@ public class EnTextCounter
     public static final int ALPHABET_SIZE = 26;
     public static final int MAX_SIZED_LEN = 3;
     
-    public final String fileName;
+    static boolean isAsciiLowerCaseLetter(char ch) {
+        return ('a' <= ch && ch <= 'z');
+    }
+    
+    static boolean isAsciiUpperCaseLetter(char ch) {
+        return ('A' <= ch && ch <= 'Z');
+    }
+
+    
     public final String filePath;
     
     /// Letters
     int lowerLetterCounts[];
+    int upperLetterCounts[];
     int firstLetterCounts[];
     int finalLetterCounts[];
     int totalLetterCount;
@@ -52,22 +61,21 @@ public class EnTextCounter
     int maxWordLen;
     int maxFoundLen;
 
-    EnTextCounter(String fileName)
+    EnTextCounter(String filePath)
     {
-        this.fileName = fileName;
+        this.filePath = filePath;
         
         lowerLetterCounts = new int[ALPHABET_SIZE];
+        upperLetterCounts = new int[ALPHABET_SIZE];
         firstLetterCounts = new int[ALPHABET_SIZE];
         finalLetterCounts = new int[ALPHABET_SIZE];
         charCounts = new CharCount[ALPHABET_SIZE];
         sizedWords = new ArrayList<ArrayList<String>>(MAX_SIZED_LEN+1);
         for (int j = 0; j < MAX_SIZED_LEN+1; j++)
             sizedWords.add(new ArrayList<String>());
-        
-        
-        filePath = FileUtil.getTextFilePath(fileName);
-        ArrayList<String> lowerWords = TextFileReader.readFileIntoArrayListOfLowerCaseWordsStr(filePath);
-                for (String word : lowerWords) {
+                
+        ArrayList<String> lowerWords = TextFileReader.readFileIntoArrayListOfWordsStr(filePath);
+        for (String word : lowerWords) {
             totalWordCount++;
             int count = 0;
             if (wordCounts.containsKey(word)) {
@@ -91,8 +99,16 @@ public class EnTextCounter
             ////if ((double)count/totalWordCount > 0.016)
                 ////Sx.format("%15s \t %3d\n", word, count);
 
-            int idx = word.charAt(0) - 'a';
-            lowerLetterCounts[idx] += count;
+            int idx;
+            char chr = word.charAt(0);
+            if (isAsciiLowerCaseLetter(chr)) {
+                idx = chr - 'a';
+                lowerLetterCounts[idx] += count;
+            }
+            else {
+                idx = chr - 'A';
+                upperLetterCounts[idx] += count;
+            }
             for (int j = 1; j < len; j++) {
                 idx = word.charAt(j) - 'a';
                 lowerLetterCounts[idx] += count;
@@ -135,7 +151,8 @@ public class EnTextCounter
         Sz.begin(testName);
         int numWrong = 0;
     
-        EnTextCounter myEtc = new EnTextCounter("corpus.txt");
+        String filePath = FileUtil.getTextFilePath("corpus.txt");
+        EnTextCounter myEtc = new EnTextCounter(filePath);
         myEtc.showCounts(1);
         
         Sz.end(testName, numWrong);

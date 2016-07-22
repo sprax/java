@@ -70,6 +70,14 @@ public class TextFileReader
         return myWords.getCollector();
     }
     
+    public static ArrayList<String> readFileIntoArrayListOfWordsStr(String textFilePath)
+    {
+        ArrayListWordCollectorStr myWords = new ArrayListWordCollectorStr();
+        TextFileReader tfr = new TextFileReader(textFilePath);
+        tfr.readIntoStringCollector(myWords);
+        return myWords.getCollector();
+    }
+    
     public static ArrayList<String> readFileIntoArrayListOfLowerCaseWordsStr(String textFilePath)
     {
         ArrayListLowerCaseWordCollectorStr myWords = new ArrayListLowerCaseWordCollectorStr();
@@ -102,33 +110,20 @@ public class TextFileReader
     
     public int readIntoStringCollector(StringCollectorInterface<?> stringCollector)
     {
-        BufferedReader reader = null;
-        try {
-            File file = new File(mTextFilePath);
-            reader = new BufferedReader(new FileReader(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {    
-            if (reader == null)
-                return 0;
-        } 
-        
         int lineCount = 0;
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                if (stringCollector.addString(line)) {
-                    lineCount++;
+        File file = new File(mTextFilePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = null;
+                while ((line = reader.readLine()) != null) {
+                    if (stringCollector.addString(line)) {
+                        lineCount++;
+                    }
                 }
-            }
+        } catch (FileNotFoundException e) {
+            System.out.println("FILE NOT FOUND: " + mTextFilePath);
+            e.printStackTrace();  
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return lineCount;
     }
@@ -179,6 +174,9 @@ public class TextFileReader
     
     public static int unit_test(final String[] args)
     {
+        
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+   
         String textFilePath = null;
         if (args.length > 0 && args[0] != null) {
             textFilePath = args[0];

@@ -214,6 +214,90 @@ public class TextFilters
         return wordList;
     }
 
+ 
+    /**
+     * Extracts "words" -- that is, word-boundary delimited strings --
+     * from a char array, converting them to lower case.  These "words"
+     * are not checked against any dictionary or rules, other than being
+     * delimited by the beginning or end of the array or by non-word-forming
+     * characters, such as whitespace or punctuation.
+     * 
+     * Parses input char array using two states for greater efficiency.
+     * The two states are: whiteSpace or not, or, in-between-words vs. inside-a-word.
+     * Note that any hyphen, apostrophe, and underscore characters (- ' _) are discarded 
+     * whether they appear inside or outside a word.  Thus "forty-one" becomes "fortyone", 
+     * "don't" becomes "dont", and "God's will" becomes "Gods will".
+     * 
+     * TODO: Make sure that any two hyphen or punctuation characters do terminate words:
+     * don't -> dont
+     * Don''told''me  ->  Don told me
+     * Don--tell'm "Go fish" ->  Don tellm Go fish
+     *   
+     * @param <T>    String collector type
+     * @param words  String collector
+     * @param chr    The char array that may contain words.
+     * @param length The number of chars in chr to process.
+     * @return       The number of words actually kept by the collector.
+     *               If the collector discards duplicates, the number kept
+     *               may be less than the number of words found.
+     */
+    public static int collectLettersOnlyWords(Collection<String> words, char[] chr, int length)
+    {
+        int numWordsAdded = 0;
+        char chrPrv = ' ';  // space
+        int kBeg = 0, kEnd = 0;
+        for (int j = 0; j < length; j++) {
+            char chr_j = chr[j];
+
+            // If current state is whiteSpace, find any letter to begin a new word.
+            if (chrPrv == ' ') {
+                if (isAsciiLetter(chr_j)) {
+                    kBeg = j;
+                    kEnd = j + 1;
+                    chrPrv = chr_j;
+                }
+            }
+            // If current state is a letter, omit select interior non-letters
+            else if (isAsciiLetter(chrPrv)) {
+                if (isAsciiLetter(chr_j)) {
+                    chr[kEnd++] = chrPrv = chr_j;
+                }
+                // Inside a word, replace the following characters with nothing
+                else if (chr_j == '-' || chr_j == '\'' || chr_j == '_' || Character.isDigit(chr_j)) {
+                    chrPrv = chr_j;
+                }
+                else {
+                    String str = new String(chr, kBeg, kEnd - kBeg);
+                    if (words.add(str)) {
+                        numWordsAdded++;
+                    }
+                    chrPrv = ' ';    // Covert substring of anything else to a single SPACE char.
+                }
+            }
+            else {  // previous char must have been in the ignorable set [-'_]
+                if (isAsciiLetter(chr_j)) {
+                    chr[kEnd++] = chrPrv = chr_j;
+                }
+                else {
+                    String str = new String(chr, kBeg, kEnd - kBeg);
+                    if (words.add(str)) {
+                        numWordsAdded++;
+                    }
+                    chrPrv = ' ';    // Covert substring of anything else to a single SPACE char.
+                }
+            }
+        }
+        // If the input ended in non-whiteSpace, add this last word.
+        if (chrPrv != ' ') {
+            String str = new String(chr, kBeg, kEnd - kBeg);
+            if (words.add(str)) {
+                numWordsAdded++;
+            }
+        }
+        return numWordsAdded;
+    }
+
+    
     /**
      * Extracts "words" -- that is, word-boundary delimited strings --
      * from a char array, converting them to lower case.  These "words"
