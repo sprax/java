@@ -101,19 +101,13 @@ public class EnTextCounter
 
             int idx;
             char chr = word.charAt(0);
-            if (isAsciiLowerCaseLetter(chr)) {
-                idx = chr - 'a';
-                lowerLetterCounts[idx] += count;
-            }
-            else {
-                idx = chr - 'A';
-                upperLetterCounts[idx] += count;
-            }
+            addCharCountToUpperOrLowerCount(chr, count);
             for (int j = 1; j < len; j++) {
-                idx = word.charAt(j) - 'a';
-                lowerLetterCounts[idx] += count;
+                chr = word.charAt(j);
+                addCharCountToUpperOrLowerCount(chr, count);
             }
-            finalLetterCounts[idx] += count;
+            if (isAsciiLowerCaseLetter(chr))
+                finalLetterCounts[chr - 'a'] += count;
         }
   
         for (int j = 0; j < ALPHABET_SIZE; j++) {
@@ -123,6 +117,15 @@ public class EnTextCounter
             charCounts[j] = new CharCount(chr, count);            
         }
         Arrays.sort(charCounts);
+    }
+    
+    void addCharCountToUpperOrLowerCount(char chr, int count) {
+        if (isAsciiLowerCaseLetter(chr)) {
+            lowerLetterCounts[chr - 'a'] += count;
+        }
+        else {
+            upperLetterCounts[chr - 'A'] += count;
+        }
     }
 
     public void showCounts(int verbose)

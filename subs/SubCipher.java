@@ -37,16 +37,85 @@ public class SubCipher
         inverseCipher = new char[EnTextCounter.ALPHABET_SIZE];
     }
     
-    void makeCharCountCiphers()
+    
+    /** 
+     * Use knowledge of English first person pronoun I to find letter i.
+     * That is,
+     * look for the encoded single-letter word most likely to encode "I".
+     */
+    boolean findForwardCipher_I()
     {
-        for (int j = 0; j < EnTextCounter.ALPHABET_SIZE; j++) {
-            char corpusChr = corpusTextCounter.charCounts[j].chr;
-            char cipherChr = cipherTextCounter.charCounts[j].chr;
-            forwardCipher[corpusChr - 'a'] = cipherChr;
-            inverseCipher[cipherChr - 'a'] = corpusChr;
+        char maxRatioChar = 0;
+        double ratio, maxRatio = 0.0;
+        for (String wd : cipherTextCounter.sizedWords.get(1)) {
+            char chr = wd.charAt(0);
+            if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
+                char lwr = Character.toLowerCase(chr);
+                int upperCount = cipherTextCounter.wordCounts.get(wd);
+                int lowerCount = cipherTextCounter.wordCounts.getOrDefault(wd, 1);
+                ratio = (float)upperCount / lowerCount;
+                if (maxRatio < ratio) {
+                    maxRatio = ratio;
+                    maxRatioChar = lwr;
+                }
+            }
         }
+        if (maxRatioChar != 0) {
+            forwardCipher['i' - 'a'] = maxRatioChar;
+            inverseCipher[maxRatioChar - 'a'] = 'i';
+            return true;
+        }
+        return false;
     }
 
+    void inferCipher()
+    {
+        findForwardCipher_I();
+        
+        //// FIXME: cheating to test...
+        assignCipher('a', 'c');
+        
+        guessUnknownInverseCiphersFromCharCounts();
+    }
+    
+    void guessUnknownInverseCiphersFromCharCounts()
+    {
+        for (int j = 0, k = 0; j < EnTextCounter.ALPHABET_SIZE; j++) {
+            char cipherChr = cipherTextCounter.charCounts[j].chr;
+            if (inverseCipher[cipherChr - 'a'] == 0) {
+                do {
+                    char corpusChr = corpusTextCounter.charCounts[k].chr;
+                    if (forwardCipher[corpusChr - 'a'] == 0) {
+                        forwardCipher[corpusChr - 'a'] = cipherChr;
+                        inverseCipher[cipherChr - 'a'] = corpusChr;
+                        break;
+                    }
+                } while (++k < EnTextCounter.ALPHABET_SIZE);
+                if (k >= EnTextCounter.ALPHABET_SIZE) {
+                    Sx.format("WARNING: ran out of unnasigned corpus chars at %c\n", cipherChr);
+                }
+            }            
+        }
+    }
+    
+    void matchSingleLetterWords()
+    {}
+    
+    void makeCharCountOnlyCiphers()
+    {
+        for (int j = 0; j < EnTextCounter.ALPHABET_SIZE; j++) {
+            char corpusChar = corpusTextCounter.charCounts[j].chr;
+            char cipherChar = cipherTextCounter.charCounts[j].chr;
+            forwardCipher[corpusChar - 'a'] = cipherChar;
+            inverseCipher[cipherChar - 'a'] = corpusChar;
+        }
+    }
+    
+    void assignCipher(char corpusChar, char cipherChar)
+    {
+        forwardCipher[corpusChar - 'a'] = cipherChar;
+        inverseCipher[cipherChar - 'a'] = corpusChar;        
+    }
 
     void decipherText()
     {
@@ -55,10 +124,10 @@ public class SubCipher
             char chrs[] = line.toCharArray();
             for (int j = 0; j < chrs.length; j++) {
                 char chr = chrs[j];
-                if (isAsciiLowerCaseLetter(chr)) {
+                if (EnTextCounter.isAsciiLowerCaseLetter(chr)) {
                     chrs[j] = inverseCipher[chr - 'a'];
                 }
-                else if (isAsciiUpperCaseLetter(chr)) {
+                else if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
                     chr = Character.toLowerCase(chr);
                     chrs[j] = Character.toUpperCase(inverseCipher[chr - 'a']);                    
                 }
@@ -78,17 +147,20 @@ public class SubCipher
         }
     }
     
+
     public static int unit_test(int level) {
         String testName = SubCipher.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
         
         SubCipher sc = new SubCipher();
-        sc.makeCharCountCiphers();
+        sc.cipherTextCounter.showCounts(1);
+        sc.inferCipher();
         sc.showForwardCipher();
         sc.decipherText();
         
         
+        Sx.puts();
         Sz.end(testName, numWrong);
         return numWrong;
     }
