@@ -182,7 +182,7 @@ public class EnTextCounter
             Sx.format("%d-letter words:  %d:\n", len, sizedWords.get(len).size());
             for (String word : sizedWords.get(len)) {
                 int count =  wordCounts.get(word);
-                if (count > MIN_WORD_COUNT)
+                if (count > MIN_WORD_COUNT + 1 - verbose)
                     Sx.format("%4s  %3d\n", word, count);
             }
         }

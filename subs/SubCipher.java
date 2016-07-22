@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import sprax.files.FileUtil;
@@ -20,11 +21,16 @@ public class SubCipher
     EnTextCounter corpusCounter;
     char forwardCipher[];
     char inverseCipher[];
+    /** index of the encoded "the" in the sorted array of 3-letter ciphers */
+    int threeLetterWordIndex_the = -1; 
+    /** index of the encoded "and" in the sorted array of 3-letter ciphers */
+    int threeLetterWordIndex_and = -1; 
+    
     
     SubCipher() 
     {
         this(FileUtil.getTextFilePath("cipher.txt"),
-             FileUtil.getTextFilePath("corpus.txt"));
+             FileUtil.getTextFilePath("corpusEn.txt"));
     }
     
     public SubCipher(String cipherFilePath, String corpusFilePath)
@@ -98,22 +104,60 @@ public class SubCipher
         }
         return false;
     }
-
+    
     boolean findCipher_the()
     {
-        // Look for "the"
-        ArrayList<String> threeLetterWords = cipherCounter.sizedWords.get(2);
-        Collections.sort(threeLetterWords);
-
-        // Confirm frequency of 'e'
+        // Look for "the": expect it to be most counted 3-letter word.
+        // The 3-letter word list was already sorted by descending counts.
+        // To make sure, check that its last letter (expected to be C('e'))
+        // is also the most frequent letter in the encoded text (also 
+        // expected to be C('e')), and check that the first letter is
+        // not C('a'), which we may already know from findCipher_a().
+        char maxCountLetter = cipherCounter.charCounts[0].chr;
+        List<String> threeLetterWords = cipherCounter.sizedWords.get(3);
+        for (int j = 0; j < threeLetterWords.size(); j++) {
+            String cipher = threeLetterWords.get(j);
         
+            // Is this word's last letter the same as the most counted, 
+            // which we expect to be 'e'?
+            char firstLetter = cipher.charAt(0);
+            char finalLetter = cipher.charAt(2);
+            if (finalLetter == maxCountLetter && firstLetter != forwardCipher['i' - 'a'])
+            {
+                assignCipher('t', firstLetter);
+                assignCipher('h', cipher.charAt(1));
+                assignCipher('e', finalLetter);
+                threeLetterWordIndex_the = j;
+                return true;
+            }
+        }
         return false;
     }
+    
+    boolean findCipher_and()
+    {
+        // Look for "and": expect it to be 2nd most counted 3-letter word.
+        // The 3-letter word list was already sorted by descending counts.
+        // To make sure, check that its first letter (expected to be C('a'))
+        // matches what we (may have) already found using findCipher_a().
+        char maxCountLetter = cipherCounter.charCounts[0].chr;
+        List<String> threeLetterWords = cipherCounter.sizedWords.get(3);
+        for (int j = 0; j < threeLetterWords.size(); j++) {
+            if (j != threeLetterWordIndex_the) {
+                String cipher = threeLetterWords.get(j);
 
-    boolean findCipher_and()    {
+                char firstLetter = cipher.charAt(0);
+                if (firstLetter == forwardCipher['a' - 'a']) {
+                    assignCipher('n', cipher.charAt(1));
+                    assignCipher('d', cipher.charAt(2));
+                    threeLetterWordIndex_and = j;
+                    return true;
+                }
+            }
+        }
         return false;
-    }
-
+    }       
+    
     boolean findCipher_for()    // use "of" with "to", then "for"
     {
         return false;
@@ -134,16 +178,16 @@ public class SubCipher
         assignCipher('x', 'e');
         assignCipher('b', 'g');
         assignCipher('p', 'i');
-        assignCipher('n', 'j');
+
         assignCipher('l', 'k');
-        assignCipher('e', 'l');
-        assignCipher('h', 'm');
+
+
         assignCipher('o', 'n');
         assignCipher('k', 'o');
         assignCipher('g', 'p');
         assignCipher('s', 'r');
-        assignCipher('d', 's');
-        assignCipher('t', 'u');
+
+
         assignCipher('v', 'v');     // vow
         assignCipher('r', 'w');     // was, who, now, how
         assignCipher('f', 'x');     // six
@@ -243,7 +287,7 @@ public class SubCipher
         
         SubCipher sc = new SubCipher();
         sc.corpusCounter.showCounts("\n     CORPUS: ", 1);
-        sc.cipherCounter.showCounts("\n     CIPHER: ", 2);
+        sc.cipherCounter.showCounts("\n     CIPHER: ", 3);
         sc.inferCipher();
         sc.showCipherRows(sc.forwardCipher);
         //sc.showForwardCipher();
