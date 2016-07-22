@@ -131,7 +131,7 @@ abstract class WordCollectorStr<T extends Collection<String>> implements
     @Override
     public boolean addString(char[] chr, int beg, int end)
     {
-        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, chr, end - beg));
+        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, chr, end - beg);//FIXME: word vs. line
         return numAdded > 0;
     }
     
