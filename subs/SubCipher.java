@@ -22,6 +22,7 @@ public class SubCipher
     EnTextCounter corpusCounter;
     char forwardCipher[];
     char inverseCipher[];
+    DescCountAscUnknownComp countAndUnMappedComp;
     
     // TODO: replace these with something like: boolean threeLetterWordIndexAssigned[]
     /** index of the encoded "the" in the sorted array of 3-letter ciphers */
@@ -33,7 +34,7 @@ public class SubCipher
     SubCipher() 
     {
         this(FileUtil.getTextFilePath("cipher.txt"),
-             FileUtil.getTextFilePath("corpus-en.txt"));
+             FileUtil.getTextFilePath("corpusEn.txt"));
     }
     
     public SubCipher(String cipherFilePath, String corpusFilePath)
@@ -45,6 +46,7 @@ public class SubCipher
         corpusCounter = new EnTextCounter(corpusFilePath);
         forwardCipher = new char[EnTextCounter.ALPHABET_SIZE];
         inverseCipher = new char[EnTextCounter.ALPHABET_SIZE];
+        countAndUnMappedComp = new DescCountAscUnknownComp(corpusCounter.wordCounts, forwardCipher);
     }
     
     
@@ -174,8 +176,7 @@ public class SubCipher
         List<String> corpusWords2 = corpusCounter.sizedWords.get(2);
         List<String> cipherWords2 = cipherCounter.sizedWords.get(2);
         
-        DescCountUnknownComp comp = new DescCountUnknownComp(corpusCounter.wordCounts, forwardCipher);
-        PriorityQueue<String> twoQueue = new PriorityQueue<>(comp);
+        PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
 
         // Add frequent two-letter words that contain at least one unknown letter
         int maxCount = corpusCounter.wordCounts.get(corpusWords2.get(0));
@@ -186,15 +187,15 @@ public class SubCipher
             char ciph0 = forwardCipher[corp0 - 'a'];
             char ciph1 = forwardCipher[corp1 - 'a'];
             if (ciph0 == 0 || ciph1 == 0) {
-                twoQueue.add(word);
+                wordQueue.add(word);
             }
             int count = corpusCounter.wordCounts.get(word);
             if (count < minCount)
                 break;
         }
         
-        while (!twoQueue.isEmpty()) {
-            String word = twoQueue.remove();
+        while (!wordQueue.isEmpty()) {
+            String word = wordQueue.remove();
             char corp0 = word.charAt(0);
             char corp1 = word.charAt(1);
             char ciph0 = forwardCipher[corp0 - 'a'];
@@ -220,9 +221,73 @@ public class SubCipher
                     }
                 }
             } 
-            else {
-                break;      // both corp0 and corp1 are still unmapped, so quit this queue
+            else break;      // both corp0 and corp1 are still unmapped, so quit this queue
+        }
+    }
+    
+    /*
+     * For each 2-letter corpus word with a reasonable count and
+     * one of its letter's cipher known already, try to find its
+     * cipher in the cipher text.  The trick is to order them
+     * efficiently, versus just looping over the remaining 
+     * unknowns several times (as in, until none are found
+     * in a complete cycle (like the draw cards in solitaire).
+     */
+    void findCipher_numLetterWords(int num)
+    {
+        if (num < 0 || num > EnTextCounter.MAX_SIZED_LEN)
+            throw new IllegalArgumentException("bad word size: " + num);
+        
+        // twoLetterWords will have already been sorted by descending counts
+        List<String> corpusWords = corpusCounter.sizedWords.get(num);
+        List<String> cipherWords = cipherCounter.sizedWords.get(num);
+        
+        PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
+
+        // Add frequent two-letter words that contain at least one unknown letter
+        int maxCount = corpusCounter.wordCounts.get(corpusWords.get(0));
+        int minCount = maxCount / EnTextCounter.ALPHABET_SIZE;
+        for (String word : corpusWords) {
+            int numUnMapped = this.numUnknownChars(word);
+            if (numUnMapped > 0)
+            {
+                wordQueue.add(word);
             }
+            int count = corpusCounter.wordCounts.get(word);
+            if (count < minCount)
+                break;
+        }
+        
+        while (!wordQueue.isEmpty()) {
+            String word = wordQueue.remove();
+            int idxUnknown = -1; 
+            for (int j = 0; j < num; j++) {
+                char corpj = word.charAt(j);
+                char ciphj = forwardCipher[corpj - 'a'];
+                if (ciphj == 0) {
+                    if (idxUnknown == -1) {
+                        idxUnknown = j;                 // index was not set, so set it
+                    }
+                    else {
+                        idxUnknown = Integer.MIN_VALUE; // index was already set: too many unknowns!
+                        break;
+                    }
+                }
+            }
+            if (idxUnknown >= 0) {
+                char corpUnknown = word.charAt(idxUnknown);
+                for (String ciph : cipherWords) {
+                    // FIXME: edit here!!
+                    // if ciph matches all the other, num-1 known letters of word,
+                    // then guess the one unmapped letter in word should map to ciph[idxUnknown]
+                    //    {
+                    //        char ciphUnknown = ciph.charAt(idxUnknown);
+                    //        assignCipher(corpUnknown, ciphUnknown);
+                    //        break;
+                    //    }
+                }
+            } 
+            else break;      // both corp0 and corp1 are still unmapped, so quit this queue
         }
     }
     
@@ -244,7 +309,7 @@ public class SubCipher
         assignCipher('p', 'i');
         assignCipher('l', 'k');
 
-        assignCipher('f', 'x');
+        //assignCipher('f', 'x');
         assignCipher('k', 'o');
         assignCipher('g', 'p');
 
@@ -377,12 +442,12 @@ public class SubCipher
     }
     
     
-    class DescCountUnknownComp implements Comparator<String>
+    class DescCountAscUnknownComp implements Comparator<String>
     {
         Map<String, Integer> wordCounts;
         char forwardCipher[];
         
-        DescCountUnknownComp(Map<String, Integer> wordCounts, char forwardCipher[]) {
+        DescCountAscUnknownComp(Map<String, Integer> wordCounts, char forwardCipher[]) {
             this.wordCounts = wordCounts;
             this.forwardCipher = forwardCipher;
         }
