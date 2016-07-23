@@ -7,12 +7,15 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import sprax.files.FileUtil;
+import sprax.files.HashMapStringCollector;
 import sprax.files.TextFileReader;
+import sprax.files.TextFilters;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
-
-
+/*
+ * TODO: Queue common words regardless of length
+ */
 public class SubCipher
 {
     String        cipherFilePath;
@@ -34,8 +37,9 @@ public class SubCipher
     SubCipher() 
     {
         this(FileUtil.getTextFilePath("cipher.txt"),
-             FileUtil.getTextFilePath("corpusEn.txt"));
-    }
+        //// FileUtil.getTextFilePath("corpusEn300kWords.txt"));
+             FileUtil.getTextFilePath("corpus-en.txt"));   
+     }
     
     public SubCipher(String cipherFilePath, String corpusFilePath)
     {
@@ -162,15 +166,24 @@ public class SubCipher
         return false;
     }
     
-    /*
+    /**
      * For each 2-letter corpus word with a reasonable count and
      * one of its letter's cipher known already, try to find its
      * cipher in the cipher text.  The trick is to order them
      * efficiently, versus just looping over the remaining 
      * unknowns several times (as in, until none are found
      * in a complete cycle (like the draw cards in solitaire).
+     * Here we use a priority queue to order words as:
+     *     higher counts and fewer unknowns first.
+     * Since we're only assigning ciphers once, not voting on multiple
+     * choices, a word must have at least one unknown to be considered.
+     * If the next word in the queue has had its unknown letters 
+     * discovered by matching a word earlier in the queue, it is discarded.
+     *   
+     * @param minWordFreqInCorpus Don't try to match cipher words
+     *          against corpus words rarer than this threshold.
      */
-    void findCipher_twoLetterWords()
+    void findCipher_twoLetterWords(double minWordFreqInCorpus)
     {
         // twoLetterWords will have already been sorted by descending counts
         List<String> corpusWords2 = corpusCounter.sizedWords.get(2);
@@ -178,9 +191,8 @@ public class SubCipher
         
         PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
 
-        // Add frequent two-letter words that contain at least one unknown letter
-        int maxCount = corpusCounter.wordCounts.get(corpusWords2.get(0));
-        int minCount = maxCount / EnTextCounter.ALPHABET_SIZE;
+        // Enqueue frequent two-letter words that contain at least one unknown letter
+        int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
         for (String word : corpusWords2) {
             char corp0 = word.charAt(0);
             char corp1 = word.charAt(1);
@@ -221,32 +233,40 @@ public class SubCipher
                     }
                 }
             } 
-            else break;      // both corp0 and corp1 are still unmapped, so quit this queue
+            else break; // all words left in the queue have 2 unknown chars, so give up
         }
     }
     
-    /*
-     * For each 2-letter corpus word with a reasonable count and
+    /**
+     * For each N-letter corpus word with a reasonable count and
      * one of its letter's cipher known already, try to find its
      * cipher in the cipher text.  The trick is to order them
      * efficiently, versus just looping over the remaining 
      * unknowns several times (as in, until none are found
      * in a complete cycle (like the draw cards in solitaire).
+     * Here we use a priority queue to order words as:
+     *     higher counts and fewer unknowns first.
+     * Since we're only assigning ciphers once, not voting on multiple
+     * choices, a word must have at least one unknown to be considered.
+     * If the next word in the queue has had its unknown letters 
+     * discovered by matching a word earlier in the queue, it is discarded.
+     *   
+     * @param minWordFreqInCorpus Don't try to match cipher words
+     *          against corpus words rarer than this threshold.
      */
-    void findCipher_numLetterWords(int num)
+    void findCiphersForWordsOfFixedLength(int wordLen, double minWordFreqInCorpus)
     {
-        if (num < 0 || num > EnTextCounter.MAX_SIZED_LEN)
-            throw new IllegalArgumentException("bad word size: " + num);
+        if (wordLen < 0 || wordLen > EnTextCounter.MAX_SIZED_LEN)
+            throw new IllegalArgumentException("bad word size: " + wordLen);
         
         // twoLetterWords will have already been sorted by descending counts
-        List<String> corpusWords = corpusCounter.sizedWords.get(num);
-        List<String> cipherWords = cipherCounter.sizedWords.get(num);
+        List<String> corpusWords = corpusCounter.sizedWords.get(wordLen);
+        List<String> cipherWords = cipherCounter.sizedWords.get(wordLen);
         
         PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
 
-        // Add frequent two-letter words that contain at least one unknown letter
-        int maxCount = corpusCounter.wordCounts.get(corpusWords.get(0));
-        int minCount = maxCount / EnTextCounter.ALPHABET_SIZE;
+        // Enqueue frequent two-letter words that contain at least one unknown letter
+        int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
         for (String word : corpusWords) {
             int numUnMapped = this.numUnknownChars(word);
             if (numUnMapped > 0)
@@ -260,34 +280,44 @@ public class SubCipher
         
         while (!wordQueue.isEmpty()) {
             String word = wordQueue.remove();
-            int idxUnknown = -1; 
-            for (int j = 0; j < num; j++) {
+            int idxUnMapped = -1; 
+            for (int j = 0; j < wordLen; j++) {
                 char corpj = word.charAt(j);
                 char ciphj = forwardCipher[corpj - 'a'];
                 if (ciphj == 0) {
-                    if (idxUnknown == -1) {
-                        idxUnknown = j;                 // index was not set, so set it
+                    if (idxUnMapped == -1) {
+                        idxUnMapped = j;                 // index was not set, so set it
                     }
                     else {
-                        idxUnknown = Integer.MIN_VALUE; // index was already set: too many unknowns!
+                        idxUnMapped = Integer.MIN_VALUE; // index was already set: too many unknowns!
                         break;
                     }
                 }
             }
-            if (idxUnknown >= 0) {
-                char corpUnknown = word.charAt(idxUnknown);
+            if (idxUnMapped >= 0) {                      // index was set just once
+                char corpUnMappedChar = word.charAt(idxUnMapped);
                 for (String ciph : cipherWords) {
-                    // FIXME: edit here!!
-                    // if ciph matches all the other, num-1 known letters of word,
-                    // then guess the one unmapped letter in word should map to ciph[idxUnknown]
-                    //    {
-                    //        char ciphUnknown = ciph.charAt(idxUnknown);
-                    //        assignCipher(corpUnknown, ciphUnknown);
-                    //        break;
-                    //    }
+                    // if this cipher word matches all the other, num-1 known letters of word,
+                    // then guess that the one unmapped letter in word should map to ciph[idxUnknown]
+                    int numMatchedChars = 0;
+                    for (int j = 0; j < wordLen; j++) {
+                        if (j == idxUnMapped)
+                            continue;
+                        if (ciph.charAt(j) != forwardCipher[word.charAt(j) - 'a'])
+                            break;
+                        numMatchedChars++;
+                    }
+                    if (numMatchedChars == wordLen - 1) {
+                        char ciphCharAtIdx = ciph.charAt(idxUnMapped);
+                        // Check if this char in the cipher word is already mapped:
+                        if (inverseCipher[ciphCharAtIdx - 'a'] == 0) {
+                            assignCipher(corpUnMappedChar, ciphCharAtIdx);
+                            break;
+                        }
+                    }
                 }
             } 
-            else break;      // both corp0 and corp1 are still unmapped, so quit this queue
+            else break; // all words left in the queue have at least 2 unknown chars, so give up
         }
     }
     
@@ -298,55 +328,72 @@ public class SubCipher
         findCipher_a();
         findCipher_the();   // use wordCount("the") and letterCount('e')
         findCipher_and();   // a + and : d, n
-        findCipher_twoLetterWords();
+        findCipher_twoLetterWords(0.0005);
+        findCiphersForWordsOfFixedLength(3, 0.0007);
+        findCiphersForWordsOfFixedLength(4, 0.0006);
         
+        findCiphersForWordsOfFixedLength(5, 0.00044);
+        findCiphersForWordsOfFixedLength(6, 0.00033);
+        findCiphersForWordsOfFixedLength(7, 0.00022);
+        findCiphersForWordsOfFixedLength(8, 0.00015);
+        findCiphersForWordsOfFixedLength(9, 0.00011);
+        
+        //// findCipher_numLetterWords(10, 0.000001);
         
         //// FIXME: cheating to test...
-        assignCipher('c', 'a');
-        assignCipher('u', 'b');
+        //assignCipher('c', 'a');
+        //assignCipher('u', 'b');
         assignCipher('x', 'e');
-        assignCipher('b', 'g');
+        //assignCipher('b', 'g');
         assignCipher('p', 'i');
         assignCipher('l', 'k');
 
         //assignCipher('f', 'x');
-        assignCipher('k', 'o');
-        assignCipher('g', 'p');
+        //assignCipher('k', 'o');
+        //assignCipher('g', 'p');
 
-        assignCipher('v', 'v');     // vow
-        assignCipher('r', 'w');     // was, who, now, how
-        assignCipher('y', 'y');     // you, say, any, may
-        assignCipher('w', 'z');     // was, who, now, how
+        //assignCipher('v', 'v');     // vow
+        //assignCipher('r', 'w');     // was, who, now, how
+        //assignCipher('y', 'y');     // you, say, any, may
+        //assignCipher('w', 'z');     // was, who, now, how
 
-        Sx.puts("Number of unmapped chars: " + numUnmappedChars());
+        int numCorpusUnknown = numUnmappedChars(forwardCipher);
+        int numCipherUnknown = numUnmappedChars(inverseCipher);
+        
+        Sx.format("Number of unmapped chars: corpus %d  cipher %d\n"
+                , numCorpusUnknown
+                , numCipherUnknown);
         guessUnknownInverseCiphersFromCharCounts();
     }
     
-    int numUnmappedChars() {
+    int numUnmappedChars(char cipher[]) {
         int numUnmapped = 0;
         for (int j = 0; j < EnTextCounter.ALPHABET_SIZE; j++) 
-            if (forwardCipher[j] == 0)
+            if (cipher[j] == 0)
                 numUnmapped++;
         return  numUnmapped;
     }
     
     void guessUnknownInverseCiphersFromCharCounts()
     {
-        for (int j = 0, k = 0; j < EnTextCounter.ALPHABET_SIZE; j++) {
-            char cipherChr = cipherCounter.charCounts[j].chr;
-            if (inverseCipher[cipherChr - 'a'] == 0) {
+        int ciphIdx = 0;
+        for (int corpIdx = 0; ciphIdx < EnTextCounter.ALPHABET_SIZE; ciphIdx++) {
+            char cipherChar = cipherCounter.charCounts[ciphIdx].chr;
+            if (inverseCipher[cipherChar - 'a'] == 0) {
+                if (corpIdx >= EnTextCounter.ALPHABET_SIZE) {
+                    String errorMessage = 
+                            "ERROR: No unnasigned corpus chars for cipher " + cipherChar;
+                    Sx.puts(errorMessage);
+                    throw new IllegalStateException(errorMessage);
+                }
                 do {
-                    char corpusChr = corpusCounter.charCounts[k].chr;
-                    if (forwardCipher[corpusChr - 'a'] == 0) {
-                        forwardCipher[corpusChr - 'a'] = cipherChr;
-                        inverseCipher[cipherChr - 'a'] = corpusChr;
+                    char corpusChar = corpusCounter.charCounts[corpIdx++].chr;
+                    if (forwardCipher[corpusChar - 'a'] == 0) {
+                        assignCipher(corpusChar, cipherChar);
                         break;
                     }
-                } while (++k < EnTextCounter.ALPHABET_SIZE);
-                if (k >= EnTextCounter.ALPHABET_SIZE) {
-                    Sx.format("WARNING: ran out of unnasigned corpus chars at %c\n", cipherChr);
-                }
-            }            
+                } while (corpIdx < EnTextCounter.ALPHABET_SIZE);
+             }            
         }
     }
     
@@ -358,39 +405,18 @@ public class SubCipher
         for (int j = 0; j < EnTextCounter.ALPHABET_SIZE; j++) {
             char corpusChar = corpusCounter.charCounts[j].chr;
             char cipherChar = cipherCounter.charCounts[j].chr;
-            forwardCipher[corpusChar - 'a'] = cipherChar;
-            inverseCipher[cipherChar - 'a'] = corpusChar;
+            assignCipher(corpusChar, cipherChar);
         }
     }
     
     void assignCipher(char corpusChar, char cipherChar)
     {
-        assert(forwardCipher[corpusChar - 'a'] == 0) : "Already assigned: " + corpusChar;
+        assert(forwardCipher[corpusChar - 'a'] == 0) : "Already assigned corpus: " + corpusChar;
+        assert(inverseCipher[cipherChar - 'a'] == 0) : "Already assigned cipher: " + cipherChar;
         forwardCipher[corpusChar - 'a'] = cipherChar;
         inverseCipher[cipherChar - 'a'] = corpusChar;        
     }
 
-    void decodeCipherText()
-    {
-        Sx.format("Encoded/Decoded cipher text (%s)\n\n", cipherFilePath);
-        for (String line : cipherFileLines) {
-            char chrs[] = line.toCharArray();
-            for (int j = 0; j < chrs.length; j++) {
-                char chr = chrs[j];
-                if (EnTextCounter.isAsciiLowerCaseLetter(chr)) {
-                    chrs[j] = inverseCipher[chr - 'a'];
-                }
-                else if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
-                    chr = Character.toLowerCase(chr);
-                    chrs[j] = Character.toUpperCase(inverseCipher[chr - 'a']);                    
-                }
-            }
-            String deciphered = new String(chrs);
-            Sx.puts(deciphered);
-            Sx.puts(line);
-        }
-    }
-    
     public void showForwardCipher() { showCipherColumns(forwardCipher); }
     public void showInverseCipher() { showCipherColumns(inverseCipher); }
     
@@ -410,6 +436,30 @@ public class SubCipher
             Sx.format("%c ", cipher[j]);
         }
         Sx.puts();
+    }
+    
+    void decodeCipherText()
+    {
+        HashMapStringCollector fixme_3 = new HashMapStringCollector();
+        Sx.format("Encoded/Decoded cipher text (%s)\n\n", cipherFilePath);
+        for (String line : cipherFileLines) {
+            char chrs[] = line.toCharArray();
+            for (int j = 0; j < chrs.length; j++) {
+                char chr = chrs[j];
+                if (EnTextCounter.isAsciiLowerCaseLetter(chr)) {
+                    chrs[j] = inverseCipher[chr - 'a'];
+                }
+                else if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
+                    chr = Character.toLowerCase(chr);
+                    chrs[j] = Character.toUpperCase(inverseCipher[chr - 'a']);                    
+                }
+            }
+            String deciphered = new String(chrs);
+            TextFilters.collectLowerCaseLetterWords(fixme_3, deciphered);
+            Sx.puts(deciphered);
+            Sx.puts(line);
+        }
+        //Sx.putsIterable(fixme_3.getCollector().entrySet(), 1, 10000);
     }
     
 
@@ -445,11 +495,11 @@ public class SubCipher
     class DescCountAscUnknownComp implements Comparator<String>
     {
         Map<String, Integer> wordCounts;
-        char forwardCipher[];
+        char cipher[];
         
-        DescCountAscUnknownComp(Map<String, Integer> wordCounts, char forwardCipher[]) {
+        DescCountAscUnknownComp(Map<String, Integer> wordCounts, char cipher[]) {
             this.wordCounts = wordCounts;
-            this.forwardCipher = forwardCipher;
+            this.cipher = forwardCipher;
         }
         
         @Override

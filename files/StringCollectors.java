@@ -2,14 +2,11 @@ package sprax.files;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import sprax.files.StringCollectorInterface;
 
 /**
  * StringCollector with unspecified container type.
@@ -23,13 +20,15 @@ abstract class AbstractStringCollector<T> implements StringCollectorInterface<T>
                                   // C++)
     
     AbstractStringCollector(T t)
-    { // The collector must be passed in, since the unknown type T cannot
+    { 
+        // The collector must be passed in, since the unknown type T cannot
         mCollector = t; // be instantiated; that is, mCollector = new T() cannot compile.
     }
     
     @Override
     public T getCollector()
-    { // public accessor for read-only collector;
+    { 
+        // public accessor for read-only collector;
         return mCollector; // do not define setCollector.
     }
 }
@@ -46,19 +45,22 @@ abstract class LowerCaseWordCollector<T extends Collection<char[]>> implements
                                   // C++)
     
     LowerCaseWordCollector(T t)
-    { // The collector must be passed in, since the unknown type T cannot
+    { 
+        // The collector must be passed in, since the unknown type T cannot
         mCollector = t; // be instantiated; that is, mCollector = new T() cannot compile.
     }
     
     @Override
     public T getCollector()
-    { // public accessor; do not define setCollector.
+    { 
+        // public accessor; do not define setCollector.
         return mCollector;
     }
     
     @Override
     public boolean addString(String str)
-    { // Return true IFF the set did not already contain this string
+    { 
+        // Return true IFF the set did not already contain this string
         return TextFilters.collectLowerCaseLetterWords(mCollector, str.toCharArray(), str.length());
     }
     
@@ -314,16 +316,7 @@ class TreeSetStringCollector extends StringCollection<TreeSet<String>>
 
 // ////////////////////////// MAPS and TABLES //////////////////////////////////
 
-class HashMapStringCollector extends MapStringCollector<HashMap<String, Integer>>
-{
-    HashMap<String, Integer> mHashMap;
-    
-    HashMapStringCollector()
-    {
-        super(new HashMap<String, Integer>());
-        mHashMap = mCollector;
-    }
-}
+// Moved: class HashMapStringCollector extends MapStringCollector<HashMap<String, Integer>>
 
 class TreeMapStringCollector extends MapStringCollector<TreeMap<String, Integer>>
 {

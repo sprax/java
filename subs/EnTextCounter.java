@@ -33,7 +33,7 @@ class CharCount implements Comparable<CharCount>
 public class EnTextCounter
 {
     public static final int ALPHABET_SIZE = 26;
-    public static final int MAX_SIZED_LEN =  3;
+    public static final int MAX_SIZED_LEN =  9;
     public static final int MIN_WORD_COUNT = 2; // Beware of hapax legomena (very rare words)
     
     static boolean isAsciiLowerCaseLetter(char ch) {
@@ -167,9 +167,7 @@ public class EnTextCounter
 
     public void showCounts(String label, int verbose)
     {
-        Sx.format("%s text file path: %s\n", label, filePath);
-        Sx.format("Total words: %d   Unique words: %d  Total letters: %d\n"
-                , totalWordCount, uniqWordCount, totalLetterCount);
+        showTotalCounts(label, verbose);
         
         // Raw letter frequencies
         if (verbose > 1) {
@@ -186,16 +184,23 @@ public class EnTextCounter
                     Sx.format("%4s  %3d\n", word, count);
             }
         }
+        showTotalCounts("Again: " + label, verbose);
     }
 
-
+    public void showTotalCounts(String label, int verbose)
+    {
+        Sx.format("%s text file path: %s\n", label, filePath);
+        Sx.format("Total words: %d   Unique words: %d  Total letters: %d\n"
+                , totalWordCount, uniqWordCount, totalLetterCount);
+    }
+    
     public static int unit_test(int level) 
     {
         String testName = EnTextCounter.class.getName() + ".unit_test";
         Sz.begin(testName);
         int numWrong = 0;
     
-        String filePath = FileUtil.getTextFilePath("corpus.txt");
+        String filePath = FileUtil.getTextFilePath("corpusEn.txt");
         EnTextCounter myEtc = new EnTextCounter(filePath);
         myEtc.showCounts("showCounts for", 2);
         
