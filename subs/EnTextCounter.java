@@ -11,7 +11,6 @@ import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
-import sprax.tries.WordTrie.NodeCount;
 
 /** Count of a single character (such a lower-case a letter) in a corpus */
 class CharCount implements Comparable<CharCount>
@@ -55,7 +54,8 @@ public class EnTextCounter
                 return Integer.compare(countB, countA); // Descending counts
             return sA.compareTo(sB);
         }
-    }    
+    }
+    
     public final String filePath;
     
     /// Letters

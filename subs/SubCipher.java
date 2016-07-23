@@ -3,14 +3,18 @@ package sprax.subs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import sprax.files.FileUtil;
 import sprax.files.TextFileReader;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
+
+
 
 public class SubCipher
 {
@@ -21,6 +25,8 @@ public class SubCipher
     EnTextCounter corpusCounter;
     char forwardCipher[];
     char inverseCipher[];
+    
+    // TODO: replace these with something like: boolean threeLetterWordIndexAssigned[]
     /** index of the encoded "the" in the sorted array of 3-letter ciphers */
     int threeLetterWordIndex_the = -1; 
     /** index of the encoded "and" in the sorted array of 3-letter ciphers */
@@ -158,10 +164,53 @@ public class SubCipher
         return false;
     }       
     
+    boolean findCipher_his()    // use "of" with "to", then "for"
+    {
+        return false;
+    }    
+    
     boolean findCipher_for()    // use "of" with "to", then "for"
     {
         return false;
     }
+    
+    /*
+     * For each 2-letter corpus word with a reasonable count and
+     * one of its letter's cipher known already, try to find its
+     * cipher in the cipher text.  The trick is to order them
+     * efficiently, versus just looping over the remaining 
+     * unknowns several times (as in, until none are found
+     * in a complete cycle (like the draw cards in solitaire).
+     */
+    void findCipher_twoLetterWords()
+    {
+        // twoLetterWords will have already been sorted by descending counts
+        List<String> twoLetterWords = corpusCounter.sizedWords.get(2);
+        
+        DescCountUnknownComp comp = new DescCountUnknownComp(corpusCounter.wordCounts, forwardCipher);
+        PriorityQueue<String> twoQueue = new PriorityQueue<>(comp);
+        twoQueue.addAll(twoLetterWords);
+        while (! twoQueue.isEmpty()) {
+            String wordy = twoQueue.remove();
+            Sx.format("TWO QUEUE twoQueue: %s  %d  %d\n"
+                    , wordy, corpusCounter.wordCounts.get(wordy), numUnknownChars(wordy));
+        }
+        
+        for (String word : twoLetterWords) {
+            char corp0 = word.charAt(0);
+            char corp1 = word.charAt(1);
+            char ciph0 = forwardCipher[corp0 - 'a'];
+            char ciph1 = forwardCipher[corp1 - 'a'];
+            if (ciph0 == 0 && ciph1 != 0) {
+                
+            } else
+            if (ciph0 != 0 && ciph1 == 0) {
+                    
+            }
+        }
+        
+    }
+    
 
     void inferCipher()
     {
@@ -169,7 +218,7 @@ public class SubCipher
         findCipher_a();
         findCipher_the();   // use wordCount("the") and letterCount('e')
         findCipher_and();   // a + and : d, n
-        findCipher_for();   // of, for, to : o, r
+        findCipher_twoLetterWords();   // of, for, to : o, r
         
         
         //// FIXME: cheating to test...
@@ -302,5 +351,39 @@ public class SubCipher
     public static void main(String[] args) {
         unit_test(1);
     }
+    
+   
+    int numUnknownChars(String word) {
+        return (int) word.chars().filter(x -> forwardCipher[x - 'a'] == 0).count();
+    }
+    
+    
+    class DescCountUnknownComp implements Comparator<String>
+    {
+        Map<String, Integer> wordCounts;
+        char forwardCipher[];
+        
+        DescCountUnknownComp(Map<String, Integer> wordCounts, char forwardCipher[]) {
+            this.wordCounts = wordCounts;
+            this.forwardCipher = forwardCipher;
+        }
+        
+        @Override
+        public int compare(String wordA, String wordB) {
+            
+            int unmapA = numUnknownChars(wordA);
+            int unmapB = numUnknownChars(wordB);
+            if (unmapA != unmapB)
+                return unmapA - unmapB;
+            int countA = wordCounts.getOrDefault(wordA, 0);
+            int countB = wordCounts.getOrDefault(wordB, 0);
+            if (countA != countB)
+                return Integer.compare(countB, countA); // Descending counts
+            return wordA.compareTo(wordB);
+        }
+    }
+
+
+    
     
 }
