@@ -185,30 +185,57 @@ public class SubCipher
     void findCipher_twoLetterWords()
     {
         // twoLetterWords will have already been sorted by descending counts
-        List<String> twoLetterWords = corpusCounter.sizedWords.get(2);
+        List<String> corpusWords2 = corpusCounter.sizedWords.get(2);
+        List<String> cipherWords2 = cipherCounter.sizedWords.get(2);
         
         DescCountUnknownComp comp = new DescCountUnknownComp(corpusCounter.wordCounts, forwardCipher);
         PriorityQueue<String> twoQueue = new PriorityQueue<>(comp);
-        twoQueue.addAll(twoLetterWords);
-        while (! twoQueue.isEmpty()) {
-            String wordy = twoQueue.remove();
-            Sx.format("TWO QUEUE twoQueue: %s  %d  %d\n"
-                    , wordy, corpusCounter.wordCounts.get(wordy), numUnknownChars(wordy));
-        }
-        
-        for (String word : twoLetterWords) {
+
+        // Add frequent two-letter words that contain at least one unknown letter
+        int maxCount = corpusCounter.wordCounts.get(corpusWords2.get(0));
+        int minCount = maxCount / EnTextCounter.ALPHABET_SIZE;
+        for (String word : corpusWords2) {
             char corp0 = word.charAt(0);
             char corp1 = word.charAt(1);
             char ciph0 = forwardCipher[corp0 - 'a'];
             char ciph1 = forwardCipher[corp1 - 'a'];
-            if (ciph0 == 0 && ciph1 != 0) {
-                
-            } else
-            if (ciph0 != 0 && ciph1 == 0) {
-                    
+            if (ciph0 == 0 || ciph1 == 0) {
+                twoQueue.add(word);
             }
+            int count = corpusCounter.wordCounts.get(word);
+            if (count < minCount)
+                break;
         }
         
+        while (!twoQueue.isEmpty()) {
+            String word = twoQueue.remove();
+            char corp0 = word.charAt(0);
+            char corp1 = word.charAt(1);
+            char ciph0 = forwardCipher[corp0 - 'a'];
+            char ciph1 = forwardCipher[corp1 - 'a'];
+            if (ciph0 != 0 && ciph1 != 0) {
+                continue;                       // no more unknowns here
+            }
+            if (ciph0 != 0) {                   // corp0 is mapped to ciph0, but ciph1 is unknown
+                for (String ciph : cipherWords2) {
+                    if (ciph0 == ciph.charAt(0)) {
+                        ciph1 = ciph.charAt(1);
+                        assignCipher(corp1, ciph1);
+                    }
+                }
+            } 
+            else if (ciph0 != 0) {              // corp1 -> ciph1, but corp0 -> ?
+                for (String ciph : cipherWords2) {
+                    if (ciph1 == ciph.charAt(1)) {
+                        ciph0 = ciph.charAt(0);
+                        assignCipher(corp0, ciph0);
+                    }
+                }
+            } 
+            else {
+                break;      // both corp0 and corp1 are still unmapped, so quit this queue
+            }
+        }
     }
     
 
@@ -227,23 +254,26 @@ public class SubCipher
         assignCipher('x', 'e');
         assignCipher('b', 'g');
         assignCipher('p', 'i');
-
         assignCipher('l', 'k');
 
-
-        assignCipher('o', 'n');
         assignCipher('k', 'o');
         assignCipher('g', 'p');
-        assignCipher('s', 'r');
-
 
         assignCipher('v', 'v');     // vow
         assignCipher('r', 'w');     // was, who, now, how
-        assignCipher('f', 'x');     // six
         assignCipher('y', 'y');     // you, say, any, may
-        assignCipher('w', 'z');     // was, who, now, how
-        
+        //assignCipher('w', 'z');     // was, who, now, how
+
+        Sx.puts("Number of unmapped chars: " + numUnmappedChars());
         guessUnknownInverseCiphersFromCharCounts();
+    }
+    
+    int numUnmappedChars() {
+        int numUnmapped = 0;
+        for (int j = 0; j < EnTextCounter.ALPHABET_SIZE; j++) 
+            if (forwardCipher[j] == 0)
+                numUnmapped++;
+        return  numUnmapped;
     }
     
     void guessUnknownInverseCiphersFromCharCounts()
