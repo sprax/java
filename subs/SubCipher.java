@@ -1,10 +1,7 @@
 package sprax.subs;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -36,7 +33,7 @@ public class SubCipher
     SubCipher() 
     {
         this(FileUtil.getTextFilePath("cipher.txt"),
-             FileUtil.getTextFilePath("corpusEn.txt"));
+             FileUtil.getTextFilePath("corpus-en.txt"));
     }
     
     public SubCipher(String cipherFilePath, String corpusFilePath)
@@ -146,7 +143,6 @@ public class SubCipher
         // The 3-letter word list was already sorted by descending counts.
         // To make sure, check that its first letter (expected to be C('a'))
         // matches what we (may have) already found using findCipher_a().
-        char maxCountLetter = cipherCounter.charCounts[0].chr;
         List<String> threeLetterWords = cipherCounter.sizedWords.get(3);
         for (int j = 0; j < threeLetterWords.size(); j++) {
             if (j != threeLetterWordIndex_the) {
@@ -161,16 +157,6 @@ public class SubCipher
                 }
             }
         }
-        return false;
-    }       
-    
-    boolean findCipher_his()    // use "of" with "to", then "for"
-    {
-        return false;
-    }    
-    
-    boolean findCipher_for()    // use "of" with "to", then "for"
-    {
         return false;
     }
     
@@ -221,6 +207,7 @@ public class SubCipher
                     if (ciph0 == ciph.charAt(0)) {
                         ciph1 = ciph.charAt(1);
                         assignCipher(corp1, ciph1);
+                        break;
                     }
                 }
             } 
@@ -229,6 +216,7 @@ public class SubCipher
                     if (ciph1 == ciph.charAt(1)) {
                         ciph0 = ciph.charAt(0);
                         assignCipher(corp0, ciph0);
+                        break;
                     }
                 }
             } 
@@ -245,7 +233,7 @@ public class SubCipher
         findCipher_a();
         findCipher_the();   // use wordCount("the") and letterCount('e')
         findCipher_and();   // a + and : d, n
-        findCipher_twoLetterWords();   // of, for, to : o, r
+        findCipher_twoLetterWords();
         
         
         //// FIXME: cheating to test...
@@ -256,13 +244,14 @@ public class SubCipher
         assignCipher('p', 'i');
         assignCipher('l', 'k');
 
+        assignCipher('f', 'x');
         assignCipher('k', 'o');
         assignCipher('g', 'p');
 
         assignCipher('v', 'v');     // vow
         assignCipher('r', 'w');     // was, who, now, how
         assignCipher('y', 'y');     // you, say, any, may
-        //assignCipher('w', 'z');     // was, who, now, how
+        assignCipher('w', 'z');     // was, who, now, how
 
         Sx.puts("Number of unmapped chars: " + numUnmappedChars());
         guessUnknownInverseCiphersFromCharCounts();
