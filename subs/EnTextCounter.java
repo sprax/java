@@ -34,7 +34,7 @@ public class EnTextCounter
 {
     public static final int ALPHABET_SIZE = 26;
     public static final int MAX_SIZED_LEN =  9;
-    public static final int MIN_WORD_COUNT = 2; // Beware of hapax legomena (very rare words)
+    public static final int MIN_WORD_COUNT = 4; // Beware of hapax legomena (very rare words)
     
     static boolean isAsciiLowerCaseLetter(char ch) {
         return ('a' <= ch && ch <= 'z');
@@ -180,7 +180,7 @@ public class EnTextCounter
             Sx.format("%d-letter words:  %d:\n", len, sizedWords.get(len).size());
             for (String word : sizedWords.get(len)) {
                 int count =  wordCounts.get(word);
-                if (count > MIN_WORD_COUNT + 1 - verbose)
+                if (count > MIN_WORD_COUNT || verbose > 2)
                     Sx.format("%4s  %3d\n", word, count);
             }
         }
@@ -200,9 +200,10 @@ public class EnTextCounter
         Sz.begin(testName);
         int numWrong = 0;
     
-        String filePath = FileUtil.getTextFilePath("corpusEn.txt");
+        String filePath = FileUtil.getTextFilePath("corpus-en.txt");
+        ////String filePath = "src/sprax/subs/deciphered.txt";
         EnTextCounter myEtc = new EnTextCounter(filePath);
-        myEtc.showCounts("showCounts for", 2);
+        myEtc.showCounts("showCounts for", 3);
         
         Sz.end(testName, numWrong);
         return numWrong;
