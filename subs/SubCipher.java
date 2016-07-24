@@ -38,7 +38,8 @@ public class SubCipher
     {
         this(FileUtil.getTextFilePath("cipher.txt"),
         //// FileUtil.getTextFilePath("corpusEn300kWords.txt"));
-             FileUtil.getTextFilePath("corpus-en.txt"));   
+        ////    FileUtil.getTextFilePath("corpus-en.txt"));   
+        FileUtil.getTextFilePath("corpusEn.txt"));   
      }
     
     public SubCipher(String cipherFilePath, String corpusFilePath)
@@ -216,9 +217,11 @@ public class SubCipher
                 continue;                       // no more unknowns here
             }
             if (ciph0 != 0) {                   // corp0 is mapped to ciph0, but ciph1 is unknown
-                for (String ciph : cipherWords2) {
+                for (String ciph : cipherWords2) {                    
                     if (ciph0 == ciph.charAt(0)) {
                         ciph1 = ciph.charAt(1);
+                        Sx.debug(2, "findCiphersForTwoLetterWords making %c -> %c from %s <> %s\n"
+                                , corp1, ciph1, word, ciph);
                         assignCipher(corp1, ciph1);
                         break;
                     }
@@ -228,6 +231,8 @@ public class SubCipher
                 for (String ciph : cipherWords2) {
                     if (ciph1 == ciph.charAt(1)) {
                         ciph0 = ciph.charAt(0);
+                        Sx.debug(2, "findCiphersForTwoLetterWords making %c -> %c from %s <> %s\n"
+                                , corp0, ciph0, word, ciph);
                         assignCipher(corp0, ciph0);
                         break;
                     }
@@ -310,9 +315,19 @@ public class SubCipher
                     if (numMatchedChars == wordLen - 1) {
                         char ciphCharAtIdx = ciph.charAt(idxUnMapped);
                         // Check if this char in the cipher word is already mapped:
+                        Sx.debug(2, "findCiphersForWordsOfFixedLength trying %c -> %c from %s <> %s\n"
+                                , corpUnMappedChar, ciphCharAtIdx, word, ciph);
                         if (inverseCipher[ciphCharAtIdx - 'a'] == 0) {
+                            Sx.debug(1, "Accepting %c -> %c\n"
+                                    , corpUnMappedChar, ciphCharAtIdx
+                                    , inverseCipher[ciphCharAtIdx - 'a'], ciphCharAtIdx);
                             assignCipher(corpUnMappedChar, ciphCharAtIdx);
                             break;
+                        }
+                        else {
+                            Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                                    , corpUnMappedChar, ciphCharAtIdx
+                                    , inverseCipher[ciphCharAtIdx - 'a'], ciphCharAtIdx);
                         }
                     }
                 }
@@ -328,7 +343,8 @@ public class SubCipher
         findCipher_a();
         findCipher_the();   // use wordCount("the") and letterCount('e')
         findCipher_and();   // a + and : d, n
-        findCipher_twoLetterWords(0.0005);
+        //findCipher_twoLetterWords(0.0005);
+        findCiphersForWordsOfFixedLength(2, 0.0005);
         findCiphersForWordsOfFixedLength(3, 0.0007);
         findCiphersForWordsOfFixedLength(4, 0.0006);
         
@@ -346,7 +362,7 @@ public class SubCipher
         assignCipher('x', 'e');
         //assignCipher('b', 'g');
         assignCipher('p', 'i');
-        assignCipher('l', 'k');
+        //assignCipher('l', 'k');
 
         //assignCipher('f', 'x');
         //assignCipher('k', 'o');
