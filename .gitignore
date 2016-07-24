@@ -85,3 +85,5 @@ _ReSharper*/
 
 #Back-up files
 *~
+*.swp
+
