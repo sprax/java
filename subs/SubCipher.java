@@ -287,7 +287,7 @@ public class SubCipher
         if (wordLen < 0 || wordLen > EnTextCounter.MAX_SIZED_LEN)
             throw new IllegalArgumentException("bad word size: " + wordLen);
         
-        // twoLetterWords will have already been sorted by descending counts
+        // These lists will have already been sorted by descending counts
         List<String> corpusWords = corpusCounter.sizedWords.get(wordLen);
         List<String> cipherWords = cipherCounter.sizedWords.get(wordLen);
         
@@ -362,6 +362,77 @@ public class SubCipher
         }
     }
     
+    void findCiphersForFrequentCorpusWords(double minWordFreqInCorpus, int numWords) // FIXME: choose one?
+    {       
+        int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
+
+        PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
+
+        // Enqueue frequent two-letter words that contain at least one unknown letter
+        for (Map.Entry<String, Integer> entry : corpusCounter.wordCounts.entrySet()) {
+            String word = entry.getKey();
+            int count = entry.getValue();
+            if (count >= minCount && word.length() > 2) 
+                wordQueue.add(word);
+        }
+        
+        while (!wordQueue.isEmpty()) {
+            String word = wordQueue.remove();
+            int wordLen = word.length();
+            int idxUnMapped = -1; 
+            for (int j = 0; j < wordLen; j++) {
+                char corpj = word.charAt(j);
+                char ciphj = forwardTable[corpj - 'a'];
+                if (ciphj == 0) {
+                    if (idxUnMapped == -1) {
+                        idxUnMapped = j;                 // index was not set, so set it
+                    }
+                    else {
+                        idxUnMapped = Integer.MIN_VALUE; // index was already set: too many unknowns!
+                        break;
+                    }
+                }
+            }
+            if (idxUnMapped >= 0) {                      // index was set just once
+                char corpUnMappedChar = word.charAt(idxUnMapped);
+                for (String ciph : cipherCounter.sizedWords.get(wordLen)) {
+                    // if this cipher word matches all the other, num-1 known letters of word,
+                    // then guess that the one unmapped letter in word should map to ciph[idxUnknown]
+                    int numMatchedChars = 0;
+                    for (int j = 0; j < wordLen; j++) {
+                        if (j == idxUnMapped)
+                            continue;
+                        if (ciph.charAt(j) != forwardTable[word.charAt(j) - 'a'])
+                            break;
+                        numMatchedChars++;
+                    }
+                    if (numMatchedChars == wordLen - 1) {
+                        char ciphCharAtIdx = ciph.charAt(idxUnMapped);
+                        // Check if this char in the cipher word is already mapped:
+                        Sx.debug(2, "findCiphersForWordsOfFixedLength trying %c -> %c from %s <> %s\n"
+                                , corpUnMappedChar, ciphCharAtIdx, word, ciph);
+                        if (inverseTable[ciphCharAtIdx - 'a'] == 0) {
+                            Sx.debug(1, "Accepting %c -> %c\n"
+                                    , corpUnMappedChar, ciphCharAtIdx
+                                    , inverseTable[ciphCharAtIdx - 'a'], ciphCharAtIdx);
+                            assignCipher(corpUnMappedChar, ciphCharAtIdx);
+                            break;
+                        }
+                        else {
+                            Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                                    , corpUnMappedChar, ciphCharAtIdx
+                                    , inverseTable[ciphCharAtIdx - 'a'], ciphCharAtIdx);
+                        }
+                    }
+                }
+            } 
+            else if (idxUnMapped == Integer.MIN_VALUE) {
+                dumpQueue(wordQueue, "findCiphersForFixedLengthWords dumping queue: " + wordLen);
+                break; // all words left in the queue have at least 2 unknown chars, so give up
+            }
+        }
+    }
+    
 
     void inferCipher()
     {
@@ -370,6 +441,10 @@ public class SubCipher
         findCipher_the();   // use wordCount("the") and letterCount('e')
         findCipher_and();   // a + and : d, n
         findCiphersForTwoLetterWords(0.006);
+        
+        double minWordFreqInCorpus = 0.005;
+        findCiphersForFrequentCorpusWords(minWordFreqInCorpus, 100);
+        /*
         //findCiphersForFixedLengthWords(2, 0.006);
         findCiphersForFixedLengthWords(3, 0.00222);
         findCiphersForFixedLengthWords(4, 0.005);
@@ -379,6 +454,9 @@ public class SubCipher
         findCiphersForFixedLengthWords(7, 0.00022);
         findCiphersForFixedLengthWords(8, 0.00015);
         findCiphersForFixedLengthWords(9, 0.00011);
+        */
+        
+        
         
         //// findCipher_numLetterWords(10, 0.000001);
         
@@ -514,9 +592,9 @@ public class SubCipher
         int numWrong = 0;
         
         SubCipher sc = new SubCipher(FileUtil.getTextFilePath("cipher.txt"),
-                                     FileUtil.getTextFilePath("corpusEn300kWords.txt"));
+            ////                         FileUtil.getTextFilePath("corpusEn300kWords.txt"));
             ////FileUtil.getTextFilePath("corpus-en.txt"));   
-        ////FileUtil.getTextFilePath("corpusEn.txt"));   
+            FileUtil.getTextFilePath("corpusEn.txt"));   
                 ////"src/sprax/subs/deciphered.txt");   
         
         sc.corpusCounter.showCounts("\n     CORPUS: ", 1);
