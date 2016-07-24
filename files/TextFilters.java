@@ -216,18 +216,20 @@ public class TextFilters
 
  
     /**
-     * Extracts "words" -- that is, word-boundary delimited strings --
-     * from a char array, converting them to lower case.  These "words"
+     * Extracts "words" omitting internal punctuation such as hyphens and apostrophes.
+     * Words -- that is, word-boundary delimited strings --
+     * are extracted from a char array, converting them to lower case.  These "words"
      * are not checked against any dictionary or rules, other than being
      * delimited by the beginning or end of the array or by non-word-forming
-     * characters, such as whitespace or punctuation.
-     * 
+     * characters, such as whitespace or punctuation.  Internal punctuation characters
+     * are filtered out (see below).
+     * <P>
      * Parses input char array using two states for greater efficiency.
      * The two states are: whiteSpace or not, or, in-between-words vs. inside-a-word.
      * Note that any hyphen, apostrophe, and underscore characters (- ' _) are discarded 
      * whether they appear inside or outside a word.  Thus "forty-one" becomes "fortyone", 
      * "don't" becomes "dont", and "God's will" becomes "Gods will".
-     * 
+     * <P>
      * TODO: Make sure that any two hyphen or punctuation characters do terminate words:
      * don't -> dont
      * Don''told''me  ->  Don told me
@@ -241,7 +243,7 @@ public class TextFilters
      *               If the collector discards duplicates, the number kept
      *               may be less than the number of words found.
      */
-    public static int collectLettersOnlyWords(Collection<String> words, char[] chr, int length)
+    public static int collectLettersOnlyWordsOmitInPunct(Collection<String> words, char[] chr, int length)
     {
         int numWordsAdded = 0;
         char chrPrv = ' ';  // space
@@ -437,6 +439,44 @@ public class TextFilters
         if (chrPrv != ' ' && words.add(Arrays.copyOfRange(chr, kBeg, kEnd)))
             anyWordsAdded = true;
         return anyWordsAdded;
+    }
+    
+    
+    public static int collectLettersOnlyWords(Collection<String> words, String str, int strLen)
+    {
+        int numWordsAdded = 0;
+        char chrPrv = ' ';  // space
+        int kBeg = 0, kEnd = 0;
+        for (int j = 0; j < strLen; j++) {
+            char chr_j = str.charAt(j);
+
+            // NB: Contrary to toLowerCaseLettersAndSingleSpaces_twoState, which 
+            // copies all kept characters from input to output, here the hyphen,
+            // apostrophe, and underscore characters terminate a word.
+
+            // If current state is whiteSpace, find a letter to change it.
+            if (chrPrv == ' ') {
+                if ((isAsciiLowerCaseLetter(chr_j)) || (isAsciiUpperCaseLetter(chr_j))) {
+                    kBeg = j;
+                    kEnd = j + 1;
+                    chrPrv = chr_j;
+                }
+            }
+            else {
+                if (isAsciiLowerCaseLetter(chr_j) || isAsciiUpperCaseLetter(chr_j)) {
+                    kEnd++;
+                }
+                else {
+                    if (words.add(str.substring(kBeg, kEnd)))
+                        numWordsAdded++;
+                    chrPrv = ' ';    // Covert substring of anything else to a single SPACE char.
+                }
+            }
+        }
+        // If the input ended in non-whiteSpace, add this last word.
+        if (chrPrv != ' ' && words.add(str.substring(kBeg, kEnd).toLowerCase()))
+            numWordsAdded++;
+        return numWordsAdded;
     }
 
     /**

@@ -115,8 +115,7 @@ abstract class WordCollectorStr<T extends Collection<String>> implements
     public boolean addString(String str)
     {
         // Return true IFF the set did not already contain this string
-        char chrs[] = str.toCharArray();
-        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, chrs, chrs.length);
+        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, str, str.length());
         return numAdded > 0;
     }
     
@@ -131,9 +130,10 @@ abstract class WordCollectorStr<T extends Collection<String>> implements
      * @deprecated // TODO: reorganize: distinguish addLine and addWord, no more addString?
      */
     @Override
-    public boolean addString(char[] chr, int beg, int end)
+    public boolean addString(char[] chrs, int beg, int end)
     {
-        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, chr, end - beg);//FIXME: word vs. line
+        String str = new String(chrs);
+        int numAdded = TextFilters.collectLettersOnlyWords(mCollector, str, end - beg);//FIXME: word vs. line
         return numAdded > 0;
     }
     
