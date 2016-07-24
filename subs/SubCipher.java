@@ -1,10 +1,13 @@
 package sprax.subs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.regex.Pattern;
+
 
 import sprax.files.FileUtil;
 import sprax.files.HashMapStringCollector;
@@ -25,7 +28,8 @@ public class SubCipher
     EnTextCounter corpusCounter;
     char forwardTable[];
     char inverseTable[];
-    AscendingUnMappedCharsDescendingWordCountsComp countAndUnMappedComp;
+    AscendingUnMappedCharsDescendingWordCountsComp unMappedCorpusWordComp;
+    AscendingUnknownCharsDescendingCipherWordCountsComp unknownCipherWordComp;
     
     // TODO: replace these with something like: boolean threeLetterWordIndexAssigned[]
     /** index of the encoded "the" in the sorted array of 3-letter ciphers */
@@ -42,7 +46,7 @@ public class SubCipher
         corpusCounter = new EnTextCounter(corpusFilePath);
         forwardTable = new char[EnTextCounter.ALPHABET_SIZE];
         inverseTable = new char[EnTextCounter.ALPHABET_SIZE];
-        countAndUnMappedComp = new AscendingUnMappedCharsDescendingWordCountsComp();
+        unMappedCorpusWordComp = new AscendingUnMappedCharsDescendingWordCountsComp();
     }
     
     void matchSingleLetterWords()
@@ -186,7 +190,7 @@ public class SubCipher
         List<String> corpusWords2 = corpusCounter.sizedWords.get(2);
         List<String> cipherWords2 = cipherCounter.sizedWords.get(2);
         
-        PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
+        PriorityQueue<String> wordQueue = new PriorityQueue<>(unMappedCorpusWordComp);
 
         // Enqueue frequent two-letter words that contain at least one unknown letter
         int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
@@ -296,7 +300,7 @@ public class SubCipher
         List<String> corpusWords = corpusCounter.sizedWords.get(wordLen);
         List<String> cipherWords = cipherCounter.sizedWords.get(wordLen);
         
-        PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
+        PriorityQueue<String> wordQueue = new PriorityQueue<>(unMappedCorpusWordComp);
 
         // Enqueue frequent two-letter words that contain at least one unknown letter
         int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
@@ -371,7 +375,7 @@ public class SubCipher
     {       
         int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
 
-        PriorityQueue<String> wordQueue = new PriorityQueue<>(countAndUnMappedComp);
+        PriorityQueue<String> wordQueue = new PriorityQueue<>(unMappedCorpusWordComp);
 
         // Enqueue frequent two-letter words that contain at least one unknown letter
         for (Map.Entry<String, Integer> entry : corpusCounter.wordCounts.entrySet()) {
@@ -508,7 +512,41 @@ public class SubCipher
         Map<String, Integer> ciphCounts = cipherCounter.wordCounts;
         String cipherWords[] = new String[ciphCounts.size()];
         cipherWords = cipherCounter.wordCounts.keySet().toArray(cipherWords);
+        Arrays.sort(cipherWords, unknownCipherWordComp);
+        for (String ciph : cipherWords) {
+            int wordLen = ciph.length();
+            if (wordLen < 2 || wordLen > EnTextCounter.MAX_SIZED_LEN)
+                continue;
+            
+            int numUnknown = numUnknownCipherChars(ciph);
+            if (numUnknown == 0)
+                continue;
+            if (numUnknown > 2)
+                continue;           // or break, if we know the rest are as bad or worse
+            
+            Pattern ciphPat = cipherWordToRegexPattern(ciph, wordLen);
+            for (String word : corpusCounter.sizedWords.get(wordLen)) {
+                if (ciphPat.matcher(word).matches()) {
+                    Sx.format("Matched: %s -> %s : %s\n", ciph, ciphPat.toString(), word);
+                }
+            }
+        }
         
+    }
+    
+    Pattern cipherWordToRegexPattern(String ciph, int wordLen) {
+        StringBuilder sb = new StringBuilder('^');
+        for (int j = 0; j < wordLen; j++) {
+            char ciphChar = ciph.charAt(j);
+            char corpChar = inverseTable[ciphChar - 'a'];
+            if (corpChar == 0)
+                sb.append("\\w");   // Could use Posix: \p{Lower} (ASCII only) or even \p{javaLowerCase} 
+            else
+                sb.append(corpChar);
+        }
+        sb.append('$');
+        String patString = sb.toString();
+        return Pattern.compile(patString);
     }
 
     
@@ -619,6 +657,68 @@ public class SubCipher
     }
     
 
+    
+   
+    /**
+     * Returns the total number of instances of corpus characters without
+     * known cipher values.  Two instances of the same unmapped character
+     * are counted as 2, not 1.  For example, if 'a' were mapped but 'l'
+     * unmapped, then the number returned for the word "all" would be 2.
+     */
+    int numUnMappedCorpusChars(String word) {
+        return (int) word.chars().filter(x -> forwardTable[x - 'a'] == 0).count();
+    }
+    
+    /**
+     * Returns the total number of different cipher characters with unknown
+     * corresponding corpus characters.  Two instances of the same unknown
+     * character are counted as 1, not 2.  For example, if 'g' and 'o' were
+     * known, but not 'n', then the number returned for the cipher word "gnno"
+     * would be 1.  Finding that one missing correspondence would solve for
+     * the rest of the word 
+     */
+    int numUnknownCipherChars(String ciph) {
+        return (int) ciph.chars().distinct().filter(x -> inverseTable[x - 'a'] == 0).count();
+    }
+    
+    ////////////// Inner Classes ///////////////
+    
+    class AscendingUnMappedCharsDescendingWordCountsComp implements Comparator<String>
+    {       
+        @Override
+        public int compare(String wordA, String wordB) 
+        {    
+            int unmapA = numUnMappedCorpusChars(wordA);
+            int unmapB = numUnMappedCorpusChars(wordB);
+            if (unmapA != unmapB)
+                return unmapA - unmapB;
+            int countA = corpusCounter.wordCounts.getOrDefault(wordA, 0);
+            int countB = corpusCounter.wordCounts.getOrDefault(wordB, 0);
+            if (countA != countB)
+                return Integer.compare(countB, countA); // Descending counts
+            return wordA.compareTo(wordB);
+        }
+    }
+
+    class AscendingUnknownCharsDescendingCipherWordCountsComp implements Comparator<String>
+    {       
+        @Override
+        public int compare(String wordA, String wordB) 
+        {    
+            int unmapA = numUnknownCipherChars(wordA);
+            int unmapB = numUnknownCipherChars(wordB);
+            if (unmapA != unmapB)
+                return unmapA - unmapB;
+            int countA = cipherCounter.wordCounts.getOrDefault(wordA, 0);
+            int countB = cipherCounter.wordCounts.getOrDefault(wordB, 0);
+            if (countA != countB)
+                return Integer.compare(countB, countA); // Descending counts
+            return wordA.compareTo(wordB);
+        }
+    }
+
+    ////////////// Unit Tests ///////////////
+
     public static int unit_test(int level) {
         String testName = SubCipher.class.getName() + ".unit_test";
         Sz.begin(testName);
@@ -646,33 +746,4 @@ public class SubCipher
     public static void main(String[] args) {
         unit_test(1);
     }
-    
-   
-    /**
-     * Returns the total number of instances of corpus characters without
-     * known cipher values.  Two instances of the same unmapped character
-     * are counted as 2, not 1.
-     */
-    int numUnMappedCorpusChars(String word) {
-        return (int) word.chars().filter(x -> forwardTable[x - 'a'] == 0).count();
-    }
-    
-    
-    class AscendingUnMappedCharsDescendingWordCountsComp implements Comparator<String>
-    {       
-        @Override
-        public int compare(String wordA, String wordB) 
-        {    
-            int unmapA = numUnMappedCorpusChars(wordA);
-            int unmapB = numUnMappedCorpusChars(wordB);
-            if (unmapA != unmapB)
-                return unmapA - unmapB;
-            int countA = corpusCounter.wordCounts.getOrDefault(wordA, 0);
-            int countB = corpusCounter.wordCounts.getOrDefault(wordB, 0);
-            if (countA != countB)
-                return Integer.compare(countB, countA); // Descending counts
-            return wordA.compareTo(wordB);
-        }
-    }
-
 }
