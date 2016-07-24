@@ -22,7 +22,7 @@ class CharCount implements Comparable<CharCount>
         this.count = count;
     }
     
-    @Override   // Most frequent first means: descending by count.
+    @Override   // Most frequent first means descending by count.
     public int compareTo(CharCount that) {
         return Integer.compare(that.count, this.count);
     }

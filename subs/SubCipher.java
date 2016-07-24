@@ -25,7 +25,7 @@ public class SubCipher
     EnTextCounter corpusCounter;
     char forwardTable[];
     char inverseTable[];
-    DescCountAscUnknownComp countAndUnMappedComp;
+    AscendingUnMappedCharsDescendingWordCountsComp countAndUnMappedComp;
     
     // TODO: replace these with something like: boolean threeLetterWordIndexAssigned[]
     /** index of the encoded "the" in the sorted array of 3-letter ciphers */
@@ -42,7 +42,12 @@ public class SubCipher
         corpusCounter = new EnTextCounter(corpusFilePath);
         forwardTable = new char[EnTextCounter.ALPHABET_SIZE];
         inverseTable = new char[EnTextCounter.ALPHABET_SIZE];
-        countAndUnMappedComp = new DescCountAscUnknownComp(corpusCounter.wordCounts, forwardTable);
+        countAndUnMappedComp = new AscendingUnMappedCharsDescendingWordCountsComp();
+    }
+    
+    void matchSingleLetterWords()
+    {
+        
     }
     
     
@@ -362,7 +367,7 @@ public class SubCipher
         }
     }
     
-    void findCiphersForFrequentCorpusWords(double minWordFreqInCorpus, int numWords) // FIXME: choose one?
+    void findCiphersFromCorpusWordsLenThreePlus(double minWordFreqInCorpus, int numWords) // FIXME: choose one?
     {       
         int minCount = (int)(minWordFreqInCorpus * corpusCounter.totalWordCount);
 
@@ -377,7 +382,7 @@ public class SubCipher
         }
         
         PriorityQueue<String> copyQueue = new PriorityQueue<String>(wordQueue); 
-        dumpQueue(copyQueue, "findCiphersForFrequentCorpusWords dumping queue at BEGINNING");
+        dumpQueue(copyQueue, "findCiphersFromCorpusWordsLenThreePlus dumping queue at BEGINNING");
          
         
         while (!wordQueue.isEmpty()) {
@@ -413,7 +418,7 @@ public class SubCipher
                     if (numMatchedChars == wordLen - 1) {
                         char ciphCharAtIdx = ciph.charAt(idxUnMapped);
                         // Check if this char in the cipher word is already mapped:
-                        Sx.debug(2, "findCiphersForFrequentCorpusWords trying %c -> %c from %s <> %s\n"
+                        Sx.debug(2, "findCiphersFromCorpusWordsLenThreePlus trying %c -> %c from %s <> %s\n"
                                 , corpUnMappedChar, ciphCharAtIdx, word, ciph);
                         if (inverseTable[ciphCharAtIdx - 'a'] == 0) {
                             Sx.debug(1, "Accepting %c -> %c\n"
@@ -431,7 +436,7 @@ public class SubCipher
                 }
             } 
             else if (idxUnMapped == Integer.MIN_VALUE) {
-                dumpQueue(wordQueue, "findCiphersForFrequentCorpusWords dumping queue on END");
+                dumpQueue(wordQueue, "findCiphersFromCorpusWordsLenThreePlus dumping queue on END");
                 break; // all words left in the queue have at least 2 unknown chars, so give up
             }
         }
@@ -447,8 +452,7 @@ public class SubCipher
         
         switch (how) {
             case 0: 
-                findCiphersFromTwoLetterCorpusWords(0.006);
-                //findCiphersFromFixedLengthCorpusWords(2, 0.006);
+                findCiphersFromFixedLengthCorpusWords(2, 0.006);
                 findCiphersFromFixedLengthCorpusWords(3, 0.00222);
                 findCiphersFromFixedLengthCorpusWords(4, 0.005);
                 findCiphersFromFixedLengthCorpusWords(5, 0.00044);
@@ -458,8 +462,9 @@ public class SubCipher
                 findCiphersFromFixedLengthCorpusWords(9, 0.00011);
                 break;
             case 1:
+                findCiphersFromTwoLetterCorpusWords(0.006);
                 double minWordFreqInCorpus = 0.00125;
-                findCiphersForFrequentCorpusWords(minWordFreqInCorpus, 100);
+                findCiphersFromCorpusWordsLenThreePlus(minWordFreqInCorpus, 100);
                 break;
             default:
                 System.exit(0);
@@ -498,7 +503,12 @@ public class SubCipher
     
     void findMissingCharsFromCipherWords()
     {
-        Sx.puts("findMissingCharsFromCipherWords: NOT YET IMPLEMENTED");
+        Sx.puts("findMissingCharsFromCipherWords");
+        
+        Map<String, Integer> ciphCounts = cipherCounter.wordCounts;
+        String cipherWords[] = new String[ciphCounts.size()];
+        cipherWords = cipherCounter.wordCounts.keySet().toArray(cipherWords);
+        
     }
 
     
@@ -541,9 +551,11 @@ public class SubCipher
         }
     }
     
-    void matchSingleLetterWords()
-    {}
-    
+
+    /**
+     * This would only work if the letter frequencies in the corpus
+     * are very similar to those in the cipher-encoded text.
+     */
     void makeCharCountOnlyCiphers()
     {
         for (int j = 0; j < EnTextCounter.ALPHABET_SIZE; j++) {
@@ -620,7 +632,7 @@ public class SubCipher
         
         sc.corpusCounter.showCounts("\n     CORPUS: ", 1);
         sc.cipherCounter.showCounts("\n     CIPHER: ", 3);
-        sc.inferCipher(1);
+        sc.inferCipher(0);
         sc.showCipherRows(sc.forwardTable);
         sc.showForwardCipher();
         sc.decodeCipherText();
@@ -646,32 +658,21 @@ public class SubCipher
     }
     
     
-    class DescCountAscUnknownComp implements Comparator<String>
-    {
-        Map<String, Integer> wordCounts;
-        char cipher[];
-        
-        DescCountAscUnknownComp(Map<String, Integer> wordCounts, char cipher[]) {
-            this.wordCounts = wordCounts;
-            this.cipher = forwardTable;
-        }
-        
+    class AscendingUnMappedCharsDescendingWordCountsComp implements Comparator<String>
+    {       
         @Override
-        public int compare(String wordA, String wordB) {
-            
+        public int compare(String wordA, String wordB) 
+        {    
             int unmapA = numUnMappedCorpusChars(wordA);
             int unmapB = numUnMappedCorpusChars(wordB);
             if (unmapA != unmapB)
                 return unmapA - unmapB;
-            int countA = wordCounts.getOrDefault(wordA, 0);
-            int countB = wordCounts.getOrDefault(wordB, 0);
+            int countA = corpusCounter.wordCounts.getOrDefault(wordA, 0);
+            int countB = corpusCounter.wordCounts.getOrDefault(wordB, 0);
             if (countA != countB)
                 return Integer.compare(countB, countA); // Descending counts
             return wordA.compareTo(wordB);
         }
     }
 
-
-    
-    
 }
