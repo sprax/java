@@ -375,6 +375,15 @@ public class SubCipher
                 if (maxScore > currentScore) {
                     Sx.format("Accepting %c -> %c because it gives new score %d > %d old score\n"
                             , wordChar, maxCiphChar, maxScore, currentScore);
+                    
+                    // Check (again?) here whether this char in the cipher word is already mapped:
+                    char oldInverse = inverseTable[maxCiphChar - 'a'];
+                    if (oldInverse != 0) {
+                        Sx.format("Warning: erasing the old mapping of %c to %c\n", oldInverse, maxCiphChar);
+                        forwardTable[oldInverse - 'a'] = 0;
+                    }
+
+                    
                     assignCipher(wordChar, maxCiphChar);
                     currentScore = maxScore;
                 }
