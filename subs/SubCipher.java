@@ -358,6 +358,7 @@ public class SubCipher
                         // Check if this char in the cipher word is already mapped:
                         if (inverseTable[ciphChar - 'a'] == 0) {
                             char inverseTemp[] = cloneInverseTablePlusOne(wordChar, ciphChar);
+                            guessUnknownInverseCiphersFromCharCounts(inverseTemp);
                             int score = scoreInverseMap(inverseTemp);
                             if (maxScore < score) {
                                 maxScore = score;
@@ -520,7 +521,7 @@ public class SubCipher
         
         showNumbersOfMissingTableValues("Number of unmapped chars after inverse regexing");
 
-        guessUnknownInverseCiphersFromCharCounts();
+        guessUnknownCiphersFromCharCounts();
     }
     
 
@@ -635,15 +636,15 @@ public class SubCipher
         return  numMissingValues;
     }
     
-    void guessUnknownInverseCiphersFromCharCounts()
+    void guessUnknownCiphersFromCharCounts()
     {
         int ciphIdx = 0;
         for (int corpIdx = 0; ciphIdx < EnTextCounter.ALPHABET_SIZE; ciphIdx++) {
             char cipherChar = cipherCounter.charCounts[ciphIdx].chr;
             if (inverseTable[cipherChar - 'a'] == 0) {
                 if (corpIdx >= EnTextCounter.ALPHABET_SIZE) {
-                    String errorMessage = 
-                            "ERROR: No unnasigned corpus chars for cipher " + cipherChar;
+                    String errorMessage = "ERROR: No unnasigned corpus chars for cipher "
+                            + cipherChar;
                     Sx.puts(errorMessage);
                     throw new IllegalStateException(errorMessage);
                 }
@@ -654,11 +655,33 @@ public class SubCipher
                         break;
                     }
                 } while (corpIdx < EnTextCounter.ALPHABET_SIZE);
-             }            
+            }
         }
     }
     
-
+    void guessUnknownInverseCiphersFromCharCounts(char inverseMap[])
+    {
+        int ciphIdx = 0;
+        for (int corpIdx = 0; ciphIdx < EnTextCounter.ALPHABET_SIZE; ciphIdx++) {
+            char cipherChar = cipherCounter.charCounts[ciphIdx].chr;
+            if (inverseMap[cipherChar - 'a'] == 0) {
+                if (corpIdx >= EnTextCounter.ALPHABET_SIZE) {
+                    String errorMessage = "ERROR: No unnasigned corpus chars for cipher "
+                            + cipherChar;
+                    Sx.puts(errorMessage);
+                    throw new IllegalStateException(errorMessage);
+                }
+                do {
+                    char corpusChar = corpusCounter.charCounts[corpIdx++].chr;
+                    if (forwardTable[corpusChar - 'a'] == 0) {          // the "real" table, read-only
+                        inverseMap[cipherChar - 'a'] = corpusChar;      // the "fake" table, temporary
+                        break;
+                    }
+                } while (corpIdx < EnTextCounter.ALPHABET_SIZE);
+            }
+        }
+    }
+    
     /**
      * This would only work if the letter frequencies in the corpus
      * are very similar to those in the cipher-encoded text.
@@ -820,8 +843,8 @@ public class SubCipher
         int numWrong = 0;
         
         SubCipher sc = new SubCipher(FileUtil.getTextFilePath("cipher.txt"),
-            ////                         FileUtil.getTextFilePath("corpusEn400kWords.txt"));
-            FileUtil.getTextFilePath("corpus-en.txt"));   
+                                     FileUtil.getTextFilePath("corpusEn400kWords.txt"));
+            ////FileUtil.getTextFilePath("corpus-en.txt"));   
             ////FileUtil.getTextFilePath("corpusEn.txt"));   
             ////"src/sprax/subs/deciphered.txt");   
         
