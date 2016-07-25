@@ -220,14 +220,14 @@ public class SubCipher
                 for (String ciph : cipherWords2) {                    
                     if (ciph0 == ciph.charAt(0)) {
                         ciph1 = ciph.charAt(1);
-                        Sx.debug(2, "findCiphersFromTwoLetterCorpusWords trying %c -> %c from %s <> %s\n"
+                        Sx.format("findCiphersFromTwoLetterCorpusWords trying %c -> %c from %s <> %s\n"
                                 , corp1, ciph1, word, ciph);
                         if (inverseTable[ciph1 - 'a'] == 0) {
                             assignCipher(corp1, ciph1);
                             break;
                         }
                         else {
-                            Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                            Sx.format("Rejecting %c -> %c because already %c -> %c\n"
                                     , corp1, ciph1, inverseTable[ciph1 - 'a'], ciph1);
                         }
                     }
@@ -237,14 +237,14 @@ public class SubCipher
                 for (String ciph : cipherWords2) {
                     if (ciph1 == ciph.charAt(1)) {
                         ciph0 = ciph.charAt(0);
-                        Sx.debug(2, "findCiphersFromTwoLetterCorpusWords trying %c -> %c from %s <> %s\n"
+                        Sx.format("findCiphersFromTwoLetterCorpusWords trying %c -> %c from %s <> %s\n"
                                 , corp0, ciph0, word, ciph);
                         if (inverseTable[ciph0 - 'a'] == 0) {
                             assignCipher(corp0, ciph0);
                             break;
                         }
                         else {
-                            Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                            Sx.format("Rejecting %c -> %c because already %c -> %c\n"
                                     , corp0, ciph0, inverseTable[ciph0 - 'a'], ciph0);
                         }
                     }
@@ -372,10 +372,17 @@ public class SubCipher
                         }
                     }    
                 }
-                if (maxScore >= currentScore) {
-                    Sx.format("Accepting %c -> %c\n", wordChar, maxCiphChar);
+                if (maxScore > currentScore) {
+                    Sx.format("Accepting %c -> %c because it gives new score %d > %d old score\n"
+                            , wordChar, maxCiphChar, maxScore, currentScore);
                     assignCipher(wordChar, maxCiphChar);
                     currentScore = maxScore;
+                }
+                else if (maxCiphChar != 0) {
+                    Sx.format("Rejecting %c -> %c because already %c -> %c AND/OR maxScore %d < curScore %d\n"
+                            , wordChar, maxCiphChar
+                            , inverseTable[maxCiphChar - 'a'], maxCiphChar
+                            , maxScore, currentScore);
                 }
             } 
             else if (idxUnMapped == Integer.MIN_VALUE) {
@@ -445,21 +452,21 @@ public class SubCipher
                     if (numMatchedChars == wordLen - 1) {
                         char ciphCharAtIdx = ciph.charAt(idxUnMapped);
                         // Check if this char in the cipher word is already mapped:
-                        Sx.debug(2, "findCiphersFromCorpusWordsLenThreePlus trying %c -> %c from %s <> %s\n"
+                        Sx.format("findCiphersFromCorpusWordsLenThreePlus trying %c -> %c from %s <> %s\n"
                                 , corpUnMappedChar, ciphCharAtIdx, word, ciph);
                         if (inverseTable[ciphCharAtIdx - 'a'] == 0) {
-                            Sx.debug(1, "Accepting %c -> %c\n", corpUnMappedChar, ciphCharAtIdx);
+                            Sx.format("Accepting %c -> %c\n", corpUnMappedChar, ciphCharAtIdx);
                             assignCipher(corpUnMappedChar, ciphCharAtIdx);
                             break;
                         }
                         else {
-                            Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                            Sx.format("Rejecting %c -> %c because already %c -> %c\n"
                                     , corpUnMappedChar, ciphCharAtIdx
                                     , inverseTable[ciphCharAtIdx - 'a'], ciphCharAtIdx);
                         }
                     }
                 }
-            } 
+            }
             else if (idxUnMapped == Integer.MIN_VALUE) {
                 dumpQueue(wordQueue, "findCiphersFromCorpusWordsLenThreePlus dumping queue on END");
                 break; // all words left in the queue have at least 2 unknown chars, so give up
@@ -539,10 +546,6 @@ public class SubCipher
             if (wordLen < 2 || wordLen > EnTextCounter.MAX_SIZED_LEN)
                 continue;
             
-            if (ciph.equals("bjlecfhjls")) {
-                Sx.puts("Let us examine the unexamined");
-            }
-            
             int numUnknown = numUnknownCipherChars(ciph);
             if (numUnknown == 0)
                 continue;
@@ -551,12 +554,8 @@ public class SubCipher
                 
             Pattern ciphPat = cipherWordToRegexPattern(ciph, wordLen);
             for (String word : corpusCounter.sizedWords.get(wordLen)) {
-                if (ciph.equals("bjlecfhjls") && word.equals("unexamined")) {
-                    Sx.puts("Eureka: examining...");
-                }
                 Matcher match = ciphPat.matcher(word);
                 if (match.matches()) {
-                    //    Sx.format("Matched: %s -> %s : %s\n", ciph, ciphPat.toString(), word);
                     Sx.format("Matched: %s -> %s : %s\n", ciph, ciphPat.toString(), word);
                     int index = match.start(1);
                     char wordChar = word.charAt(index);
@@ -565,15 +564,15 @@ public class SubCipher
                             ciph, index, ciphChar);
 
                     // Check if this char in the cipher word is already mapped:
-                    Sx.debug(2, "findMissingCharsFromCipherWords trying %c -> %c from %s <> %s\n"
+                    Sx.format("findMissingCharsFromCipherWords trying %c -> %c from %s <> %s\n"
                             , wordChar, ciphChar, word, ciph);
                     if (forwardTable[wordChar - 'a'] == 0) {
-                        Sx.debug(1, "Accepting %c -> %c\n", wordChar, ciphChar);
+                        Sx.format("Accepting %c -> %c\n", wordChar, ciphChar);
                         assignCipher(wordChar, ciphChar);
                         break;
                     }
                     else {
-                        Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                        Sx.format("Rejecting %c -> %c because already %c -> %c\n"
                                 , wordChar, ciphChar
                                 , wordChar, forwardTable[wordChar - 'a']);
                     }
@@ -732,24 +731,28 @@ public class SubCipher
             if (ciph.length() < 2)
                 continue;
             String deciph = decipher(ciph, inverseMap);
+            ////Sx.print(deciph + "  ");
             if (corpusCounter.wordCounts.containsKey(deciph)) {
                 score += cipherCounter.wordCounts.get(ciph)*ciph.length();
             }
         }
+        ////Sx.puts();
         return score;
     }
     
     String decipher(String encodedString, char inverseMap[])
     {
-        char decodedChars[] = encodedString.toCharArray();
+        char inv, decodedChars[] = encodedString.toCharArray();
         for (int j = 0; j < decodedChars.length; j++) {
             char chr = decodedChars[j];
             if (EnTextCounter.isAsciiLowerCaseLetter(chr)) {
-                decodedChars[j] = inverseTable[chr - 'a'];
+                inv = inverseMap[chr - 'a'];
+                decodedChars[j] = inv == 0 ? '_' : inv;
             }
             else if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
                 chr = Character.toLowerCase(chr);
-                decodedChars[j] = Character.toUpperCase(inverseTable[chr - 'a']);                    
+                inv = inverseMap[chr - 'a'];                    
+                decodedChars[j] = inv == 0 ? '_' : Character.toUpperCase(inv);                    
             }
         }
         return new String(decodedChars);
@@ -843,8 +846,8 @@ public class SubCipher
         int numWrong = 0;
         
         SubCipher sc = new SubCipher(FileUtil.getTextFilePath("cipher.txt"),
-                                     FileUtil.getTextFilePath("corpusEn400kWords.txt"));
-            ////FileUtil.getTextFilePath("corpus-en.txt"));   
+            ////                         FileUtil.getTextFilePath("corpusEn400kWords.txt"));
+            FileUtil.getTextFilePath("corpus-en.txt"));   
             ////FileUtil.getTextFilePath("corpusEn.txt"));   
             ////"src/sprax/subs/deciphered.txt");   
         
@@ -852,7 +855,7 @@ public class SubCipher
         sc.cipherCounter.showCounts("\n     CIPHER: ", 3);
         sc.inferCipher(0);
         sc.showCipherRows(sc.forwardTable);
-        sc.showForwardCipher();
+        //sc.showForwardCipher();
         sc.decodeCipherText();
         int score = sc.scoreInverseMap(sc.inverseTable);
         numWrong += 614 - score;
