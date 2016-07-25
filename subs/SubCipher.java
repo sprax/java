@@ -300,6 +300,9 @@ public class SubCipher
         List<String> corpusWords = corpusCounter.sizedWords.get(wordLen);
         List<String> cipherWords = cipherCounter.sizedWords.get(wordLen);
         
+        int initialScore = scoreInverseMap(inverseTable);
+        int currentScore = initialScore;
+        
         PriorityQueue<String> wordQueue = new PriorityQueue<>(unMappedCorpusWordComp);
 
         // Enqueue frequent two-letter words that contain at least one unknown letter
@@ -332,7 +335,10 @@ public class SubCipher
                 }
             }
             if (idxUnMapped >= 0) {                      // index was set just once
-                char corpUnMappedChar = word.charAt(idxUnMapped);
+                char wordChar = word.charAt(idxUnMapped);
+                
+                char maxCiphChar = 0;
+                int maxScore = 0;
                 for (String ciph : cipherWords) {
                     // if this cipher word matches all the other, num-1 known letters of word,
                     // then guess that the one unmapped letter in word should map to ciph[idxUnknown]
@@ -345,29 +351,47 @@ public class SubCipher
                         numMatchedChars++;
                     }
                     if (numMatchedChars == wordLen - 1) {
-                        char ciphCharAtIdx = ciph.charAt(idxUnMapped);
+                        char ciphChar = ciph.charAt(idxUnMapped);
+                        Sx.format("findCiphersFromFixedLengthCorpusWords trying %c -> %c from %s <> %s\n"
+                                , wordChar, ciphChar, word, ciph);
+
                         // Check if this char in the cipher word is already mapped:
-                        Sx.debug(2, "findCiphersForWordsOfFixedLength trying %c -> %c from %s <> %s\n"
-                                , corpUnMappedChar, ciphCharAtIdx, word, ciph);
-                        if (inverseTable[ciphCharAtIdx - 'a'] == 0) {
-                            Sx.debug(1, "Accepting %c -> %c\n", corpUnMappedChar, ciphCharAtIdx);
-                            assignCipher(corpUnMappedChar, ciphCharAtIdx);
-                            break;
+                        if (inverseTable[ciphChar - 'a'] == 0) {
+                            char inverseTemp[] = cloneInverseTablePlusOne(wordChar, ciphChar);
+                            int score = scoreInverseMap(inverseTemp);
+                            if (maxScore < score) {
+                                maxScore = score;
+                                maxCiphChar = ciphChar;
+                            }
                         }
                         else {
-                            Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
-                                    , corpUnMappedChar, ciphCharAtIdx
-                                    , inverseTable[ciphCharAtIdx - 'a'], ciphCharAtIdx);
+                            Sx.format("Rejecting %c -> %c because already %c -> %c\n"
+                                    , wordChar, ciphChar
+                                    , inverseTable[ciphChar - 'a'], ciphChar);
                         }
-                    }
+                    }    
+                }
+                if (maxScore >= currentScore) {
+                    Sx.format("Accepting %c -> %c\n", wordChar, maxCiphChar);
+                    assignCipher(wordChar, maxCiphChar);
+                    currentScore = maxScore;
                 }
             } 
             else if (idxUnMapped == Integer.MIN_VALUE) {
                 dumpQueue(wordQueue, "findCiphersFromFixedLengthCorpusWords dumping queue: " + wordLen);
-                break; // all words left in the queue have at least 2 unknown chars, so give up
+                break; // all words left in the queue have at least 2 unknown chars, so move on
             }
         }
     }
+    
+    char[] cloneInverseTablePlusOne(char wordChar, char ciphChar)
+    {
+        char table[] = inverseTable.clone();
+        table[ciphChar - 'a'] = wordChar;
+        return table;
+    }
+
+    
     
     void findCiphersFromCorpusWordsLenThreePlus(double minWordFreqInCorpus, int numWords) // FIXME: choose one?
     {       
@@ -596,8 +620,6 @@ public class SubCipher
         return Pattern.compile(patString);
     }
 
-    
-    
     void showNumbersOfMissingTableValues(String label)
     {
         int forward = numMissingTableValues(forwardTable);
@@ -679,31 +701,46 @@ public class SubCipher
         Sx.puts();
     }
     
+
+    int scoreInverseMap(char inverseMap[])
+    {
+        int score = 0;
+        for (String ciph : cipherCounter.wordCounts.keySet()) {
+            if (ciph.length() < 2)
+                continue;
+            String deciph = decipher(ciph, inverseMap);
+            if (corpusCounter.wordCounts.containsKey(deciph)) {
+                score += cipherCounter.wordCounts.get(ciph)*ciph.length();
+            }
+        }
+        return score;
+    }
+    
+    String decipher(String encodedString, char inverseMap[])
+    {
+        char decodedChars[] = encodedString.toCharArray();
+        for (int j = 0; j < decodedChars.length; j++) {
+            char chr = decodedChars[j];
+            if (EnTextCounter.isAsciiLowerCaseLetter(chr)) {
+                decodedChars[j] = inverseTable[chr - 'a'];
+            }
+            else if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
+                chr = Character.toLowerCase(chr);
+                decodedChars[j] = Character.toUpperCase(inverseTable[chr - 'a']);                    
+            }
+        }
+        return new String(decodedChars);
+    }
+        
     void decodeCipherText()
     {
-        HashMapStringCollector fixme_3 = new HashMapStringCollector();
         Sx.format("Encoded/Decoded cipher text (%s)\n\n", cipherFilePath);
         for (String line : cipherFileLines) {
-            char chrs[] = line.toCharArray();
-            for (int j = 0; j < chrs.length; j++) {
-                char chr = chrs[j];
-                if (EnTextCounter.isAsciiLowerCaseLetter(chr)) {
-                    chrs[j] = inverseTable[chr - 'a'];
-                }
-                else if (EnTextCounter.isAsciiUpperCaseLetter(chr)) {
-                    chr = Character.toLowerCase(chr);
-                    chrs[j] = Character.toUpperCase(inverseTable[chr - 'a']);                    
-                }
-            }
-            String deciphered = new String(chrs);
-            TextFilters.collectLowerCaseLetterWords(fixme_3, deciphered);
+            String deciphered = decipher(line, inverseTable);
             Sx.puts(deciphered);
             Sx.puts(line);
         }
-        //Sx.putsIterable(fixme_3.getCollector().entrySet(), 1, 10000);
     }
-    
-
     
    
     /**
@@ -783,18 +820,19 @@ public class SubCipher
         int numWrong = 0;
         
         SubCipher sc = new SubCipher(FileUtil.getTextFilePath("cipher.txt"),
-                                     FileUtil.getTextFilePath("corpusEn400kWords.txt"));
-            ////FileUtil.getTextFilePath("corpus-en.txt"));   
+            ////                         FileUtil.getTextFilePath("corpusEn400kWords.txt"));
+            FileUtil.getTextFilePath("corpus-en.txt"));   
             ////FileUtil.getTextFilePath("corpusEn.txt"));   
             ////"src/sprax/subs/deciphered.txt");   
         
-        sc.corpusCounter.showCounts("\n     CORPUS: ", 3);
+        sc.corpusCounter.showCounts("\n     CORPUS: ", 1);
         sc.cipherCounter.showCounts("\n     CIPHER: ", 3);
         sc.inferCipher(0);
         sc.showCipherRows(sc.forwardTable);
         sc.showForwardCipher();
         sc.decodeCipherText();
-        
+        int score = sc.scoreInverseMap(sc.inverseTable);
+        numWrong += 614 - score;
         
         Sx.puts();
         Sz.end(testName, numWrong);
