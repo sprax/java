@@ -6,8 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 import sprax.files.FileUtil;
 import sprax.files.HashMapStringCollector;
@@ -350,9 +350,7 @@ public class SubCipher
                         Sx.debug(2, "findCiphersForWordsOfFixedLength trying %c -> %c from %s <> %s\n"
                                 , corpUnMappedChar, ciphCharAtIdx, word, ciph);
                         if (inverseTable[ciphCharAtIdx - 'a'] == 0) {
-                            Sx.debug(1, "Accepting %c -> %c\n"
-                                    , corpUnMappedChar, ciphCharAtIdx
-                                    , inverseTable[ciphCharAtIdx - 'a'], ciphCharAtIdx);
+                            Sx.debug(1, "Accepting %c -> %c\n", corpUnMappedChar, ciphCharAtIdx);
                             assignCipher(corpUnMappedChar, ciphCharAtIdx);
                             break;
                         }
@@ -425,9 +423,7 @@ public class SubCipher
                         Sx.debug(2, "findCiphersFromCorpusWordsLenThreePlus trying %c -> %c from %s <> %s\n"
                                 , corpUnMappedChar, ciphCharAtIdx, word, ciph);
                         if (inverseTable[ciphCharAtIdx - 'a'] == 0) {
-                            Sx.debug(1, "Accepting %c -> %c\n"
-                                    , corpUnMappedChar, ciphCharAtIdx
-                                    , inverseTable[ciphCharAtIdx - 'a'], ciphCharAtIdx);
+                            Sx.debug(1, "Accepting %c -> %c\n", corpUnMappedChar, ciphCharAtIdx);
                             assignCipher(corpUnMappedChar, ciphCharAtIdx);
                             break;
                         }
@@ -518,33 +514,84 @@ public class SubCipher
             if (wordLen < 2 || wordLen > EnTextCounter.MAX_SIZED_LEN)
                 continue;
             
+            if (ciph.equals("bjlecfhjls")) {
+                Sx.puts("Let us examine the unexamined");
+            }
+            
             int numUnknown = numUnknownCipherChars(ciph);
             if (numUnknown == 0)
                 continue;
             if (numUnknown > 2)
                 continue;           // or break, if we know the rest are as bad or worse
-            
+                
             Pattern ciphPat = cipherWordToRegexPattern(ciph, wordLen);
             for (String word : corpusCounter.sizedWords.get(wordLen)) {
-                if (ciphPat.matcher(word).matches()) {
+                if (ciph.equals("bjlecfhjls") && word.equals("unexamined")) {
+                    Sx.puts("Eureka: examining...");
+                }
+                Matcher match = ciphPat.matcher(word);
+                if (match.matches()) {
+                    //    Sx.format("Matched: %s -> %s : %s\n", ciph, ciphPat.toString(), word);
                     Sx.format("Matched: %s -> %s : %s\n", ciph, ciphPat.toString(), word);
+                    int index = match.start(1);
+                    char wordChar = word.charAt(index);
+                    char ciphChar = ciph.charAt(index);
+                    Sx.format("First L: %s[%d]<%c> -> %s[%d]<%c>\n", word, index, wordChar,
+                            ciph, index, ciphChar);
+
+                    // Check if this char in the cipher word is already mapped:
+                    Sx.debug(2, "findMissingCharsFromCipherWords trying %c -> %c from %s <> %s\n"
+                            , wordChar, ciphChar, word, ciph);
+                    if (forwardTable[wordChar - 'a'] == 0) {
+                        Sx.debug(1, "Accepting %c -> %c\n", wordChar, ciphChar);
+                        assignCipher(wordChar, ciphChar);
+                        break;
+                    }
+                    else {
+                        Sx.debug(2, "Rejecting %c -> %c because already %c -> %c\n"
+                                , wordChar, ciphChar
+                                , wordChar, forwardTable[wordChar - 'a']);
+                    }
                 }
             }
         }
-        
     }
     
+    /**
+     * Make a compiled regex pattern containing up to 2 wildcards,
+     * each to match a single unknown character.  For two instances
+     * of the same unknown input character, a backreference is used
+     * to enforce this identity in any matched words.
+     * @param ciph
+     * @param wordLen
+     * @return
+     */
     Pattern cipherWordToRegexPattern(String ciph, int wordLen) {
-        StringBuilder sb = new StringBuilder('^');
+        StringBuilder sb = new StringBuilder("^");
+        int numWildcards = 0;
         for (int j = 0; j < wordLen; j++) {
             char ciphChar = ciph.charAt(j);
             char corpChar = inverseTable[ciphChar - 'a'];
-            if (corpChar == 0)
-                sb.append("\\w");   // Could use Posix: \p{Lower} (ASCII only) or even \p{javaLowerCase} 
-            else
+            char firstUnknownChar = 0;
+            if (corpChar == 0) {
+                numWildcards++;
+                if (numWildcards == 1) {
+                    firstUnknownChar = ciphChar;
+                    sb.append("(\\w)");         // Could use Posix: \p{Lower} (US-ASCII only) 
+                } else {
+                    if (ciphChar == firstUnknownChar) {
+                        sb.append("(\\1)");     // back-reference to match value of first group 
+                    } else {
+                        sb.append("(\\w)");     // second unknown char is different from the first
+                        ////sb.append("(?!\\1)");     // second unknown char is different from the first
+                    }
+                }
+            } 
+            else {
                 sb.append(corpChar);
+            }
         }
-        sb.append('$');
+        sb.append("$");
         String patString = sb.toString();
         return Pattern.compile(patString);
     }
@@ -670,6 +717,17 @@ public class SubCipher
     }
     
     /**
+     * Returns the total number of instances of cipher characters with unknown
+     * corresponding corpus characters.  Two instances of the same unknown
+     * character are counted as 2, not 1, as in the corresponding method for
+     * unmapped corpus characters. 
+     * @see numUnMappedCorpusChars
+     */
+    int numUnknownCipherChars(String ciph) {
+        return (int) ciph.chars().filter(x -> inverseTable[x - 'a'] == 0).count();
+    }
+    
+    /**
      * Returns the total number of different cipher characters with unknown
      * corresponding corpus characters.  Two instances of the same unknown
      * character are counted as 1, not 2.  For example, if 'g' and 'o' were
@@ -677,7 +735,7 @@ public class SubCipher
      * would be 1.  Finding that one missing correspondence would solve for
      * the rest of the word 
      */
-    int numUnknownCipherChars(String ciph) {
+    int numDistinctUnknownCipherChars(String ciph) {
         return (int) ciph.chars().distinct().filter(x -> inverseTable[x - 'a'] == 0).count();
     }
     
@@ -725,12 +783,12 @@ public class SubCipher
         int numWrong = 0;
         
         SubCipher sc = new SubCipher(FileUtil.getTextFilePath("cipher.txt"),
-                                     FileUtil.getTextFilePath("corpusEn300kWords.txt"));
+                                     FileUtil.getTextFilePath("corpusEn400kWords.txt"));
             ////FileUtil.getTextFilePath("corpus-en.txt"));   
             ////FileUtil.getTextFilePath("corpusEn.txt"));   
             ////"src/sprax/subs/deciphered.txt");   
         
-        sc.corpusCounter.showCounts("\n     CORPUS: ", 1);
+        sc.corpusCounter.showCounts("\n     CORPUS: ", 3);
         sc.cipherCounter.showCounts("\n     CIPHER: ", 3);
         sc.inferCipher(0);
         sc.showCipherRows(sc.forwardTable);

@@ -33,7 +33,7 @@ class CharCount implements Comparable<CharCount>
 public class EnTextCounter
 {
     public static final int ALPHABET_SIZE = 26;
-    public static final int MAX_SIZED_LEN =  9;
+    public static final int MAX_SIZED_LEN = 10;
     public static final int MIN_WORD_COUNT = 4; // Beware of hapax legomena (very rare words)
     
     static boolean isAsciiLowerCaseLetter(char ch) {
