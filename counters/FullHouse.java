@@ -97,9 +97,9 @@ public class FullHouse
     }
     
     /**
-     * isFullHouseCount simply counts how many of the numbers are the same as the first one, how are
-     * the same as the next different number, and returns false early if a third value is found. If
-     * there are exactly two different values and their counts are 2 and 3
+     * isFullHouseCount simply counts how many of the numbers are the same as the first one, 
+     * how many are the same as the next different number, and returns false early if a third value is found. 
+     * Returns true if there are exactly two different values and their counts are 2 and 3
      */
     public static boolean isFullHouseCount(int n1, int n2, int n3, int n4, int n5, boolean bPrint)
     {
@@ -118,7 +118,8 @@ public class FullHouse
             }
         }
         // Still here? Then there are at most two values.
-        // If we letting 5-of-a-kind count as a fullhouse, then also check for countFirst == 5
+        // If we wanted to count 5-of-a-kind as a fullhouse, then we should also 
+        // check for countFirst == 5.  But let's not.
         boolean bFullHouse = (countFirst == 2 && countOther == 3)
                 || (countFirst == 3 && countOther == 2);
         if (bPrint)
