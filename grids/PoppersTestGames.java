@@ -128,7 +128,7 @@ public class PoppersTestGames
         return  game;
     }
     
-    static PoppersGame makeTestGameSlow12()
+    static PoppersGame makeTestGameSlow12a()
     {   // 12 poppers, max val: 3, max taps: 27, est taps: 11
     	char vals[][] = {
     			{  0,  0,  1,  0,  3 },
@@ -137,6 +137,23 @@ public class PoppersTestGames
     			{  0,  2,  0,  3,  0 },
     			{  3,  0,  2,  0,  0 },
     			{  2,  1,  0,  0,  0 },
+    	};
+    	// Depth so far:  1 2 3 4 5 6 7 (20:33:55 20)[12119742 0.581478]  8 (20:37:31 237)[123502243 0.520669]  9 (22:46:55 8000)[1164210416 0.145516]  10 (18:58:52 80717)[9935652307 0.123091]  11 (23:19:14 355539)[74453820570 0.209411] 
+    	// Game can be won in 12 taps (422045676 ms, 94429491785 trials, 0.223742 Mtps):
+    	//  [0  4 (3)]  [0  4 (2)]  [1  3 (3)]  [1  3 (2)]  [1  4 (3)]  [2  2 (3)]  [2  2 (2)]  [2  2 (1)]  [3  1 (2)]  [3  1 (1)]  [4  0 (2)]  [4  0 (1)]
+    	PoppersGame game = new PoppersGame(vals, 0);
+    	return  game;
+    }
+
+    static PoppersGame makeTestGameSlow12()
+    {   // 12 poppers, max val: 3, max taps: 27, est taps: 11
+    	char vals[][] = {
+    			{  0,  3,  3,  4,  2 },
+    			{  1,  2,  2,  1,  0 },
+    			{  2,  1,  2,  0,  2 },
+    			{  1,  0,  2,  3,  1 },
+    			{  3,  0,  0,  0,  2 },
+    			{  2,  0,  0,  1,  4 },
     	};
     	// Depth so far:  1 2 3 4 5 6 7 (20:33:55 20)[12119742 0.581478]  8 (20:37:31 237)[123502243 0.520669]  9 (22:46:55 8000)[1164210416 0.145516]  10 (18:58:52 80717)[9935652307 0.123091]  11 (23:19:14 355539)[74453820570 0.209411] 
     	// Game can be won in 12 taps (422045676 ms, 94429491785 trials, 0.223742 Mtps):
