@@ -10,6 +10,7 @@ import java.util.Map;
 
 import sprax.grids.PoppersGame.Tap;
 import sprax.sprout.Sx;
+import sprax.test.Sz;
 
 /* 
  * Minimum-number-of-taps solution for a specified Poppers game.
@@ -759,7 +760,7 @@ public class PoppersSolver
     public static int unit_test(int level) 
     {
         String  testName = PoppersSolver.class.getName() + ".unit_test";
-        Sx.puts(testName + " BEGIN");    
+        Sz.begin(testName);
 
         PoppersGame game = null;
         PoppersSolver solver = null;
@@ -787,6 +788,17 @@ public class PoppersSolver
         game.tap(1, 2);
         game.showBoard();
 
+        if (level > 2) {
+            testSolveRandom();
+
+            game = PoppersTestGames.makeTestGameSlow12();
+            solver = game.getSolver();
+            solver.showPreStats();
+            game.showBoard(0);
+            results = solver.resultStr(3);
+            Sx.puts(results);
+        }
+
         if (level > 3) {
             game = PoppersTestGames.makeTestGame6();
             solver = game.getSolver();
@@ -796,19 +808,7 @@ public class PoppersSolver
             Sx.puts(results);
         }
 
-        if (level > 2) {
-            game = PoppersTestGames.makeTestGameSlow12();
-            solver = game.getSolver();
-            solver.showPreStats();
-            game.showBoard(0);
-            results = solver.resultStr(3);
-            Sx.puts(results);
-        }
-
-        if (level > 2)
-            testSolveRandom();
-
-        Sx.puts(testName + " END");    
+        Sz.end(testName, 0);
         return 0;
     }
 
