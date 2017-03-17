@@ -813,6 +813,6 @@ public class PoppersSolver
     }
 
 
-    public static void main(String[] args) { unit_test(3); }   
+    public static void main(String[] args) { unit_test(1); }   
 }   // end of class PoppersSolver
 

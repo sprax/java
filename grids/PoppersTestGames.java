@@ -18,6 +18,26 @@ public class PoppersTestGames
 {
     static PoppersGame makeTestGame()
     {
+        return  makeTestGame_4_3();
+    }
+    
+    static PoppersGame makeTestGame_4_3()
+    {
+        //   [1  0 (1)]  [4  2 (1)]  [5  4 (2)]  [5  4 (1)]
+        char vals[][] = {
+                { 0,  3,  0,  0,  0 },
+                { 1,  0,  0,  1,  1 },
+                { 0,  1,  2,  1,  0 },
+                { 1,  2,  1,  3,  2 },
+                { 0,  1,  4,  2,  1 },
+                { 1,  0,  1,  2,  2 },
+        };
+        PoppersGame game = new PoppersGame(vals, 4);
+        return  game;
+    }
+    
+    static PoppersGame makeTestGame_3_something()
+    {
         //   [1  0 (1)]  [4  2 (1)]  [5  4 (2)]  [5  4 (1)]
         char vals[][] = {
                 { 4,  1,  0,  1,  4 },
