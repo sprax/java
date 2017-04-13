@@ -1,12 +1,9 @@
+package sprax.questions;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
+import java.util.Scanner;
 
-public class Solution {
-
+public class Substr
+{
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         String S = in.next();
