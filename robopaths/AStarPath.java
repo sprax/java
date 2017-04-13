@@ -417,7 +417,7 @@ public class AStarPath
     
     //// OTHER CLASSES ////
     
-    /** compare x coordinates, then y coordinates if same x. */
+    /** compare x coordinates, then y coordinates if they have the same x. */
     class ComparePointXY implements Comparator<Point2d> {
         @Override
         public int compare(Point2d pA, Point2d pB) {
