@@ -41,12 +41,12 @@ public class SubCipher
     {
         this.cipherFilePath = cipherFilePath;
         this.corpusFilePath = corpusFilePath;
-        cipherFileLines = TextFileReader.readFileIntoArrayList(cipherFilePath);
-        cipherCounter = new EnTextCounter(cipherFilePath);
-        corpusCounter = new EnTextCounter(corpusFilePath);
-        forwardTable = new char[EnTextCounter.ALPHABET_SIZE];
-        inverseTable = new char[EnTextCounter.ALPHABET_SIZE];
-        unMappedCorpusWordComp = new AscendingUnMappedCharsDescendingWordCountsComp();
+        this.cipherFileLines = TextFileReader.readFileIntoArrayList(cipherFilePath);
+        this.cipherCounter = new EnTextCounter(cipherFilePath);
+        this.corpusCounter = new EnTextCounter(corpusFilePath);
+        this.forwardTable = new char[EnTextCounter.ALPHABET_SIZE];
+        this.inverseTable = new char[EnTextCounter.ALPHABET_SIZE];
+        this.unMappedCorpusWordComp = new AscendingUnMappedCharsDescendingWordCountsComp();
     }
     
     void matchSingleLetterWords()
