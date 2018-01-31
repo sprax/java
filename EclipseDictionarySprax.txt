@@ -4,3 +4,6 @@ iterable
 repelled
 col
 hoare
+discretize
+voronoi
+ctor
