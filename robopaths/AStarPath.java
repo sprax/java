@@ -104,7 +104,7 @@ public class AStarPath
      *  4) Bug algorithms: follow implicit walls around sensors and groups
      *  of sensors (blockades).
      *  
-     *  5) Elastic path repelled from sensors, computed by relaxation.
+     *  5) Elastic path repeled from sensors, computed by relaxation.
      *  
      *  6) Some kind of dual graph constructed from the graph of sensors.
      */

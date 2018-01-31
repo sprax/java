@@ -116,12 +116,12 @@ public class AStarPathAwt
     {
         corner0 = r0;
         corner1 = r1;
-        width = r1.x - r0.x;
-        height = r1.y - r0.y;
+        width = r1.getX() - r0.getX();
+        height = r1.getY() - r0.getY();
         radius = sensorRadius;
         if (radius <= 0.0 || width < radius || height < radius)
             throw new IllegalArgumentException("bad dimensions");
-        rect = new Rectangle2D.Double(r0.x, r0.y, width, height);
+        rect = new Rectangle2D.Double(r0.getX(), r0.getY(), width, height);
         sensors = Arrays.copyOf(sensorPoints, sensorPoints.length);     // defensive copy
         
         //Don't need to sort for grid algo:
@@ -142,7 +142,7 @@ public class AStarPathAwt
         minimalCoordPath = new Point2D[minGridPathLength];
         int j = 0;
         for (GridCell cell : minimalGridPath) {
-            minimalCoordPath[j++] = new Point2D(rect.x + cell.col*cellSize, rect.y + cell.row*cellSize);
+            minimalCoordPath[j++] = new Point2D.Double(rect.getX() + cell.col*cellSize, rect.getY() + cell.row*cellSize);
         }
         // Fix-up last point to be exactly on the right boundary:
         minimalCoordPath[minGridPathLength - 1].setLocation(corner1.getX(), corner1.getY());
@@ -268,8 +268,8 @@ public class AStarPathAwt
     void markSensorsInGrid() 
     {
         for (Point2D ss : sensors) {
-            int col = (int) Math.floor((ss.x - rect.x)/cellSize);   // remember x ~ column
-            int row = (int) Math.floor((ss.y - rect.y)/cellSize);   // remember y ~ row
+            int col = (int) Math.floor((ss.getX() - rect.getX())/cellSize);   // remember x ~ column
+            int row = (int) Math.floor((ss.getY() - rect.getY())/cellSize);   // remember y ~ row
             markSensor(row, col);
         }
     }
@@ -370,7 +370,7 @@ public class AStarPathAwt
     
     /** Translate distance back into readable characters */
     public static void printOnePoint2d(Point2D pt) {
-        Sx.format("(%5.2f, %5.2f) ", pt.x, pt.y);
+        Sx.format("(%5.2f, %5.2f) ", pt.getX(), pt.getY());
     }    
     
     public static int unit_test()
@@ -379,17 +379,17 @@ public class AStarPathAwt
         Sx.format("BEGIN %s\n", testName);
         int numWrong = 0;
         
-        Point2D r0 = new Point2D( 1.0, 0.0);
-        Point2D r1 = new Point2D(28.0, 14.0);
+        Point2D r0 = new Point2D.Double( 1.0, 0.0);
+        Point2D r1 = new Point2D.Double(28.0, 14.0);
         double sensorRadius = Math.E;
         Point2D[] sensorPoints = {
-                new Point2D(26.0, 11.0),
-                new Point2D(25.0,  1.0),
-                new Point2D(19.0, 11.0),
-                new Point2D(17.0,  4.5),
-                new Point2D(11.5,  8.5),
-                new Point2D( 7.8,  3.5),
-                new Point2D( 5.5, 12.5),
+                new Point2D.Double(26.0, 11.0),
+                new Point2D.Double(25.0,  1.0),
+                new Point2D.Double(19.0, 11.0),
+                new Point2D.Double(17.0,  4.5),
+                new Point2D.Double(11.5,  8.5),
+                new Point2D.Double( 7.8,  3.5),
+                new Point2D.Double( 5.5, 12.5),
         };
         
         AStarPathAwt acir = new AStarPathAwt(r0, r1, sensorPoints, sensorRadius);
@@ -422,10 +422,10 @@ public class AStarPathAwt
     class ComparePointXY implements Comparator<Point2D> {
         @Override
         public int compare(Point2D pA, Point2D pB) {
-            int xcomp = Double.compare(pA.x, pB.x);
+            int xcomp = Double.compare(pA.getX(), pB.getX());
             if (xcomp != 0)
                 return xcomp;
-            return Double.compare(pA.y, pB.y);
+            return Double.compare(pA.getY(), pB.getY());
         }
         
     }
