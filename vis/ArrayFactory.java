@@ -2,6 +2,8 @@ package sprax.vis;
 
 import java.util.Random;
 
+import sprax.sprout.Sx;
+
 public class ArrayFactory 
 {
     Random mRng = null;
@@ -25,22 +27,16 @@ public class ArrayFactory
     }
 
     /** 
-     * creates random vector in positive hyper-cube with
+     * creates random vector in hyper-cube with
      * coordinates in interval (-1, 1)
      * @param numDims
      * @return
      */
     public float[] randomVectorInOriginCube(int numDims)
     {
-        ;
-        float num;
         float[] vec = new float[numDims];
         for (int j = 0; j < numDims; j++) {
-            num = mRng.nextFloat();
-            if (mRng.nextBoolean())
-                vec[j] =  num;
-            else
-                vec[j] = -num;
+            vec[j] = mRng.nextFloat() * 2f - 1f;
         }
         return  vec;
     }
@@ -93,7 +89,9 @@ public class ArrayFactory
      * @param args
      */
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
+        ArrayFactory af = new ArrayFactory();
+        float[] vec =  af.randomVectorInOriginCube(5);
+        Sx.putsArray(vec);
 
     }
 
