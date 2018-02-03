@@ -5,6 +5,7 @@ package sprax.questions;
 
 import java.util.Arrays;
 
+import sprax.arrays.Arrays2d;
 import sprax.numbers.FibonacciInt32;
 import sprax.numbers.Primes;
 import sprax.sprout.Sx;
@@ -56,7 +57,7 @@ public class BinPack implements IBinPack
                 packed[i] = true;
                 for (int j = 0; j < bins.length; j++) {
                     if (bins[j] >= items[i]) {
-                        bins[j] -= items[i];            // deduct item amount from bin an try packing the rest
+                        bins[j] -= items[i];            // deduct item amount from bin and try to pack the rest
                         if(canPackRecursive(bins, items, packed)){
                             return true;                // success: return
                         }
@@ -81,14 +82,17 @@ public class BinPack implements IBinPack
             Sx.format("Total bin space - items space: %d - %d = %d\n", binTot, itemTot, diff);
         }
         // Test the lower-level function:
+        long begTime = System.currentTimeMillis();
         boolean[] packed = new boolean[items.length];
         boolean result = canPackRecursive(bins, items, packed);
+        long runTime = System.currentTimeMillis() - begTime;
         if (verbose > 0) {
             Sx.format("canPack?  %s\n", result);
             Sx.putsArray("bins leftover:  ", bins);
             if (!result) {
                 Sx.print("not all packed: ");
                 Sx.printFilteredArrayFalse(items, packed);
+                Sx.format("\nrunTime milliseconds: %d\n", runTime);
                 Sx.puts();
             }
         }
@@ -117,7 +121,7 @@ public class BinPack implements IBinPack
         int boxes[] = Primes.primesInRangeIntArray(2, 25);
         numWrong += test_canPack(crates, boxes, 1, false);
         
-        if (level > 1) {  // 
+        if (level > 1) {
             int frames[] = FibonacciInt32.fib32Range(0, 13);
             int photos[] = Primes.primesInRangeIntArray(2, 70);
             numWrong += test_canPack(frames, photos, 1, true);
