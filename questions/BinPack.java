@@ -12,16 +12,22 @@ import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 /** 
- * Can the space requirements specified by items be packed into the specified bins?
- * Implementation: Naive exhaustive recursion with supplementary boolean array.
+ * Can the space requirements given by items be packed into the specified bins?
+ * Implementations: Naive exhaustive recursion with supplementary boolean array.
  * Complexity: Time O(N!), additional space O(N).
  */
 public class BinPack implements IBinPack
 {
     @Override
     public boolean canPack(int[] bins, int[] items) {
+        if (excessBinSpace(bins, items) < 0)
+            return false;
         return canPackNaive(bins, items);
     }    
+
+    public static int excessBinSpace(int[] bins, int[] items) {
+        return Arrays.stream(bins).sum() - Arrays.stream(items).sum();
+    }
 
     /** 
      * Can the space requirements specified by items be packed into the specified bins?
@@ -72,29 +78,32 @@ public class BinPack implements IBinPack
     
     public static int test_canPack(int bins[], int items[], int verbose, boolean expected)
     {
+        int excess = excessBinSpace(bins, items);
         if (verbose > 0) {
-            Sx.puts("\n\t  test_canAllocate:");
-            Sx.putsArray("bins before:    ", bins);
-            Sx.putsArray("items to pack:  ", items);
+            Sx.puts("\n\t  Test canAllocate:");
+            Sx.putsArray("Bins space before:", bins);
+            Sx.putsArray("Items to pack:    ", items);
             int binTot = Arrays.stream(bins).sum();
             int itemTot = Arrays.stream(items).sum();
             int diff = binTot - itemTot;
+            assert(diff == excess);
             Sx.format("Total bin space - items space: %d - %d = %d\n", binTot, itemTot, diff);
         }
-        // Test the lower-level function:
-        long begTime = System.currentTimeMillis();
-        boolean[] packed = new boolean[items.length];
-        boolean result = canPackRecursive(bins, items, packed);
-        long runTime = System.currentTimeMillis() - begTime;
-        if (verbose > 0) {
-            Sx.format("canPack?  %s\n", result);
-            Sx.putsArray("bins leftover:  ", bins);
-            if (!result) {
-                Sx.print("not all packed: ");
-                Sx.printFilteredArrayFalse(items, packed, 1);
-            }
+        if (excess < 0) {
+            Sx.puts("Insufficient total bin space.");
+            return 0;
         }
-        Sx.format("runTime milliseconds: %d\n", runTime);
+
+        // Test the lower-level (static) method:
+        long begTime = System.currentTimeMillis();
+        boolean result = canPackNaive(bins, items);
+        long runTime = System.currentTimeMillis() - begTime;
+
+        if (verbose > 0) {
+            Sx.format("Pack items in bins? %s\n", result);
+            Sx.putsArray("Bin space after:  ", bins);
+        }
+        Sx.format("Run time millis:    %d\n", runTime);
         return Sz.oneIfDiff(result, expected);
     }
     
@@ -142,7 +151,7 @@ public class BinPack implements IBinPack
     
     public static void main(String[] args) 
     {
-        unit_test(2);
+        unit_test(1);
     }
 
 }
