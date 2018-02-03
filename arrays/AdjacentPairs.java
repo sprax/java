@@ -48,7 +48,7 @@ Elements of input arrays can be modified.
 /** Two ways of finding all adjacent value pairs in an array: tree-map and sorted count */
 public class AdjacentPairs 
 {
-    /** Uses sorted map of values to indices to find distinct adjacent value pairs */
+    /** Uses sorted map (values to indices) to find distinct adjacent value pairs */
     public static int countAndPrintPairsOfIndicesWithAdjacentDifferentValues(int A[])
     {
         int pairCount = 0;		// return value
@@ -75,7 +75,7 @@ public class AdjacentPairs
         return pairCount;
     }	
 
-    /** Uses sorted map of values to indices to find not necessarily distinct adjacent value pairs */
+    /** Uses sorted map (values to indices) to find not necessarily distinct adjacent value pairs */
     public static int countAndPrintPairsOfIndicesWithAdjacentPossiblyRepeatedValues(int A[])
     {
         int pairCount = 0;		// return value

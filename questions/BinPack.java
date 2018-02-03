@@ -43,11 +43,11 @@ public class BinPack implements IBinPack
      * @return
      */
     static boolean canPackRecursive(int[] bins, int[] items, boolean[] packed) {
-        boolean allUsed = true;
+        boolean allPacked = true;
         for (boolean b : packed) {
-            allUsed &= b;
+            allPacked &= b;
         }
-        if (allUsed){
+        if (allPacked){
             return true;
         }
         for (int i = 0; i < items.length; i++) {
@@ -56,11 +56,11 @@ public class BinPack implements IBinPack
                 packed[i] = true;
                 for (int j = 0; j < bins.length; j++) {
                     if (bins[j] >= items[i]) {
-                        bins[j] -= items[i];
+                        bins[j] -= items[i];            // deduct item amount from bin an try packing the rest
                         if(canPackRecursive(bins, items, packed)){
-                            return true;
+                            return true;                // success: return
                         }
-                        bins[j] = bins[j] + items[i];
+                        bins[j] = bins[j] + items[i];   // failure: restore item amount to bin
                     }
                 }
                 packed[i] = false;
@@ -117,11 +117,10 @@ public class BinPack implements IBinPack
         int boxes[] = Primes.primesInRangeIntArray(2, 25);
         numWrong += test_canPack(crates, boxes, 1, false);
         
-        if (level > 1) {  // 11, 42
-        
-            int frames[] = FibonacciInt32.fib32Range(0, 15);
-            int photos[] = Primes.primesInRangeIntArray(2, 125);
-            numWrong += test_canPack(frames, photos, 1, false);
+        if (level > 1) {  // 
+            int frames[] = FibonacciInt32.fib32Range(0, 13);
+            int photos[] = Primes.primesInRangeIntArray(2, 70);
+            numWrong += test_canPack(frames, photos, 1, true);
         }
         
         if (level > 2) {  // 11, 42

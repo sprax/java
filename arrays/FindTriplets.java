@@ -53,7 +53,8 @@ public class FindTriplets
                 int dif = arr[j] - arr[k];
                 if (val2idxList.containsKey(dif)) {
                     for ( int idx : val2idxList.get(dif)) {
-                        System.out.format("Index triplet %2d <%d, %d, %d> gives % 3d - % 3d = % 3d\n", ++q, j, k, idx, arr[j], arr[k], dif);
+                        System.out.format("Index triplet %2d <%d, %d, %d> gives % 3d - % 3d = % 3d\n"
+                                , ++q, j, k, idx, arr[j], arr[k], dif);
                     }
                 }
             }
@@ -85,7 +86,8 @@ public class FindTriplets
                 if (val2idxList.containsKey(dif)) {
                     for ( int idx : val2idxList.get(dif)) {
                         if (A[j] != dif && A[k] != dif) {
-                            System.out.format("Index triplet %2d <%d, %d, %d> gives % 3d - % 3d = % 3d\n", ++q, j, k, idx, A[j], A[k], dif);
+                            System.out.format("Index triplet %2d <%d, %d, %d> gives % 3d - % 3d = % 3d\n"
+                                    , ++q, j, k, idx, A[j], A[k], dif);
                         }
                     }
                 }
@@ -115,7 +117,7 @@ public class FindTriplets
     
     /*
      * 
-  Tags: Google » Algorithm(1st telephone interview)  » Application Developer
+  Tags: Google ï¿½ Algorithm(1st telephone interview)  ï¿½ Application Developer
   Question #10103678 (Report Dup) | Edit
   Google Interview Question for Software Engineers about Arrays
   anonymous on August 04, 2011
@@ -125,7 +127,7 @@ public class FindTriplets
   When you attempt an approach, test your code with this example 
   and list your outputs for verification. Thanks.
   -12, -7, -4, 0, 3, 5, 9, 10, 15, 16
-  Tags: Google » Arrays  » Software Engineer
+  Tags: Google ï¿½ Arrays  ï¿½ Software Engineer
   Question #10094092 (Report Dup) | Edit
   Amazon Interview Question for Software Engineer / Developers about Algorithm
   bar raiser question on August 04, 2011  
