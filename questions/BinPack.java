@@ -5,7 +5,6 @@ package sprax.questions;
 
 import java.util.Arrays;
 
-import sprax.arrays.Arrays2d;
 import sprax.numbers.FibonacciInt32;
 import sprax.numbers.Primes;
 import sprax.sprout.Sx;
@@ -75,12 +74,21 @@ public class BinPack implements IBinPack
         }
         return false;
     }
-    
-    public static int test_canPack(int bins[], int items[], int verbose, boolean expected)
+}
+
+@FunctionalInterface
+interface BinPackIntArrays
+{
+    boolean canPack(int[] bins, int[] items); 
+}
+
+class BinPackTest
+{
+    public static int test_canPack(int bins[], int items[], int verbose, boolean expected, BinPackIntArrays packer)
     {
-        int excess = excessBinSpace(bins, items);
+        int excess = BinPack.excessBinSpace(bins, items);
         if (verbose > 0) {
-            Sx.puts("\n\t  Test canAllocate:");
+            Sx.puts("\n\t  Test canPack:");
             Sx.putsArray("Bins space before:", bins);
             Sx.putsArray("Items to pack:    ", items);
             int binTot = Arrays.stream(bins).sum();
@@ -96,7 +104,7 @@ public class BinPack implements IBinPack
 
         // Test the lower-level (static) method:
         long begTime = System.currentTimeMillis();
-        boolean result = canPackNaive(bins, items);
+        boolean result = packer.canPack(bins, items);
         long runTime = System.currentTimeMillis() - begTime;
 
         if (verbose > 0) {
@@ -107,7 +115,7 @@ public class BinPack implements IBinPack
         return Sz.oneIfDiff(result, expected);
     }
     
-    public static int unit_test(int level)
+    public static int test_packer(BinPackIntArrays packer, int level)
     {
         String testName = BinPack.class.getName() + ".unit_test";
         Sz.begin(testName);
@@ -115,36 +123,47 @@ public class BinPack implements IBinPack
         
         int servers[] = { 8, 16, 8, 32 };
         int tasks[] = { 18, 4, 8, 4, 6, 6, 8, 8 };
-        numWrong += test_canPack(servers, tasks, 1, true);
+        numWrong += test_canPack(servers, tasks, 1, true, packer);
         
         int limits[] = { 1, 3 };
         int needs[] = { 4 };
-        numWrong += test_canPack(limits, needs, 1, false);
+        numWrong += test_canPack(limits, needs, 1, false, packer);
         
         int fibs[] = FibonacciInt32.fib32Range(0, 12);
         int mems[] = Primes.primesInRangeIntArray(2, 47);
-        numWrong += test_canPack(fibs, mems, 1, true);
+        numWrong += test_canPack(fibs, mems, 1, true, packer);
         
         int crates[] = FibonacciInt32.fib32Range(0, 9);
         int boxes[] = Primes.primesInRangeIntArray(2, 25);
-        numWrong += test_canPack(crates, boxes, 1, false);
+        numWrong += test_canPack(crates, boxes, 1, false, packer);
         
         if (level > 1) {
             int frames[] = FibonacciInt32.fib32Range(0, 13);
             int photos[] = Primes.primesInRangeIntArray(2, 70);
-            numWrong += test_canPack(frames, photos, 1, true);
+            numWrong += test_canPack(frames, photos, 1, true, packer);
         }
         
         if (level > 2) {  // 11, 42
             int blocks[] = FibonacciInt32.fib32Range(0, 10);
             int allocs[] = Primes.primesInRangeIntArray(2, 31);
-            numWrong += test_canPack(blocks, allocs, 1, false);
+            numWrong += test_canPack(blocks, allocs, 1, false, packer);
             
             int frames[] = FibonacciInt32.fib32Range(0, 15);
             int photos[] = Primes.primesInRangeIntArray(2, 125);
-            numWrong += test_canPack(frames, photos, 1, false);
+            numWrong += test_canPack(frames, photos, 1, false, packer);
         }
+        Sz.end(testName, numWrong);
+        return numWrong;
+    }
+
+    public static int unit_test(int level)
+    {
+        String testName = BinPack.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
         
+        numWrong += test_packer(BinPack::canPackNaive, level);
+
         Sz.end(testName, numWrong);
         return numWrong;
     }

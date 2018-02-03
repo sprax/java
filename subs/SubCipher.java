@@ -847,7 +847,7 @@ public class SubCipher
         }
     }
 
-    ////////////// Unit Tests ///////////////
+    ////////////// unit tests ///////////////
 
     public static int unit_test(int level) {
         String testName = SubCipher.class.getName() + ".unit_test";

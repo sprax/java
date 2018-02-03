@@ -34,12 +34,12 @@ public class Sz
     }
 
     public static void end(String testName, int numWrong) {
-        System.out.format("END   %s,  wrong %d,  %s\n\n", testName, numWrong, Sz.passFail(numWrong));  
+        System.out.format("\nEND   %s,  wrong %d,  %s\n\n", testName, numWrong, Sz.passFail(numWrong));
     }
 
     public static void ender(String testName, int numCases, int numWrong) {
         System.out.format("END   %s,  right %d,  wrong %d, %s\n\n"
-                , testName, numCases - numWrong, numWrong, Sz.passFail(numWrong));  
+                , testName, numCases - numWrong, numWrong, Sz.passFail(numWrong));
     }
     
     public static <T> int compareListAndArray(List<T> list, T[] array)
