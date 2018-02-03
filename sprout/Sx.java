@@ -12,7 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
-import sprax.sprout.*;
+import sprax.questions.BinPack;
+import sprax.test.Sz;
 
 /**
  * static output methods for testing, debugging, etc.
@@ -501,6 +502,13 @@ public class Sx
                 printListInt(A[j]);
     }
     
+    public static void printFilteredArrayFalse(int A[], boolean filter[], int newlines)
+    {
+        printFilteredArrayFalse(A, filter);
+        while (--newlines >= 0)
+            puts();
+    }
+
     /**
      * Print the elements in A indexed by the entries in index.
      * ANEX: Almost No Errors or Exceptions
@@ -1218,8 +1226,9 @@ public class Sx
      */
     public static int unit_test(int level) throws IOException
     {
-        String testName = Sx.class.getName() + ".unit_test";
-        format("BEGIN %s\n", testName);
+        String testName = BinPack.class.getName() + ".unit_test";
+        Sz.begin(testName);
+        int numWrong = 0;
 
         String str = null;
         char[] chr = new char[0];
@@ -1251,10 +1260,15 @@ public class Sx
             test_getCharray();
             test_getStrings();
         }
-        format("END   %s,  PASS\n", testName);
-        return 0;
+
+        Sx.puts("test: printFilteredArrayFalse should print 1, 3:");
+        int A[] = { 1, 2, 3, 4 };
+        boolean filter[] = { false, true, false, true };
+        printFilteredArrayFalse(A, filter, 1);
+        Sz.end(testName, numWrong);
+        return numWrong;
     }
-    
+
     public static void main(String[] args) throws IOException
     {
         unit_test(1);

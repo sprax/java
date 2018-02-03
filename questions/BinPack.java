@@ -91,11 +91,10 @@ public class BinPack implements IBinPack
             Sx.putsArray("bins leftover:  ", bins);
             if (!result) {
                 Sx.print("not all packed: ");
-                Sx.printFilteredArrayFalse(items, packed);
-                Sx.format("\nrunTime milliseconds: %d\n", runTime);
-                Sx.puts();
+                Sx.printFilteredArrayFalse(items, packed, 1);
             }
         }
+        Sx.format("runTime milliseconds: %d\n", runTime);
         return Sz.oneIfDiff(result, expected);
     }
     
