@@ -43,6 +43,7 @@ public class BinPack implements IBinPack
     
     /**
      * Naive exhaustive recursion, no early failure (as when sum(bins) < sum(items)), no sorting.
+     * Tries to fit items into bins in the original order given.
      * @param bins
      * @param items
      * @param packed

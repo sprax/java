@@ -4,6 +4,7 @@
 package sprax.questions;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.IntStream;
 
 import sprax.numbers.FibonacciInt32;
@@ -21,7 +22,20 @@ public class BinPackRec implements IBinPack
     @Override
     public boolean canPack(int[] bins, int[] items) {
         return canPackRec(bins, items);
+    }
+
+    public static int excessBinSpace(int[] bins, int[] items) {
+        return Arrays.stream(bins).sum() - Arrays.stream(items).sum();
+    }
+
+    public static boolean allTrue (boolean[] values) {
+        for (boolean value : values) {
+            if (!value)
+                return false;
+        }
+        return true;
     }    
+
     /** 
      * Can the space requirements specified by items be packed into the specified bins?
      * Recursive without sorting, adapted from:
@@ -32,33 +46,34 @@ public class BinPackRec implements IBinPack
      */
     public static boolean canPackRec(int[] bins, int[] items) {
         
-        int binTot = Arrays.stream(bins).sum();
-        int itemTot = Arrays.stream(items).sum();
-        int diffTot = binTot - itemTot;
-        if (diffTot < 0)
-            return false;                           // early return
+        if (excessBinSpace(bins, items) < 0)
+            return false;                           // return early: insufficient total space
         
         Arrays.sort(bins);
         Arrays.sort(items);
+
+        if (bins[bins.length - 1] < items[items.length - 1])
+            return false;                           // return early: max bin < max item
+
         boolean[] packed = new boolean[items.length];
         return canPackRecursive(bins, bins.length, items, packed);
     }
     
     /**
-     * Naive exhaustive recursion, no early failure (as when sum(bins) < sum(items)), no sorting.
+     * Naive exhaustive recursion, no early failure (as when sum(bins) < sum(items)).
+     * TODO: early returns
+     * TODO: check max item against max bin
+     * TODO: reduce used size of items, rather than use boolean supplemental array
      * @param bins
      * @param items
      * @param packed
      * @return
      */
     static boolean canPackRecursive(int[] bins, int numUsableBins, int[] items, boolean[] packed) {
-        boolean allUsed = true;
-        for (boolean b : packed) {
-            allUsed &= b;
-        }
-        if (allUsed){
+        if (allTrue(packed))
             return true;
-        }
+
+        // Use reverse order, assuming the inputs were sorted in ascending order.
         for (int j = items.length; --j >= 0; ) {
             if (!packed[j]) {
                 // Exhaustive: check all remaining solutions that start with item[i] packed in some bin[j]
@@ -68,9 +83,9 @@ public class BinPackRec implements IBinPack
                         bins[k] -= items[j];
                         
                         int tmp = bins[k];
-                        //boolean swapped = false;
+                        boolean swapped = false;
                         if (bins[k] < items[0]) {
-                            //swapped = true;
+                            swapped = true;
                             bins[k] = bins[--numUsableBins];
                             bins[numUsableBins] = tmp;      
                         }
@@ -79,13 +94,11 @@ public class BinPackRec implements IBinPack
                             return true;
                         }
                         
-                        // failed, so swap back and increment?
-                        /*
+                        // failed, so swap back and increment.
                         if (swapped) {
                             bins[numUsableBins++] = bins[k];
                             bins[k] = tmp;
-                        } 
-                        */
+                        }
 
                         bins[k] += items[j];
                     }
@@ -187,7 +200,7 @@ public class BinPackRec implements IBinPack
         
         int seas[] = {2, 2, 37};
         int holes[] = {4, 37};
-        numWrong += test_canPack(binPacker, seas, holes, 1, true);
+        numWrong += test_canPack(binPacker, seas, holes, 1, false);
         
         int servers[] = {8, 16, 8, 32};
         int tasks[] = {18, 4, 8, 4, 6, 6, 8, 8};
@@ -197,6 +210,10 @@ public class BinPackRec implements IBinPack
         int needs[] = { 4 };
         numWrong += test_canPack(binPacker, limits, needs, 1, false);
         
+        int duffels[] = { 2, 2, 2, 5, 6  };
+        int bags[] = { 3, 3, 5};
+        numWrong += test_canPack(binPacker, duffels, bags, 1, true);
+
         int fibs[] = FibonacciInt32.fib32Range(0, 12);
         int mems[] = Primes.primesInRangeIntArray(2, 47);
         numWrong += test_canPack(binPacker, fibs, mems, 1, true);
@@ -226,7 +243,7 @@ public class BinPackRec implements IBinPack
     
     public static void main(String[] args) 
     {
-        unit_test(3);
+        unit_test(1);
     }
 
 }
