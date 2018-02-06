@@ -58,8 +58,9 @@ public class BinPackRec implements IBinPack
 
         if (canPackRecursive(binsCopy, bins.length, items, items.length)) {
             // TODO: this does NOT change the original array, nor does bins = binsCopy
-            bins = Arrays.copyOf(binsCopy, bins.length);
-            assert Arrays.stream(binsCopy).sum() == excess;
+            for (int j = bins.length; --j >= 0; ) {
+                bins[j] = binsCopy[j];
+            }
             return true;
         }
         return false;
@@ -159,6 +160,9 @@ public class BinPackRec implements IBinPack
                 Sx.putsArray("Bin space after:  ", bins);
             }
             Sx.format("Run time millis:    %d\n", runTime);
+            if (result) {
+                assert Arrays.stream(bins).sum() == excess;
+            }
         }
         return Sz.showWrong(result, expected);
     }
@@ -181,8 +185,8 @@ public class BinPackRec implements IBinPack
         int limits[] = {1, 3};
         int needs[] = { 4 };
         numWrong += test_canPack(binPacker, limits, needs, 1, false);
-        
-        int duffels[] = { 2, 2, 2, 5, 6  };
+
+        int duffels[] = { 2, 5, 2, 2, 6  };
         int bags[] = { 3, 3, 5};
         numWrong += test_canPack(binPacker, duffels, bags, 1, true);
 
