@@ -25,6 +25,14 @@ public class Sz
         return 1;
     }
 
+    public static int showWrong(boolean result, boolean expected)
+    {
+        if (result == expected)
+            return 0;
+        System.out.format("Wrong result %s, expected %s\n", result, expected);
+        return 1;
+    }
+
     public static String passFail(int numWrong) {
         return numWrong == 0 ? "PASS" : "FAIL"; 
     }
