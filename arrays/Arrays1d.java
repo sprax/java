@@ -4,7 +4,6 @@ package sprax.arrays;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 
 import sprax.sprout.Sx;
 import sprax.test.Sz;
@@ -12,9 +11,47 @@ import sprax.test.Sz;
 public class Arrays1d
 {
     /**
+     * Return sum of all elements.
+     */
+    public static int sum(int iA[])
+    {    
+        if (iA == null || iA.length == 0) {
+            throw new IllegalArgumentException("null or empty array");
+        }
+        return sumNiece(iA, iA.length);
+    }
+
+    /**
+     * Return sum of up to N elements.
+     */
+    public static int sum(int iA[], int num)
+    {
+        if (iA == null || iA.length == 0) {
+            throw new IllegalArgumentException("null or empty array");
+        }
+        if (num < 0 || num > iA.length) {
+            throw new IllegalArgumentException("num < 0 or num > array length");
+        }
+        return sumNiece(iA, num);
+    }
+
+    /**
+     * Return sum of up to N elements, NIECE = No Input Error Checking 
+     */
+    public static int sumNiece(int iA[], int num)
+    {
+        int sum = 0;
+        for (int i = 0; i < num; i++) {
+            sum += iA[i];
+        }
+        return sum;
+    }
+
+    /**
      * Return sum of squares of elements.
      */
-    public static int sumOfSquares(int iA[]) {
+    public static int sumOfSquares(int iA[])
+    {
         if (iA == null || iA.length == 0) {
             throw new IllegalArgumentException("null or empty array");
         }

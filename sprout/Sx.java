@@ -534,14 +534,21 @@ public class Sx
 
     public static void printArrayFolded(int A[], int numPerLine)
     {
+        printArrayFolded(A, numPerLine, 1);
+    }
+
+    public static void printArrayFolded(int A[], int numPerLine, int newlines)
+    {
         for (int j = 0; j < A.length; )
         {
             printListInt(A[j]);
             if (++j % numPerLine == 0)
                 puts();
         }
+        while (--newlines >= 0)
+            puts();
     }
-    
+
     public static void printArrayFoldedCsv(int A[], int numPerLine)
     {
         for (int j = 0; j < A.length; )
