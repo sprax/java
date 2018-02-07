@@ -4,12 +4,26 @@ package sprax.arrays;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.IntSummaryStatistics;
 
+import sprax.numbers.Primes;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 public class Arrays1d
 {
+    public static IntSummaryStatistics summaryStats(int[] iA)
+    {
+        return Arrays.stream(iA).summaryStatistics();
+    }
+
+    public static void test_summaryStats() {
+        int[] primes = Primes.primesInRangeIntArray(2, 47);
+        IntSummaryStatistics stats = summaryStats(primes);
+        System.out.print("IntSummaryStats for Primes.primesInRangeIntArray(2, 47):\n\t");
+        System.out.println(stats);
+    }
+
     /**
      * Return sum of all elements.
      */
@@ -300,6 +314,7 @@ public class Arrays1d
 		Sx.puts("duh.get(0) before and after: " + d0 + "  " + two.get(0));
 
 		numWrong += test_productArray();
+		test_summaryStats();
 
 		Sz.end(testName, numWrong);
 		return numWrong;
