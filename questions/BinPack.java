@@ -15,6 +15,9 @@ import sprax.test.Sz;
  * Can the space requirements given by items be packed into the specified bins?
  * Implementations: Naive exhaustive recursion with supplementary boolean array.
  * Complexity: Time O(N!), additional space O(N).
+ * 
+ * Short-circuited sorted exhaustive recursion, no supplementary array:
+ * Expected complexity: Time ~O(N^2 log N), additional space O(1).
  */
 public class BinPack implements IBinPack
 {
@@ -41,6 +44,7 @@ public class BinPack implements IBinPack
      * Can the space requirements specified by items be packed into the specified bins?
      * If the packing algorithm succeeds, the values in bins will be decreased by the amounts in items.
      * The items array will be sorted.
+     * Expected complexity: Time ~O(N^2 log N), additional space O(1).
      */
     public static boolean canPackTrack(int[] bins, int[] items)
     {
