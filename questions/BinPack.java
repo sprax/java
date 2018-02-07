@@ -174,14 +174,12 @@ public class BinPack implements IBinPack
      * @param packed
      * @return
      */
-    static boolean canPackNaiveRec(int[] bins, int[] items, boolean[] packed) {
-        boolean allPacked = true;
-        for (boolean b : packed) {
-            allPacked &= b;
-        }
-        if (allPacked){
+    static boolean canPackNaiveRec(int[] bins, int[] items, boolean[] packed)
+    {
+        if (allTrue(packed)) {
             return true;
         }
+
         for (int i = 0; i < items.length; i++) {
             if (!packed[i]) {
                 // Exhaustive: check all remaining solutions that start with item[i] packed in some bin[j]
@@ -192,7 +190,7 @@ public class BinPack implements IBinPack
                         if(canPackNaiveRec(bins, items, packed)){
                             return true;                // success: return
                         }
-                        bins[j] = bins[j] + items[i];   // failure: restore item amount to bin
+                        bins[j] += items[i];   // failure: restore item amount to bin
                     }
                 }
                 packed[i] = false;
