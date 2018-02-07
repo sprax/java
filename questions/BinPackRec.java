@@ -34,7 +34,7 @@ public class BinPackRec implements IBinPack
                 return false;
         }
         return true;
-    }    
+    }
 
     /** 
      * Can the space requirements specified by items be packed into the specified bins?
@@ -215,17 +215,21 @@ public class BinPackRec implements IBinPack
             int fibs[] = FibonacciInt32.fib32Range(0, 12);
             int mems[] = Primes.primesInRangeIntArray(2, 47);
             numWrong += test_canPack(binPacker, fibs, mems, 1, true);
-            
+
             int crates[] = FibonacciInt32.fib32Range(0, 9);
             int boxes[] = Primes.primesInRangeIntArray(2, 25);
             numWrong += test_canPack(binPacker, crates, boxes, 1, false);
-            
+
+            int frames[] = FibonacciInt32.fib32Range(0, 13);
+            int photos[] = Primes.primesInRangeIntArray(2, 70);
+            numWrong += test_canPack(binPacker, frames, photos, 1, true);
+        
             int blocks[] = FibonacciInt32.fib32Range(0, 14);
             int allocs[] = Primes.primesInRangeIntArray(2, 90);
             numWrong += test_canPack(binPacker, blocks, allocs, 1, false);
 
-            int frames[] = FibonacciInt32.fib32Range(0, 15);
-            int photos[] = Primes.primesInRangeIntArray(2, 125);
+            frames = FibonacciInt32.fib32Range(0, 15);
+            photos = Primes.primesInRangeIntArray(2, 125);
             numWrong += test_canPack(binPacker, frames, photos, 1, false);
 
             if (level > 2) {    // A naive algorithm may take a very long time...
