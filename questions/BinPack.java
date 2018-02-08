@@ -249,40 +249,45 @@ class BinPackTest
         int numWrong = 0, testNum = 0;
         //IBinPack binPacker = new BinPackRec();
 
-        
-        int seas[] = {2, 2, 37};
-        int holes[] = {4, 37};
-        numWrong += test_canPack(packer, seas, holes, 1, testName, ++testNum, false);
-        
-        int servers[] = {8, 16, 8, 32};
-        int tasks[] = {18, 4, 8, 4, 6, 6, 8, 8};
-        Sx.format("%s:\t%d\n", testName, ++testNum);
-        numWrong += test_canPack(packer, servers, tasks, 1, testName, ++testNum, true);
-
-        int limits[] = {1, 3};
-        int needs[] = { 4 };
-        Sx.format("%s:\t%d\n", testName, ++testNum);
-        numWrong += test_canPack(packer, limits, needs, 1, testName, ++testNum, false);
-
-        int duffels[] = { 2, 5, 2, 2, 6  };
-        int bags[] = { 3, 3, 5};
-        Sx.format("%s:\t%d\n", testName, ++testNum);
-        numWrong += test_canPack(packer, duffels, bags, 1, testName, ++testNum, true);
-
-        int sashes[] = { 1, 2, 3, 4, 5, 6, 8, 9  };
-        int badges[] = { 1, 4, 6, 6, 8, 8, };
-        Sx.format("%s:\t%d\n", testName, ++testNum);
-        numWrong += test_canPack(packer, sashes, badges, 1, testName, ++testNum, false);
-
-        if (level > 1) {
-            Sx.format("%s:\t%d\n", testName, ++testNum);
+        if (level < 1) {
+            int seas[] = {2, 2, 37};
+            int holes[] = {4, 37};
+            numWrong += test_canPack(packer, seas, holes, 1, testName, ++testNum, false);
             
+            int servers[] = {8, 16, 8, 32};
+            int tasks[] = {18, 4, 8, 4, 6, 6, 8, 8};
+            Sx.format("%s:\t%d\n", testName, ++testNum);
+            numWrong += test_canPack(packer, servers, tasks, 1, testName, ++testNum, true);
+    
+            int limits[] = {1, 3};
+            int needs[] = { 4 };
+            Sx.format("%s:\t%d\n", testName, ++testNum);
+            numWrong += test_canPack(packer, limits, needs, 1, testName, ++testNum, false);
+    
+            int duffels[] = { 2, 5, 2, 2, 6  };
+            int bags[] = { 3, 3, 5};
+            Sx.format("%s:\t%d\n", testName, ++testNum);
+            numWrong += test_canPack(packer, duffels, bags, 1, testName, ++testNum, true);
+    
+            int sashes[] = { 1, 2, 3, 4, 5, 6, 8, 9  };
+            int badges[] = { 1, 4, 6, 6, 8, 8, };
+            Sx.format("%s:\t%d\n", testName, ++testNum);
+            numWrong += test_canPack(packer, sashes, badges, 1, testName, ++testNum, false);
+        }
+        
+        int crates[] = FibonacciInt32.fib32Range(0, 11);
+        int boxes[] = Primes.primesInRangeIntArray(2, 42);
+        boxes[boxes.length-1] = 27;
+        numWrong += test_canPack(packer, crates, boxes, 1, testName, ++testNum, false);
+
+        
+        if (level > 1) {
             int fibs[] = FibonacciInt32.fib32Range(0, 12);
             int mems[] = Primes.primesInRangeIntArray(2, 47);
             numWrong += test_canPack(packer, fibs, mems, 1, testName, ++testNum, true);
             
-            int crates[] = FibonacciInt32.fib32Range(0, 9);
-            int boxes[] = Primes.primesInRangeIntArray(2, 25);
+            int bins[] = FibonacciInt32.fib32Range(0, 9);
+            int bits[] = Primes.primesInRangeIntArray(2, 25);
             numWrong += test_canPack(packer, crates, boxes, 1, testName, ++testNum, false);
 
             if (level > 2) {    // A naive algorithm may take a very long time...
@@ -320,7 +325,7 @@ class BinPackTest
         Sz.begin(testName);
         int numWrong = 0;
         
-        numWrong += test_packer(BinPack::canPackTrack, "canPackTrack", level + 2);
+        numWrong += test_packer(BinPack::canPackTrack, "canPackTrack", level);
         numWrong += test_packer(BinPack::canPackNaive, "canPackNaive", level);
 
         Sz.end(testName, numWrong);
@@ -329,7 +334,7 @@ class BinPackTest
     
     public static void main(String[] args) 
     {
-        unit_test(2);
+        unit_test(1);
     }
 
 }
