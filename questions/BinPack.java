@@ -94,21 +94,25 @@ public class BinPack implements IBinPack
 
         // return false if the largest remaining bin cannot fit the largest unpacked item.
         if (bins[k] < items[j]) {
-            return false;
+            //return false;
         }
 
         // Use reverse order, assuming the inputs were sorted in ascending order.
         for (; k >= 0; k--) {
             int diff_k_j = bins[k] - items[j];
             if (diff_k_j >= 0) {                        // expected to be true at beginning of loop
+                Sx.format("Try %2d(%2d) in %2d(%2d), leaving bins: ", j, items[j], k, bins[k]);
                 boolean swapping = false;
+                /*****
                 if (diff_k_j < items[0]) {              // If the space left in this bin would be less than the
                     usableSpace -= diff_k_j;            // smallest item, then this bin would become unusable.
                     if (usableSpace < neededSpace) {    // If the remaining usable space would not suffice,
-                        return false;                   // return false immediately, without decrementing, etc.
+                        usableSpace += diff_k_j; 
+                        continue;                       // move on immediately, without decrementing, etc.
                     }
                     swapping = true;                    // Need to swap the diminished bins[k] off the active list.
                 }
+                *****/
                 usableSpace -= items[j];
                 neededSpace -= items[j];
                 bins[k] = diff_k_j;
@@ -131,6 +135,8 @@ public class BinPack implements IBinPack
                 }
 
                 // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
+                Sx.printArray(bins);
+                Sx.format("  total space %3d, max to pack %2d\n", usableSpace, items[j-1]);
                 if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
                     return true;
                 }
@@ -215,7 +221,7 @@ class BinPackTest
         if (verbose > 0) {
             Sx.format("\n\t  Test canPack:  %s: %d\n", name, number);
             Sx.putsArray("bin space before: ", bins);
-            Sx.puts("items to pack:    ");
+            Sx.print("items to pack:    ");
             Sx.printArrayFolded(items, 24);
             int binTot = IntStream.of(bins).sum();
             int itemTot = IntStream.of(items).sum();
@@ -278,7 +284,7 @@ class BinPackTest
         int crates[] = FibonacciInt32.fib32Range(0, 11);
         int boxes[] = Primes.primesInRangeIntArray(2, 42);
         boxes[boxes.length-1] = 27;
-        numWrong += test_canPack(packer, crates, boxes, 1, testName, ++testNum, false);
+        numWrong += test_canPack(packer, crates, boxes, 1, testName, ++testNum, true);
 
         
         if (level > 1) {
@@ -288,7 +294,7 @@ class BinPackTest
             
             int bins[] = FibonacciInt32.fib32Range(0, 9);
             int bits[] = Primes.primesInRangeIntArray(2, 25);
-            numWrong += test_canPack(packer, crates, boxes, 1, testName, ++testNum, false);
+            numWrong += test_canPack(packer, bins, bits, 1, testName, ++testNum, false);
 
             if (level > 2) {    // A naive algorithm may take a very long time...
                 int frames[] = FibonacciInt32.fib32Range(0, 13);
