@@ -61,7 +61,7 @@ public class BinPack implements IBinPack
         if (binsCopy[bins.length - 1] < items[items.length - 1])
             return false;                           // return early: max bin < max item
 
-        if (canPackRecursive(binsCopy, bins.length, items, items.length, usableSpace, neededSpace)) {
+        if (canPackTrackRec(binsCopy, bins.length, items, items.length, usableSpace, neededSpace)) {
             // Change the original array.  (Pass by value means bins = binsCopy would not.)
             for (int j = bins.length; --j >= 0; ) {
                 bins[j] = binsCopy[j];
@@ -80,7 +80,7 @@ public class BinPack implements IBinPack
      * @param numUnpacked
      * @return
      */
-    static boolean canPackRecursive(int[] bins, int numUsable, int[] items, int numUnpacked, int usableSpace, int neededSpace)
+    static boolean canPackTrackRec(int[] bins, int numUsable, int[] items, int numUnpacked, int usableSpace, int neededSpace)
     {
         if (numUnpacked < 1) {
             return true;
@@ -117,7 +117,7 @@ public class BinPack implements IBinPack
                 // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
                 //  Sx.printArray(bins);
                 //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
-                if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
+                if (canPackTrackRec(bins, numUsable, items, j, usableSpace, neededSpace)) {
                     return true;
                 }
                 // failed, so swap back and increment.
@@ -146,7 +146,7 @@ public class BinPack implements IBinPack
                 // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
                 //  Sx.printArray(bins);
                 //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
-                if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
+                if (canPackTrackRec(bins, numUsable, items, j, usableSpace, neededSpace)) {
                     return true;
                 }
                 // Failed, so re-sort/restore.
@@ -349,7 +349,7 @@ class BinPackTest
     
     public static void main(String[] args) 
     {
-        unit_test(1);
+        unit_test(2);
     }
 
 }
