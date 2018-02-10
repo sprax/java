@@ -82,7 +82,108 @@ public class BinPack implements IBinPack
         return false;
     }
 
+    static void shiftUp(int[] arr, int beg, int end)
+    {
+        for (int k = end; --k > beg; ) {
+            arr[k] = arr[k-1];
+        }
+    }
 
+    /**
+     * Sorted recursion.  Early return if largest item cannot fit in largest remaining bin.
+     * @param bins
+     * @param numUsable
+     * @param items
+     * @param numUnpacked
+     * @return
+     */
+    static boolean canPackSortRec(int[] bins, int minUsableIndex, int[] items, int numUnpacked, int usableSpace, int neededSpace)
+    {
+        if (numUnpacked < 1) {
+            return true;
+        }
+        if (minUsableIndex >= bins.length) {
+            return false;
+        }
+
+        int j = numUnpacked - 1;
+        int k = bins.length - 1;
+
+        // return false if the largest remaining bin cannot fit the largest unpacked item.
+        if (bins[k] < items[j]) {
+            return false;
+        }
+
+        // Use reverse order, assuming the inputs were sorted in ascending order.
+        for (; k >= 0; k--) {
+            int diff_k_j = bins[k] - items[j];
+            if (diff_k_j < 0) {                         // expected to be false at beginning of loop
+                break;                                  // assumes that bins is sorted ascending
+            }
+            //  Sx.format("Try %2d(%2d) in %2d(%2d), leaving bins: ", j, items[j], k, bins[k]);
+            if (diff_k_j < items[0]) {              // If the space left in this bin would be less than the
+                int reducedSpace = usableSpace - diff_k_j;            // smallest item, then this bin would become unusable.
+                if (reducedSpace < neededSpace) {    // If the remaining usable space would not suffice,
+                    continue;                       // move on immediately, without decrementing, etc.
+                }
+                neededSpace -= items[j];
+                usableSpace = reducedSpace - items[j];
+                // Need to swap the diminished bins[k] off the active list.
+                shiftUp(bins, minUsableIndex, k);
+                bins[minUsableIndex] = diff_k_j;
+                minUsableIndex++;
+                // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
+                //  Sx.printArray(bins);
+                //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                if (canPackSortRec(bins, minUsableIndex, items, j, usableSpace, neededSpace)) {
+                    return true;
+                }
+                // failed, so swap back and increment.
+                bins[numUsable++] = bins[k];
+                bins[k] = diff_k_j + items[j];
+                usableSpace += items[j] + diff_k_j;
+                neededSpace += items[j];
+            } else {
+                neededSpace -= items[j];
+                usableSpace -= items[j];
+                bins[k] = diff_k_j;                
+                
+                // Sort the list by re-inserting diminished bin[k] value where it now belongs.
+                int q = k;
+                for (; --q >= 0; ) {
+                    if (diff_k_j < bins[q]) {
+                        bins[q + 1] = bins[q];
+                    }
+                    else {
+                        break;
+                    }
+                }
+                int ins_k = q + 1;
+                bins[ins_k] = diff_k_j;
+
+                // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
+                //  Sx.printArray(bins);
+                //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                if (canPackSortRec(bins, minUsableIndex, items, j, usableSpace, neededSpace)) {
+                    return true;
+                }
+                // Failed, so re-sort/restore.
+                int z = ins_k;
+                for (; z < k; z++) {
+                    bins[z] = bins[z + 1];
+                }
+                bins[z] = diff_k_j + items[j];
+                //  Sx.printArray(bins);
+                //  Sx.format("  rests space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                
+                usableSpace += items[j];
+                neededSpace += items[j];
+            }
+        }
+        return false;
+    }
+    
+    
     /**
      * Can the space requirements specified by items be packed into the specified bins?
      * If the packing algorithm succeeds, the values in bins will be decreased by the amounts in items.
@@ -171,8 +272,7 @@ public class BinPack implements IBinPack
             } else {
                 neededSpace -= items[j];
                 usableSpace -= items[j];
-                bins[k] = diff_k_j;                
-                
+                bins[k] = diff_k_j;
                 // Sort the list by re-inserting diminished bin[k] value where it now belongs.
                 int q = k;
                 for (; --q >= 0; ) {
