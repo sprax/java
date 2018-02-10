@@ -100,30 +100,37 @@ public class BinPack implements IBinPack
         // Use reverse order, assuming the inputs were sorted in ascending order.
         for (; k >= 0; k--) {
             int diff_k_j = bins[k] - items[j];
-            if (diff_k_j < 0) {                        // expected to be true at beginning of loop
-                break;
+            if (diff_k_j < 0) {                         // expected to be false at beginning of loop
+                break;                                  // assumes that bins is sorted ascending
             }
             //  Sx.format("Try %2d(%2d) in %2d(%2d), leaving bins: ", j, items[j], k, bins[k]);
-            boolean swapping = false;
             if (diff_k_j < items[0]) {              // If the space left in this bin would be less than the
-                usableSpace -= diff_k_j;            // smallest item, then this bin would become unusable.
-                if (usableSpace < neededSpace) {    // If the remaining usable space would not suffice,
-                    usableSpace += diff_k_j; 
+                int reducedSpace = usableSpace - diff_k_j;            // smallest item, then this bin would become unusable.
+                if (reducedSpace < neededSpace) {    // If the remaining usable space would not suffice,
                     continue;                       // move on immediately, without decrementing, etc.
                 }
-                swapping = true;                    // Need to swap the diminished bins[k] off the active list.
-            }
-            usableSpace -= items[j];
-            neededSpace -= items[j];
-            bins[k] = diff_k_j;
-            // TODO: eliminate swapping variable, just make it a condition and call canPackRec from each branch
-            int ins_k = -9999;
-            
-            if (swapping) {
+                neededSpace -= items[j];
+                usableSpace = reducedSpace - items[j];
+                // Need to swap the diminished bins[k] off the active list.
                 bins[k] = bins[--numUsable];
                 bins[numUsable] = diff_k_j;      
+                // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
+                //  Sx.printArray(bins);
+                //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
+                    return true;
+                }
+                // failed, so swap back and increment.
+                bins[numUsable++] = bins[k];
+                bins[k] = diff_k_j + items[j];
+                usableSpace += items[j] + diff_k_j;
+                neededSpace += items[j];
             } else {
-                // Otherwise, sort the list by re-inserting diminished bin[k] value where it now belongs.
+                neededSpace -= items[j];
+                usableSpace -= items[j];
+                bins[k] = diff_k_j;                
+                
+                // Sort the list by re-inserting diminished bin[k] value where it now belongs.
                 int q = k;
                 for (; --q >= 0; ) {
                     if (diff_k_j < bins[q]) {
@@ -133,36 +140,27 @@ public class BinPack implements IBinPack
                         break;
                     }
                 }
-                ins_k = q + 1;
+                int ins_k = q + 1;
                 bins[ins_k] = diff_k_j;
-            }
 
-            // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
-            //  Sx.printArray(bins);
-            //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
-            if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
-                return true;
-            }
-            
-            // failed, so swap back and increment.
-            if (swapping) {
-                bins[numUsable] = bins[k];
-                bins[k] = diff_k_j;
-                usableSpace += diff_k_j;
-                numUsable++;
-                bins[k] = items[j];
-            } else {
-                int q = ins_k;
-                for (; q < k; q++) {
-                    bins[q] = bins[q + 1];
+                // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
+                //  Sx.printArray(bins);
+                //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
+                    return true;
                 }
-                bins[q] = diff_k_j + items[j];
+                // Failed, so re-sort/restore.
+                int z = ins_k;
+                for (; z < k; z++) {
+                    bins[z] = bins[z + 1];
+                }
+                bins[z] = diff_k_j + items[j];
                 //  Sx.printArray(bins);
                 //  Sx.format("  rests space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                
+                usableSpace += items[j];
+                neededSpace += items[j];
             }
-            
-            usableSpace += items[j];
-            neededSpace += items[j];
         }
         return false;
     }
@@ -343,7 +341,7 @@ class BinPackTest
         int numWrong = 0;
         
         numWrong += test_packer(BinPack::canPackTrack, "canPackTrack", level);
-        //numWrong += test_packer(BinPack::canPackNaive, "canPackNaive", level);
+        numWrong += test_packer(BinPack::canPackNaive, "canPackNaive", level);
 
         Sz.end(testName, numWrong);
         return numWrong;
