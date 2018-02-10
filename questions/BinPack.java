@@ -103,9 +103,8 @@ public class BinPack implements IBinPack
             if (diff_k_j < 0) {                        // expected to be true at beginning of loop
                 break;
             }
-            Sx.format("Try %2d(%2d) in %2d(%2d), leaving bins: ", j, items[j], k, bins[k]);
+            //  Sx.format("Try %2d(%2d) in %2d(%2d), leaving bins: ", j, items[j], k, bins[k]);
             boolean swapping = false;
-            /*****/
             if (diff_k_j < items[0]) {              // If the space left in this bin would be less than the
                 usableSpace -= diff_k_j;            // smallest item, then this bin would become unusable.
                 if (usableSpace < neededSpace) {    // If the remaining usable space would not suffice,
@@ -114,7 +113,6 @@ public class BinPack implements IBinPack
                 }
                 swapping = true;                    // Need to swap the diminished bins[k] off the active list.
             }
-            /*****/
             usableSpace -= items[j];
             neededSpace -= items[j];
             bins[k] = diff_k_j;
@@ -140,8 +138,8 @@ public class BinPack implements IBinPack
             }
 
             // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
-            Sx.printArray(bins);
-            Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+            //  Sx.printArray(bins);
+            //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
             if (canPackRecursive(bins, numUsable, items, j, usableSpace, neededSpace)) {
                 return true;
             }
@@ -154,24 +152,13 @@ public class BinPack implements IBinPack
                 numUsable++;
                 bins[k] = items[j];
             } else {
-                if (false) {
-                    bins[ins_k] += items[j];
-                    Arrays.sort(bins);
-                } else {
-                    int restore = bins[ins_k] + items[j];
-                    int q = ins_k;
-                    for (; q < k; q++) {
-                        bins[q] = bins[q + 1];
-                    }
-                    if (restore != diff_k_j + items[j]) {
-                        int temp = diff_k_j + items[j];
-                        restore += (temp - 1*temp);
-                    }
-                    bins[q] = diff_k_j + items[j];
-                    // bins[q + 1] = restore;
+                int q = ins_k;
+                for (; q < k; q++) {
+                    bins[q] = bins[q + 1];
                 }
-                Sx.printArray(bins);
-                Sx.format("  rests space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
+                bins[q] = diff_k_j + items[j];
+                //  Sx.printArray(bins);
+                //  Sx.format("  rests space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
             }
             
             usableSpace += items[j];
