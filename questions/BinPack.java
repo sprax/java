@@ -40,6 +40,49 @@ public class BinPack implements IBinPack
         return true;
     }
 
+
+    /**
+     * Can the space requirements specified by items be packed into the specified bins?
+     * If the packing algorithm succeeds, the values in bins will be decreased by the amounts in items.
+     * The items array will be sorted.
+     * Expected complexity: Time ~O(N^2 log N), additional space O(1).
+     */
+    public static boolean canPackSort(int[] bins, int[] items)
+    {
+        int usableSpace = Arrays.stream(bins).sum();
+        int neededSpace = Arrays.stream(items).sum();
+        int excess = usableSpace - neededSpace;
+        if (excess < 0)
+            return false;                           // return early: insufficient total space
+
+        int[] binsCopy = Arrays.copyOf(bins, bins.length);
+        Arrays.sort(binsCopy);
+        Arrays.sort(items);
+
+        if (binsCopy[bins.length - 1] < items[items.length - 1])
+            return false;                           // return early: max bin < max item
+
+        int minUsableIndex = 0;
+        while (bins[minUsableIndex] < items[0]) {
+            excess -= bins[minUsableIndex];
+            minUsableIndex++;
+        }
+        if (excess < 0)
+            return false;                           // return early: insufficient usable space
+        usableSpace = neededSpace + excess;
+
+        if (canPackSortRec(binsCopy, minUsableIndex, items, items.length, usableSpace, neededSpace)) {
+            // Change the original array.  (Pass by value means bins = binsCopy would not.)
+            for (int j = bins.length; --j >= 0; ) {
+                bins[j] = binsCopy[j];
+            }
+            return true;
+        }
+        Sx.putsArray("failed binCopy:   ", binsCopy);
+        return false;
+    }
+
+
     /**
      * Can the space requirements specified by items be packed into the specified bins?
      * If the packing algorithm succeeds, the values in bins will be decreased by the amounts in items.
