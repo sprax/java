@@ -105,7 +105,7 @@ public class BinPack implements IBinPack
             }
             Sx.format("Try %2d(%2d) in %2d(%2d), leaving bins: ", j, items[j], k, bins[k]);
             boolean swapping = false;
-            /*****
+            /*****/
             if (diff_k_j < items[0]) {              // If the space left in this bin would be less than the
                 usableSpace -= diff_k_j;            // smallest item, then this bin would become unusable.
                 if (usableSpace < neededSpace) {    // If the remaining usable space would not suffice,
@@ -114,7 +114,7 @@ public class BinPack implements IBinPack
                 }
                 swapping = true;                    // Need to swap the diminished bins[k] off the active list.
             }
-            *****/
+            /*****/
             usableSpace -= items[j];
             neededSpace -= items[j];
             bins[k] = diff_k_j;
@@ -152,10 +152,26 @@ public class BinPack implements IBinPack
                 bins[k] = diff_k_j;
                 usableSpace += diff_k_j;
                 numUsable++;
-                bins[k] += items[j];
+                bins[k] = items[j];
             } else {
-                bins[ins_k] += items[j];
-                Arrays.sort(bins);
+                if (false) {
+                    bins[ins_k] += items[j];
+                    Arrays.sort(bins);
+                } else {
+                    int restore = bins[ins_k] + items[j];
+                    int q = ins_k;
+                    for (; q < k; q++) {
+                        bins[q] = bins[q + 1];
+                    }
+                    if (restore != diff_k_j + items[j]) {
+                        int temp = diff_k_j + items[j];
+                        restore += (temp - 1*temp);
+                    }
+                    bins[q] = diff_k_j + items[j];
+                    // bins[q + 1] = restore;
+                }
+                Sx.printArray(bins);
+                Sx.format("  rests space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
             }
             
             usableSpace += items[j];
