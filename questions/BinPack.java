@@ -47,7 +47,7 @@ public class BinPack implements IBinPack
      * The items array will be sorted.
      * Expected complexity: Time ~O(N^2 log N), additional space O(1).
      */
-    public static boolean canPackSort(int[] bins, int[] items)
+    public static boolean canPackSort1(int[] bins, int[] items)
     {
         int usableSpace = Arrays.stream(bins).sum();
         int neededSpace = Arrays.stream(items).sum();
@@ -83,11 +83,17 @@ public class BinPack implements IBinPack
     }
 
     
+    static void shiftDown(int[] arr, int beg, int end)
+    {
+        while (beg < end)
+            arr[beg] = arr[++beg];
+    }
+    
 
     static void shiftUp(int[] arr, int beg, int end)
     {
-        while (--end > beg)
-            arr[end] = arr[end-1];
+        while (end > beg)
+            arr[end] = arr[--end];
     }
     
 
@@ -132,8 +138,7 @@ public class BinPack implements IBinPack
                 usableSpace = reducedSpace - items[j];
                 // Need to swap the diminished bins[k] off the active list.
                 shiftUp(bins, minUsableIndex, k);
-                bins[minUsableIndex] = diff_k_j;
-                minUsableIndex++;
+                bins[minUsableIndex++] = diff_k_j;
                 // Exhaustive recursion: check all remaining solutions that start with item[j] packed in bin[q]
                 //  Sx.printArray(bins);
                 //  Sx.format("  total space %3d, max to pack %2d\n", usableSpace, (j > 0 ? items[j-1] : 0));
@@ -141,9 +146,11 @@ public class BinPack implements IBinPack
                     return true;
                 }
                 // failed, so swap back and increment.
-                bins[numUsable++] = bins[k];
-                bins[k] = diff_k_j + items[j];
-                usableSpace += items[j] + diff_k_j;
+                minUsableIndex--;
+                shiftDown(bins, minUsableIndex, k);
+                int bins_k_prior = diff_k_j + items[j];
+                bins[k] = bins_k_prior;
+                usableSpace += bins_k_prior;
                 neededSpace += items[j];
             } else {
                 neededSpace -= items[j];
@@ -485,16 +492,17 @@ class BinPackTest
         Sz.begin(testName);
         int numWrong = 0;
         
-        numWrong += test_packer(BinPack::canPackTrack, "canPackTrack", level);
         numWrong += test_packer(BinPack::canPackNaive, "canPackNaive", level);
-
+        numWrong += test_packer(BinPack::canPackTrack, "canPackTrack", level);
+        numWrong += test_packer(BinPack::canPackSort1, "canPackSort1", level);
+ 
         Sz.end(testName, numWrong);
         return numWrong;
     }
     
     public static void main(String[] args) 
     {
-        unit_test(2);
+        unit_test(1);
     }
 
 }
