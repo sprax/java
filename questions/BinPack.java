@@ -82,12 +82,14 @@ public class BinPack implements IBinPack
         return false;
     }
 
+    
+
     static void shiftUp(int[] arr, int beg, int end)
     {
-        for (int k = end; --k > beg; ) {
-            arr[k] = arr[k-1];
-        }
+        while (--end > beg)
+            arr[end] = arr[end-1];
     }
+    
 
     /**
      * Sorted recursion.  Early return if largest item cannot fit in largest remaining bin.
