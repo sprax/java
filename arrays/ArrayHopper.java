@@ -8,7 +8,6 @@ import sprax.test.Sz;
  * Question: Find the minimum number of steps to reach the end of array from start 
  * Each array value give the max size of the next step, but you can also use a smaller
  * step.  Usually the arrays are specified to be non-negative.
- * Answers:
  */
 public abstract class ArrayHopper
 {
@@ -21,13 +20,13 @@ public abstract class ArrayHopper
 
 abstract class ArrayHopperRecursive extends ArrayHopper
 {
-    protected long mCalls;
-    protected long mDives;
+    protected long mCalls;  // times recursive method is called
+    protected long mDives;  // times recursive method calls itself (dives <= calls)
 
     @Override
     protected void showCounts()
     {
-    	Sx.puts("calls: " + mCalls + "  dives: " + mDives);
+        Sx.puts("calls: " + mCalls + "  dives: " + mDives);
     }
 }
 
@@ -37,7 +36,7 @@ abstract class ArrayHopperWithAuxArray extends ArrayHopper
     
     ArrayHopperWithAuxArray(int[] inputArray)
     {
-        if(inputArray == null || inputArray.length < 1)
+        if (inputArray == null || inputArray.length < 1)
             throw new IllegalArgumentException(this.getClass().getSimpleName() + " needs non-null, non-empty input array");
 
         mMinHops = new int[inputArray.length];
@@ -46,7 +45,7 @@ abstract class ArrayHopperWithAuxArray extends ArrayHopper
 
 
 /** 
- * Naive: 
+ * Naive: Re-tries steps and may have to back-track out from greed.
  */
 class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 {
@@ -58,6 +57,7 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 		if (length < 1)
 			return 0;
 
+		// reset counts
 		mCalls = 0;
 		mDives = 0;
 		int count = countHopsGreedyRecurse(iA, length, 0, 0, Integer.MAX_VALUE - 1);
@@ -114,9 +114,9 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
     
     int countHopsRBF(int[] iA, int length, int pos, int hops, int maxHops)
     {
-    	assert(pos < length);
-    	mCalls++;
-    	
+        	assert(pos < length);
+        	mCalls++;
+        	
         int nowHop = hops + 1;
         if (nowHop > maxHops)
         	return Integer.MAX_VALUE;
@@ -138,22 +138,52 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
 
 class ArrayHopperDP extends ArrayHopperWithAuxArray
 {
+    protected long mAssigns;  // upper bound on the number of assigments to aux array
 
-	ArrayHopperDP(int[] inputArray) {
+    ArrayHopperDP(int[] inputArray) {
 		super(inputArray);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public int countHops(int[] iA) {
-		// TODO Auto-generated method stub
+	public int countHops(int[] iA) 
+	{
+	    mAssigns = 0;
+	    
+	    // sanity check
+	    if (iA == null || iA.length < 1 || iA[0] < 1)
+	        return Integer.MAX_VALUE;
+	
+	    // init aux array
+	    if (mMinHops.length < iA.length)
+	        mMinHops = new int[iA.length];
+	    for (int j = 1; j < mMinHops.length; j++) {     // mMinHops[0] remains 0
+	        mMinHops[j] = Integer.MAX_VALUE;
+	    }
+	    
+	    // init conditions: first hop is special
+        for (int pos = iA[0]; pos > 0; pos--) {        // mMinHops[0] remains 0
+            if (pos >= iA.length)
+                return 1;                              // reached the goal in one hop
+            mMinHops[pos] = 1;
+        }
+        
+	    for (int j = 1; j < iA.length; j++) {
+	        int maxPos = j + iA[j];
+	        int hopNum = 1 + mMinHops[j];              // 1 more than min num hops it took to get here.
+	        mAssigns += iA[j];
+	        for (int pos = maxPos; pos > j; pos--) {   // mMinHops[0] remains 0
+	            if (pos >= iA.length)
+	                return hopNum;                     // off the end in one more hop
+	            if (mMinHops[pos] > hopNum)
+	                mMinHops[pos] = hopNum;
+	        }
+	    }
 		return 0;
 	}
 
 	@Override
 	protected void showCounts() {
-		// TODO Auto-generated method stub
-		
+        Sx.puts("aux assigns: " + mAssigns);
 	}
 	
 }
