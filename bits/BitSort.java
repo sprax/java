@@ -1,9 +1,13 @@
 package sprax.bits;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import sprax.arrays.ArrayDiffs;
 import sprax.sprout.Sx;
 import sprax.test.Sz;
 
@@ -68,10 +72,15 @@ public class BitSort
         Sz.begin(testName);
         int numWrong = 0;
         
-        int testArray[] = { 1, 4, 7, 11, 17, 18, 20, 29, 32 };
+        int origArray[] = { 1, 4, 7, 11, 17, 18, 20, 29, 32 };
+        Sx.putsArray("origArray:", origArray);
+        List<Integer> testList = Arrays.stream(origArray).boxed().collect(Collectors.toList());
+        Collections.shuffle(testList);
+        int testArray[] = testList.stream().mapToInt(i->i).toArray();
+
         int rangeSize = 40;
         Sx.putsArray("testArray:", testArray);
-        int beg = 0, end = 30;
+        int beg = 0, end = rangeSize;
         BitSort bs = new BitSort(testArray, rangeSize);
         List<Integer> list = bs.toList(beg, end);
         int array[] = bs.toArray(beg, end);
@@ -79,6 +88,7 @@ public class BitSort
         Sx.putsArray("toArray:  ", array);
         
         numWrong += Sz.compareListAndArray(list, array);
+        numWrong += ArrayDiffs.absDiff(origArray, array);
             
         Sz.end(testName, numWrong);
         return numWrong;
