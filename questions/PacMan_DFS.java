@@ -2,7 +2,8 @@ package sprax.questions;
 
 
 /**********************************************
-AI has a lot of problems that involve searches.In this track you will learn most of the search techniques used in AI.
+AI has a lot of problems that involve searches.
+In this track you will learn most of the search techniques used in AI.
 
 In this game, PacMan is positioned in a grid.PacMan has to find the food using Depth First Search(DFS).Assume the grid is completely observable, perform a DFS on the grid and then print the path obtained by DFS from the PacMan to the food.
 
@@ -50,9 +51,7 @@ PacMan can move only UP, DOWN, LEFT or RIGHT.
 Your task is to print all the nodes that you encounter while searching the DFS tree.
 While populating the stack, the following convention must be followed.
 
-% 
-%--
- -
+
 In the above cell, LEFT and UP are invalid moves.You can either go RIGHT or DOWN.RIGHT is pushed first followed by DOWN.
 
 Print the number of nodes explored.
@@ -183,9 +182,9 @@ public class PacMan_DFS
      * DFS search for PacMan food pellet.
      * NIECE: No Input Error Checking/Exceptions
      */
-    static void dfs(int rows, int colsc, int pacman_r, int pacman_c, int food_r, int food_c, String[] grid)
+    static void dfs(int rows, int cols, int pacman_r, int pacman_c, int food_r, int food_c, String[] grid)
     {
-        char[][] visited = new char[rows][colsc];
+        char[][] visited = new char[rows][cols];
         int nodesVisited = 0;
         Stack<Step> stack = new Stack<Step>();
         ArrayList<Step> tree = new ArrayList<Step>();

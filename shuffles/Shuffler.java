@@ -61,7 +61,7 @@ public class Shuffler
 		return  copy;
 	}  
 
-	public static void SetSeed(long seed)	{ sRandom.setSeed(seed); }
+	public static void setSeed(long seed)	{ sRandom.setSeed(seed); }
 
 	public static void unit_test() 
 	{
