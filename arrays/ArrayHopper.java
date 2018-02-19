@@ -69,11 +69,11 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 	    mCalls++;
 	    
 		if (numHopsNow > minNumHops)
-			return minNumHops;
+			return numHopsNow;           // return failure ASAP
 
 		if (pos >= len)
 		{
-			return numHopsNow;
+			return numHopsNow;           // return success
 		}
 		mDives++;
 		for (int hopSize = iA[pos]; hopSize > 0; hopSize--)
@@ -82,14 +82,13 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 			if (minNumHops > numHops)
 				minNumHops = numHops;
 		}
-		
 		return minNumHops;
 	}
 	
 }
 
 /** 
- * Naive: Repeats many steps repeatedly
+ * Naive: Repeats many steps
  */
 class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
 {

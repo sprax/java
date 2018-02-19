@@ -8,7 +8,7 @@ import sprax.test.Sz;
 public class Bitfields 
 {
     
-    BitSet bitSet;  // TODO: Not used -- rewrite this class to use it on begger char sets
+    BitSet bitSet;  // TODO: Not used -- rewrite this class to use it on larger char sets
     
     
     /**

@@ -27,7 +27,11 @@ public class TreeMapCounter
                 return (o2.getValue()).compareTo(o1.getValue());
             }
         });
+        int ntop = 4;
+        System.out.format("Showing only the top %d highest counts:\n", ntop);
         for (Map.Entry<String, Integer> entry : list) {
+            if (--ntop < 0)
+                break;
             System.out.println(entry.getKey() + " ==== " + entry.getValue());
         }
     }
