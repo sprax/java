@@ -14,7 +14,12 @@ import sprax.test.Sz;
 /**
  * Programming Pearls opening example by Jon Bentley:
  * Sort up to 27,000 unique numbers between 0 and 27000 exclusive.
- * Hint: don't sort anything, just use a bitfield.
+ * Hint: don't sort anything, just use an auxiliary bitfield of size
+ * sufficient to cover the range of your values.
+ * For example, to sort a collection of int values in the range [4000, 6000),
+ * use a BitSet of size 2000 and for each value to sort, set the bit at (value - 4000).
+ * To read out the sorted values, traverse the BitSet.
+ * Depending on your usage, you may be able to lose the original and just keep the BitSet.
  */
 public class BitSort 
 {
