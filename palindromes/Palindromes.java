@@ -100,21 +100,23 @@ public class Palindromes
                 iLeft = half - 1;                   // Reset left and right indices to point back to the middle.
                 iRight = len - half;                // We may have to copy the entire left side to the right, after breaking from this loop. 
                 if (chr[iRight-1] < '9') {
-                    chr[iLeft+1] = ++chr[iRight-1];   // Increment the digit in the next higher (or middle) place
+                    chr[iLeft+1] = ++chr[iRight-1]; // Increment the digit in the next higher (or middle) place
                     break;
                 } else {                            // We got a 9, so we must propagate the increase leftward.
-                    int j = iRight - 1;               // There must be a non-9 in the left half of the number string;
-                    do {                              // otherwise, we'd have already broken out of this loop.
-                        chr[j--] = '0';                 // "Increment" the 9 to 0 and carry the 1
-                    } while (chr[j] == '9');          // Repeat as necessary...
-                    chr[j]++;                         // Add the carried 1 to the first non-9 digit and break.
+                    int j = iRight - 1;             // There must be a non-9 in the left half of the number string;
+                    do {                            // otherwise, we'd have already broken out of this loop.
+                        chr[j--] = '0';             // "Increment" the 9 to 0 and carry the 1
+                    } while (chr[j] == '9');        // Repeat as necessary...
+                    chr[j]++;                       // Add the carried 1 to the first non-9 digit and break.
                     break;
                 }
             }
         }
-        // If the input number was already a palindrome, return the next one:
+        // If the input number was already a palindrome, start over to return the next one:
+        // NOTE: If you already know the argument num is palindromic, skip this penalty by calling this function
+        // with num + 1.  After 9, then next palindrome is always at least 2 greater than the previous, so num+1 is OK.
         if ( ! increased )
-            return nextPalindromeNumber(num + 1);  // This takes care of 9, 99, 999, etc.
+            return nextPalindromeNumber(num + 1);  // This takes care of 9, 99, 999, etc., which increment chr.length.
 
         // Now just mirror-copy left to right:
         for ( ; iLeft >= 0; --iLeft, ++iRight)
