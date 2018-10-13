@@ -4,6 +4,31 @@ import sprax.sprout.Sx;
 
 public class Histarea
 {
+    static int histarea_opt(int histogram[], int length)
+    {
+        int area = 0;
+        if (length > 2) {
+            int maxFromLeft[] = new int[length];
+            int height, maxHeight = Integer.MIN_VALUE;
+            for (int j = 0; j < length; j++) {  // Don't skip the last entry.
+                height = histogram[j];
+                if (maxHeight < height)
+                    maxHeight = height;
+                maxFromLeft[j] = maxHeight;
+            }
+            maxHeight = Integer.MIN_VALUE;
+            for (int j = length; --j > 0;) {   // Do skip the first entry.
+                height = histogram[j];
+                if (maxHeight < height)
+                    maxHeight = height;
+                if (maxHeight > maxFromLeft[j])
+                    area += maxFromLeft[j] - height;
+                else
+                    area += maxHeight - height;
+            }
+        }
+        return area;
+    }
     static int histarea(int histogram[], int length)
     {
         int area = 0;
