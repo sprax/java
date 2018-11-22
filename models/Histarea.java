@@ -63,13 +63,20 @@ public class Histarea
         Sx.puts(Histarea.class.getName() + ".main");
         final String programName = args.length > 0 ? args[0] : defProgramName;
         
-        int histogram[] = { 100, -1, 2, 3, -4, 4, 4, 2, 7, 0, 400 };
-        int length = histogram.length;
         
-        int area = histarea(histogram, length);
-        System.out.format("%s got area %d from histogram:\n", programName, area);
-        for (int j = 0; j < length; j++)
-            System.out.format("%d  ", histogram[j]);
-        System.out.println();
+        int histograms[][] = {
+                {    0,    -1,      2,     3,     -4,     4,     4,     2,     7,     0 },
+                {   -1,     2,     32,    32,     -4,     4,    44,     2,    38,     0 },
+                {   -1,    34,      3,   -14,      4,     0,    -8,    17,     0,    -1 },
+        };
+        for (int i = 0; i < histograms.length; i++) {
+            int histogram[] = histograms[i];
+            int length = histogram.length;
+            for (int j = 0; j < length; j++)
+                System.out.format("% 4d ", histogram[j]);
+            int area = histarea(histogram, length);
+            int areo = histarea_opt(histogram, length);
+            System.out.format("=> %s: % 5d,  %s: % 5d\n", "def", area, "opt", areo);
+        }
     }
 }

@@ -1,5 +1,4 @@
 package sprax.palindromes;
-
 import sprax.sprout.Sx;
 
 /**
