@@ -9,7 +9,6 @@ public class Histarea
         if (length < 3)
             return 0;
         int area = 0;
-
         int lenMinus1 = length - 1;
         Stack<Integer> dropStack = new Stack<>();
         int heightPrev = histogram[0];
