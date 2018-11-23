@@ -99,8 +99,8 @@ public class Histarea
     
     public static void main(String[] args)
     {
-        Sx.puts(Histarea.class.getName() + ".main");
         final String programName = args.length > 0 ? args[0] : defProgramName;
+        System.out.println(Histarea.class.getName() + ".main called by: " + programName);
         int histograms[][] = {
                 {    0,    -1,      2,     3,     -4,     4,     4,     2,     7,     0 },
                 {   -1,     2,     32,    32,     -4,     4,    44,     2,    38,     0 },
