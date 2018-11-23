@@ -1,6 +1,5 @@
 package sprax.models;
 import java.util.Stack;
-import sprax.sprout.Sx;
 
 public class Histarea
 {
