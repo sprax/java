@@ -40,6 +40,7 @@ class Anode
     }
 }
 
+///   Agraph: Used as a 2-D array graph, but works with any graph of 2D points
 class Agraph
 {
     int         mComponentCount;
