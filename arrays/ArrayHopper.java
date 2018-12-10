@@ -113,8 +113,8 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
     
     int countHopsRBF(int[] iA, int length, int pos, int hops, int maxHops)
     {
-        	assert(pos < length);
-        	mCalls++;
+    	assert(pos < length);
+    	mCalls++;
         	
         int nowHop = hops + 1;
         if (nowHop > maxHops)

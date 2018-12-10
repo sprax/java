@@ -61,27 +61,36 @@ public class Histarea
     }
 
 
-    /// Single pass with a stack for minimal back-tracking
-    /// Worst-case complexity is Theta(N**2) space and Theta(N) more space.
-    /// For example:
-    /// [7, 5, 6, 4, 5, 3, 4, 2, 3, 1, 2, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7]
-    /// But the expected complexity on uniformly random input is more like
-    /// O(N log N) time and O(log N) more space,
-    /// because at each new index M, with value H[M],
-    /// the probability that you must backtrack is basically 1/2,
-    /// but then the probability that you must backtrack all the way to index J,
-    /// where 0 < J < M, is the probability that H[J] >= H[M] times
-    /// the probability that H[K] < H[M] for all K where J < K < M,
-    /// which is basically (1/2)**(M - J - 1).
-    /// Since the probability that you must backtrack any given distance
-    /// is cut in half at each step, the sum of those probabilities increases
-    /// as log2(N), so the total expected complexity is bounded by O(N log2 N)
-    /// for at least a uniformly "random" histogram.
-    ///
-    /// Would "typical" histogram data be better or worse for this algorithm
-    /// than "random" data?  My guess is better, due to less variance.
-    /// Time series such as stock prices are likely to show trends at
-    /// various sample scales, which tends to reduce the need for backtracking.
+  /// Single pass with a stack for minimal back-tracking
+  /// Worst-case complexity is Theta(N**2) space and Theta(N) more space.
+  /// For example:
+  /// [7, 5, 6, 4, 5, 3, 4, 2, 3, 1, 2, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7]
+  /// But the expected complexity on uniformly random input is more like
+  /// O(N log N) time and O(log N) more space,
+  /// because at each new index M, with value H[M],
+  /// the probability that you must backtrack at all is basically 1/2,
+  /// and then the probability that you must pop the stack and backtrack again,
+  /// after adding the area trapped by the closest drop point, is also 1/2,
+  /// and so on.  Since the probability that you must continue backtracking
+  /// is cut in half at each step, the sum of those probabilities increases
+  /// as log2(N).  The added complexity for each backtracking step is constant
+  /// (you just multiply the lesser bounding height by the difference in indices),
+  /// so the total expected complexity is bounded by O(N log2 N), at least for
+  /// a uniformly "random" histogram.
+  ///
+  /// Note that if you do a point-wise sum instead of a single multiply
+  /// at each backtracking step, the expected complexity will be O(N * (log2 N)**2),
+  /// that is, N times the square of log2(N).  That is because at each backtracking
+  /// step starting from index M, the probability that you must backtrack all the
+  /// way to index J, where 0 < J < M, is the probability that H[J] >= H[M] times
+  /// the probability that H[K] < H[M] for all K where J < K < M,
+  /// which is basically (1/2)**(M - J - 1).  Once again, the sum of a series
+  /// of terms bound by inverse powers of 2 grows as log2(N).
+  ///
+  /// Would "typical" histogram data be better or worse for this algorithm
+  /// than "random" data?  My guess is better, due to less variance.
+  /// Time series such as stock prices are likely to show trends at
+  /// various sample scales, which tends to reduce the need for backtracking.
     static int histarea_stack(int histogram[], int length)
     {
         if (length < 3)
