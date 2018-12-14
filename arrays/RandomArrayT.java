@@ -23,7 +23,7 @@ public class RandomArrayT
         return A;
     }
     
-    /**** FIXME: generic factory pattern, infer type from an argument
+    /**** FIXME: generic factory pattern, infer type from an argument */
     public static <T extends Number> T[] makeRandomArray(int size, int minVal, int maxVal, long seed)
     {
         if (size < 1 || minVal > maxVal)
@@ -38,7 +38,7 @@ public class RandomArrayT
         }
         return A;
     }
-    ****/
+    /****/
     
       
     public static int unit_test(int lvl) 

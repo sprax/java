@@ -41,7 +41,7 @@ public class FindZeroed
 		int index = sRandom.nextInt(array.length);
 		int oldVal = array[index];
 		array[index] = newVal;
-		return new int[]{index, oldVal};
+		return new int[]{index, oldVal};  // return index and oldVal as 2-item array
 	}
 
 	static int[] zeroRandomElement(int array[])
