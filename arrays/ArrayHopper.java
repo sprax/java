@@ -6,8 +6,8 @@ import sprax.test.Sz;
 /**
  * Array Hopper Problem:
  * Question: Find the minimum number of steps to reach the end of array from start 
- * Each array value give the max size of the next step, but you can also use a smaller
- * step.  Usually the arrays are specified to be non-negative.
+ * Each array value gives the max size of the next step, but you may also take a
+ * smaller step.  Usually the arrays are specified to be non-negative.
  */
 public abstract class ArrayHopper
 {
@@ -21,12 +21,14 @@ public abstract class ArrayHopper
 abstract class ArrayHopperRecursive extends ArrayHopper
 {
     protected long mCalls;  // times recursive method is called
-    protected long mDives;  // times recursive method calls itself (dives <= calls)
+    protected long mLoops;  // times recursive method begins a loop of calling itself (loops <= calls)
+
+    // No constructor
 
     @Override
     protected void showCounts()
     {
-        Sx.puts("calls: " + mCalls + "  dives: " + mDives);
+        Sx.puts("calls: " + mCalls + "  loops: " + mLoops);
     }
 }
 
@@ -34,11 +36,12 @@ abstract class ArrayHopperWithAuxArray extends ArrayHopper
 {
     protected int mMinHops[];
     
-    ArrayHopperWithAuxArray(int[] inputArray)
+    // base class Constructor
+    protected ArrayHopperWithAuxArray(int[] inputArray)
     {
         if (inputArray == null || inputArray.length < 1)
-            throw new IllegalArgumentException(this.getClass().getSimpleName() + " needs non-null, non-empty input array");
-
+            throw new IllegalArgumentException(this.getClass().getSimpleName()
+            		+ " needs non-null, non-empty input array");
         mMinHops = new int[inputArray.length];
     }
 }
@@ -59,7 +62,7 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 
 		// reset counts
 		mCalls = 0;
-		mDives = 0;
+		mLoops = 0;
 		int count = countHopsGreedyRecurse(iA, length, 0, 0, Integer.MAX_VALUE - 1);
 	    return count;
 	}
@@ -75,7 +78,7 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 		{
 			return numHopsNow;           // return success
 		}
-		mDives++;
+		mLoops++;
 		for (int hopSize = iA[pos]; hopSize > 0; hopSize--)
 		{
 			int numHops = countHopsGreedyRecurse(iA, len, pos + hopSize, numHopsNow + 1, minNumHops);
@@ -83,8 +86,7 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 				minNumHops = numHops;
 		}
 		return minNumHops;
-	}
-	
+	}	
 }
 
 /** 
@@ -101,7 +103,7 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
             return 0;
         
 		mCalls = 0;
-		mDives = 0;
+		mLoops = 0;
         for (int maxHops = 1; maxHops < length; maxHops++)
         {
             int minHops = countHopsRBF(iA, length, 0, 0, maxHops);
@@ -113,8 +115,8 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
     
     int countHopsRBF(int[] iA, int length, int pos, int hops, int maxHops)
     {
-        	assert(pos < length);
-        	mCalls++;
+        assert(pos < length);
+        mCalls++;
         	
         int nowHop = hops + 1;
         if (nowHop > maxHops)
@@ -124,7 +126,7 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
         if (pos + maxHopSize >= length)
             return nowHop;
         
-        mDives++;
+        mLoops++;
         for (int hopSize = 0; ++hopSize <= maxHopSize; )
         {
             int minHops = countHopsRBF(iA, length, pos + hopSize, nowHop, maxHops);
@@ -135,11 +137,11 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
     }
 }
 
-class ArrayHopperDP extends ArrayHopperWithAuxArray
+class ArrayHopperDynamicProgramming extends ArrayHopperWithAuxArray
 {
-    protected long mAssigns;  // upper bound on the number of assigments to aux array
+    protected long mAssigns;  // upper bound on the number of assignments to aux array
 
-    ArrayHopperDP(int[] inputArray) {
+    ArrayHopperDynamicProgramming(int[] inputArray) {
 		super(inputArray);
 	}
 
@@ -160,22 +162,25 @@ class ArrayHopperDP extends ArrayHopperWithAuxArray
 	    }
 	    
 	    // init conditions: first hop is special
-        for (int pos = iA[0]; pos > 0; pos--) {        // mMinHops[0] remains 0
+	    mAssigns = mMinHops.length + iA[0];			   	// worst case is "expected" usual case
+        for (int pos = iA[0]; pos > 0; pos--) {        	// mMinHops[0] remains 0
             if (pos >= iA.length)
-                return 1;                              // reached the goal in one hop
+                return 1;                              	// reached the goal in one hop
             mMinHops[pos] = 1;
         }
         
 	    for (int j = 1; j < iA.length; j++) {
 	        int maxPos = j + iA[j];
-	        int hopNum = 1 + mMinHops[j];              // 1 more than min num hops it took to get here.
-	        mAssigns += iA[j];
-	        for (int pos = maxPos; pos > j; pos--) {   // mMinHops[0] remains 0
-	            if (pos >= iA.length)
-	                return hopNum;                     // off the end in one more hop
+	        int hopNum = 1 + mMinHops[j];              	// 1 more than min num hops it took to get here.
+	        for (int pos = maxPos; pos > j; pos--) {   	// mMinHops[0] remains 0
+	            if (pos >= iA.length) {
+	            	mAssigns += maxPos - pos;
+	                return hopNum;                     	// off the end in one more hop
+	            }
 	            if (mMinHops[pos] > hopNum)
 	                mMinHops[pos] = hopNum;
 	        }
+	        mAssigns += iA[j];						    // still here
 	    }
 		return 0;
 	}
@@ -193,7 +198,7 @@ class ArrayHopperTest
 	{
 		String className = arrayHopper.getClass().getSimpleName();
 		int minNumHops = arrayHopper.countHops(iA);
-		Sx.format("%s.countHops(...) returned %d\t", className, minNumHops);
+		Sx.format("%s.countHops(...)\t hops: %d\t", className, minNumHops);
 		arrayHopper.showCounts();
 		return Sz.showWrong(minNumHops, expectedMinNumHops);
 	}
@@ -221,7 +226,7 @@ class ArrayHopperTest
 
 		ArrayHopper hopperGRF = new ArrayHopperGreedyRecurseForward();
 		ArrayHopper hopperRBF = new ArrayHopperRecurseBreadthFirst();
-		ArrayHopper hopperNDP = new ArrayHopperDP(iA);
+		ArrayHopper hopperNDP = new ArrayHopperDynamicProgramming(iA);
 		
 		ArrayHopper hoppers[] = { hopperGRF, hopperRBF, hopperNDP };
 
