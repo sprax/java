@@ -4,12 +4,42 @@ import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 /**
- * Array parkour Problem:
- * Question: Find the minimum number of steps to reach the end of array from start
+ * Problems: Parkour over arrays of pairs.
+ * Question: Find the minimum number of parkour moves needed to traverse
+ * an array of pairs (which may also be represented as a pair of arrays).
+ * At each array index, you get a pair of values, which we could call
+ * height and energy.  You can picture this array as representing a 
+ * series of wall-like obstacles.  It takes a certain amount of energy
+ * to jump or climb to the top of a wall, which is proportional to its
+ * height.  But once on top, you find a spring-board or catapult or 
+ * human cannon or something that gives you some other amount of energy
+ * that you can use to go forward and upward, if necessary, to get to
+ * the top of the next wall -- or, if you have enough energy, to jump
+ * over the next wall and get to the top or the near side of a later
+ * wall.  
+ * Thus wall-height and the energy its takes to make a move are 
+ * measured in the same units.
+ * It takes one unit of energy to go forward one index measure, and one unit
+ * to go upward one height unit, but zero units to jump downward.
+ * You cannot store excess energy from previous moves.  You only get
+ * the energy specified at your current location.  If that amount is 
+ * less than the height increase of the next wall, it will take you
+ * more than one move to surmount it.  For example, if you arrive on
+ * top of a wall of height 10 that gives you energy 4, but the next wall
+ * has height 16, it will take you two moves to surmount it (because 
+ * 2 * 4 > (16 - 10), at which point you lose the excess two units, 
+ * and gain whatever you find at the top.   
+ *   
+ * 
+ * So, going up a stairway of K unit-height steps 2K units
+ * of energy.  
+ * 
+ * Thus wall-height
+ * to get to       
  * Each array value gives the max size of the next step, but you may also take a
  * smaller step.  Usually the arrays are specified to be non-negative.
  */
-public abstract class ArrayParkour
+public abstract class PairrayParkour
 {
 	/** The "interface" method: */
 	public abstract int countHops(int[] iA);
@@ -18,7 +48,7 @@ public abstract class ArrayParkour
 	protected abstract void showCounts();
 }
 
-abstract class ArrayParkourRecursive extends ArrayParkour
+abstract class PairrayParkourRecursive extends PairrayParkour
 {
     protected long mCalls;  // times recursive method is called
     protected long mLoops;  // times recursive method begins a loop of calling itself (loops <= calls)
@@ -32,12 +62,12 @@ abstract class ArrayParkourRecursive extends ArrayParkour
     }
 }
 
-abstract class ArrayParkourWithAuxArray extends ArrayParkour
+abstract class PairrayParkourWithAuxArray extends PairrayParkour
 {
     protected int mMinHops[];
 
     // base class Constructor
-    protected ArrayParkourWithAuxArray(int[] inputArray)
+    protected PairrayParkourWithAuxArray(int[] inputArray)
     {
         if (inputArray == null || inputArray.length < 1)
             throw new IllegalArgumentException(this.getClass().getSimpleName()
@@ -50,7 +80,7 @@ abstract class ArrayParkourWithAuxArray extends ArrayParkour
 /**
  * Naive: Re-tries steps and may have to back-track out from greed.
  */
-class ArrayParkourGreedyRecurseForward extends ArrayParkourRecursive
+class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
     @Override
 	public int countHops(int[] iA)
@@ -92,7 +122,7 @@ class ArrayParkourGreedyRecurseForward extends ArrayParkourRecursive
 /**
  * Naive: Repeats many steps
  */
-class ArrayParkourRecurseBreadthFirst extends ArrayParkourRecursive
+class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
 {
     @Override
     public int countHops(int[] iA)
@@ -137,11 +167,11 @@ class ArrayParkourRecurseBreadthFirst extends ArrayParkourRecursive
     }
 }
 
-class ArrayParkourDynamicProgramming extends ArrayParkourWithAuxArray
+class PairrayParkourDynamicProgramming extends PairrayParkourWithAuxArray
 {
     protected long mAssigns;  // upper bound on the number of assignments to aux array
 
-    ArrayParkourDynamicProgramming(int[] inputArray) {
+    PairrayParkourDynamicProgramming(int[] inputArray) {
 		super(inputArray);
 	}
 
@@ -192,9 +222,9 @@ class ArrayParkourDynamicProgramming extends ArrayParkourWithAuxArray
 
 }
 
-class ArrayParkourTest
+class PairrayParkourTest
 {
-	public static int test_ArrayParkour(ArrayParkour arrayParkour, int[] iA, int expectedMinNumHops)
+	public static int test_PairrayParkour(PairrayParkour arrayParkour, int[] iA, int expectedMinNumHops)
 	{
 		String className = arrayParkour.getClass().getSimpleName();
 		int minNumHops = arrayParkour.countHops(iA);
@@ -203,19 +233,19 @@ class ArrayParkourTest
 		return Sz.showWrong(minNumHops, expectedMinNumHops);
 	}
 
-	public static int testParkours(ArrayParkour[] parkours, int[] iA, int expectedMinNumHops)
+	public static int testParkours(PairrayParkour[] parkours, int[] iA, int expectedMinNumHops)
 	{
 	    int numWrong = 0;
-		for (ArrayParkour parkour : parkours)
+		for (PairrayParkour parkour : parkours)
 		{
-	        numWrong += test_ArrayParkour(parkour, iA, expectedMinNumHops);
+	        numWrong += test_PairrayParkour(parkour, iA, expectedMinNumHops);
 		}
 		return numWrong;
 	}
 
 	public static int unit_test(int lvl)
 	{
-		String  testName = ArrayParkour.class.getName() + ".unit_test";
+		String  testName = PairrayParkour.class.getName() + ".unit_test";
 		Sz.begin(testName);
 		int numWrong = 0;
 
@@ -224,11 +254,11 @@ class ArrayParkourTest
         int iC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         //int aiA[][] = { iA, iB, iC };
 
-		ArrayParkour ParkourGRF = new ArrayParkourGreedyRecurseForward();
-		ArrayParkour ParkourRBF = new ArrayParkourRecurseBreadthFirst();
-		ArrayParkour ParkourNDP = new ArrayParkourDynamicProgramming(iA);
+		PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward();
+		PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst();
+		PairrayParkour ParkourNDP = new PairrayParkourDynamicProgramming(iA);
 
-		ArrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
+		PairrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
 
         Sx.putsArray("iA: ", iA);
         numWrong += testParkours(parkours, iA, 5);
