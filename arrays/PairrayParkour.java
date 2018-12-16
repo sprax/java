@@ -4,7 +4,11 @@ import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 /**
- * Problems: Parkour over arrays of pairs.
+ * Context: Parkour over an arbitrary line-up of obstacles.  Confronted 
+ * by a series of walls, you try to compute how to run, climb, or jump
+ * over them, in th order they appear, in the most efficient series of
+ * moves possible.
+ * 
  * Question: Find the minimum number of parkour moves needed to traverse
  * an array of pairs (which may also be represented as a pair of arrays).
  * At each array index, you get a pair of values, which we could call
@@ -13,22 +17,39 @@ import sprax.test.Sz;
  * to jump or climb to the top of a wall, which is proportional to its
  * height.  But once on top, you find a spring-board or catapult or 
  * human cannon or something that gives you some other amount of energy
- * that you can use to go forward and upward, if necessary, to get to
+ * that you can use to go forward, and upward, if necessary, to get to
  * the top of the next wall -- or, if you have enough energy, to jump
  * over the next wall and get to the top or the near side of a later
  * wall.  
- * Thus wall-height and the energy its takes to make a move are 
- * measured in the same units.
+ * The height of the walls and the energy its takes to make a move are 
+ * thus measured in the same units.
  * It takes one unit of energy to go forward one index measure, and one unit
  * to go upward one height unit, but zero units to jump downward.
- * You cannot store excess energy from previous moves.  You only get
- * the energy specified at your current location.  If that amount is 
- * less than the height increase of the next wall, it will take you
- * more than one move to surmount it.  For example, if you arrive on
- * top of a wall of height 10 that gives you energy 4, but the next wall
- * has height 16, it will take you two moves to surmount it (because 
- * 2 * 4 > (16 - 10), at which point you lose the excess two units, 
- * and gain whatever you find at the top.   
+ * 
+ * You can keep or use any excess energy from previous moves ("momentum")
+ * until it is used up.  The "boost energy" you get at the top of each
+ * wall can be used repeatedly until you have moved to a later wall.
+ * In short, "boost" is re-usable; "momentum" is not.
+ * 
+ * If your current energy is less than the height increase of the 
+ * next wall, and your current location's boost is positive, you will
+ * need to re-use that boost in more than one move to surmount that 
+ * next wall.  But if the local boost is zero or less, then you are
+ * stuck and cannot progress.  That's game over.
+ * 
+ * For example, say you arrive with excess energy 3 on top of a wall of
+ * height 20 that gives you "boost" energy 4, and the next wall
+ * has height 30.  Your current energy becomes 7 = 3 + 4, so you are
+ * 3 units short.  It will take you two moves to surmount the next wall,
+ * where you could land with an excess of 1 units (3 + 2*4 - 10).  
+ * To that 1, you would add whatever boost you find there at the top.
+ * BUT, if the next wall after that has height <= 30, you could choose 
+ * to use your 1 unit excess to go one more unit of distance to that 
+ * next wall, land there with 0 excess, and pick up the boost there 
+ * instead.  (Instead of just climbing to the top of the 30-wall and
+ * stopping there, you use your last move's momentum jump over it to 
+ * the next wall, which of course cannot be higher, because your excess
+ * is only 1.)
  *   
  * 
  * So, going up a stairway of K unit-height steps 2K units
