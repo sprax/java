@@ -55,8 +55,16 @@ import sprax.test.Sz;
  * If boost(K+2) - boost(K+2) > 1, the extra energy you would get
  * by choosing to land on wall K+2 would work to your advantage.
  *
- * So, going up a stairway of K unit-height steps 2K units
- * of energy.  
+ * Further examples, where the obstacle course is represented by
+ * a list of pairs of the form (height, boost):
+ *
+ *                         0       1       2       3       4
+ * Flat land, 4 moves: [(0, 1), (0, 1), (0, 1), (0, 1), (0, 0)]
+ * Up stairs, 4 moves: [(0, 2), (1, 2), (2, 2), (3, 2), (4, 0)]
+ * Step down, 4 moves: [(4, 1), (3, 1), (2, 1), (1, 1), (0, 0)]
+ * Jump down, 2 moves: [(4, 2), (3, 0), (2, 2), (2, 0), (0, 0)] (skip 1 & 3)
+ * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1,2,3)
+ * Up & down, 3 moves: [(0, 4), (3, 5), (6, 0), (4, 1), (0, 0)] (skip K = 2)
  * 
  * Thus wall-height
  * to get to       
