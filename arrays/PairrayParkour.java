@@ -55,7 +55,16 @@ import sprax.test.Sz;
  * If boost(K+2) - boost(K+2) > 1, the extra energy you would get
  * by choosing to land on wall K+2 would work to your advantage.
  *
- * Further examples, where the obstacle course is represented by
+ * Furthermore, you can stick to walls like Spider-Man, which means
+ * that if you have current energy M, you can jump across a trough
+ * of any width < M and begin climbing the wall you at the same
+ * height from which you jumped.  But you only pick up boost
+ * energy from top of a wall, not from the sides.  Even though
+ * you can re-used it for climbing the side of a wall, you must
+ * have landed on the flat just before the wall to have picked
+ * it up in the first place.
+ *
+ * Numerical examples, where the obstacle course is represented by
  * a list of pairs of the form (height, boost):
  *
  *                         0       1       2       3       4
@@ -72,8 +81,8 @@ import sprax.test.Sz;
  * 6                                      _____                   |
  * 5                                      |   |       _____       |
  * 4                      _____           |   |   ____|   |   ____|
- * 3                  ____|   |           |   |___|       |   |
- * 2                  |       |___    ____|               |   |
+ * 3                  ____|   |       ____|   |___|       |   |
+ * 2                  |       |___    |                   |   |
  * 1          _____   |           |___|                   |   |
  * 0      ____|   |___|                                   |___|
  * H/Boost  2   3   0   B   B   B   B   B   B   B   B   B   B   B   B   B
