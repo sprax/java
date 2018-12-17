@@ -4,11 +4,11 @@ import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 /**
- * Context: Parkour over an arbitrary line-up of obstacles.  Confronted 
+ * Context: Parkour over an arbitrary line-up of obstacles.  Confronted
  * by a series of walls, you try to compute how to run, climb, or jump
  * over them, in th order they appear, in the most efficient series of
  * moves possible.
- * 
+ *
  * Question: Find the minimum number of parkour moves needed to traverse
  * an array of pairs (which may also be represented as a pair of arrays).
  * At each array index, you get a pair of values, which we could call
@@ -26,18 +26,18 @@ import sprax.test.Sz;
  * It takes one unit of energy to go forward one horizontal distance
  * unit, and one unit to go up one height unit, but zero units to jump
  * downward.
- * 
+ *
  * You can keep or use any excess energy from previous moves ("momentum")
  * until it is used up.  The "boost energy" you get at the top of each
  * wall can be used repeatedly until you have moved to a later wall.
  * In short, "boost" is re-usable; "momentum" is not.
- * 
- * If your current energy is less than the height increase of the 
+ *
+ * If your current energy is less than the height increase of the
  * next wall, and your current location's boost is positive, you will
- * need to re-use that boost in more than one move to surmount that 
+ * need to re-use that boost in more than one move to surmount that
  * next wall.  But if the local boost is zero or less, then you are
- * stuck and cannot progress.  That's game over.
- * 
+ * stuck and cannot progress.  That's game over, you lose.
+ *
  * For example, let's say you bring excess energy 3 to the top of some
  * wall K, which then gives you boost energy 4.  Your current energy
  * becomes 3 + 4 = 7.  If that wall K's height is 20 and the next wall's
@@ -48,7 +48,7 @@ import sprax.test.Sz;
  * at index K+2, is <= 30, you could choose to use your 1 unit excess
  * to go one *more* unit of distance, and land on top of wall K+2
  * with 0 excess, and pick up the boost there instead.
- * 
+ *
  * In other words, instead of just climbing to the top of the wall
  * K+1 and stopping there, you can use your last move's momentum to
  * jump over K+1 and land on wall K+2.
@@ -66,16 +66,17 @@ import sprax.test.Sz;
  * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1,2,3)
  * Up & down, 3 moves: [(0, 4), (3, 5), (6, 0), (4, 1), (0, 0)] (skip K = 2)
  * 
- * H/Index  0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
- * 7                                                              _____
+ * H/Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+ * 8                                                                  ____
+ * 7                                                              ____|
  * 6                                      _____                   |
  * 5                                      |   |       _____       |
  * 4                      _____           |   |   ____|   |   ____|
  * 3                  ____|   |           |   |___|       |   |
  * 2                  |       |___    ____|               |   |
  * 1          _____   |           |___|                   |   |
- * 0      ____|   |___|                                   |___|   
- * H/Boost  2   3   0   B   B   B   B   B   B   B   B   B   B   B   B
+ * 0      ____|   |___|                                   |___|
+ * H/Boost  2   3   0   B   B   B   B   B   B   B   B   B   B   B   B   B
  * 
  */
 public abstract class PairrayParkour
