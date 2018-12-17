@@ -66,10 +66,17 @@ import sprax.test.Sz;
  * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1,2,3)
  * Up & down, 3 moves: [(0, 4), (3, 5), (6, 0), (4, 1), (0, 0)] (skip K = 2)
  * 
- * Thus wall-height
- * to get to       
- * Each array value gives the max size of the next step, but you may also take a
- * smaller step.  Usually the arrays are specified to be non-negative.
+ * H/Index  0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
+ * 7                                                              _____
+ * 6                                      _____                   |
+ * 5                                      |   |       _____       |
+ * 4                      _____           |   |   ____|   |   ____|
+ * 3                  ____|   |           |   |___|       |   |
+ * 2                  |       |___    ____|               |   |
+ * 1          _____   |           |___|                   |   |
+ * 0      ____|   |___|                                   |___|   
+ * H/Boost  2   3   0   B   B   B   B   B   B   B   B   B   B   B   B
+ * 
  */
 public abstract class PairrayParkour
 {
