@@ -21,10 +21,11 @@ import sprax.test.Sz;
  * the top of the next wall -- or, if you have enough energy, to jump
  * over the next wall and get to the top or the near side of a later
  * wall.  
- * The height of the walls and the energy its takes to make a move are 
- * thus measured in the same units.
- * It takes one unit of energy to go forward one index measure, and one unit
- * to go upward one height unit, but zero units to jump downward.
+ * The height of the walls and the energy its takes to make any move
+ * are thus measured in the same units.
+ * It takes one unit of energy to go forward one horizontal distance
+ * unit, and one unit to go up one height unit, but zero units to jump
+ * downward.
  * 
  * You can keep or use any excess energy from previous moves ("momentum")
  * until it is used up.  The "boost energy" you get at the top of each
@@ -37,21 +38,23 @@ import sprax.test.Sz;
  * next wall.  But if the local boost is zero or less, then you are
  * stuck and cannot progress.  That's game over.
  * 
- * For example, say you arrive with excess energy 3 on top of a wall of
- * height 20 that gives you "boost" energy 4, and the next wall
- * has height 30.  Your current energy becomes 7 = 3 + 4, so you are
- * 3 units short.  It will take you two moves to surmount the next wall,
- * where you could land with an excess of 1 units (3 + 2*4 - 10).  
- * To that 1, you would add whatever boost you find there at the top.
- * BUT, if the next wall after that has height <= 30, you could choose 
- * to use your 1 unit excess to go one more unit of distance to that 
- * next wall, land there with 0 excess, and pick up the boost there 
- * instead.  (Instead of just climbing to the top of the 30-wall and
- * stopping there, you use your last move's momentum jump over it to 
- * the next wall, which of course cannot be higher, because your excess
- * is only 1.)
- *   
+ * For example, let's say you bring excess energy 3 to the top of some
+ * wall K, which then gives you boost energy 4.  Your current energy
+ * becomes 3 + 4 = 7.  If that wall K's height is 20 and the next wall's
+ * is 30, you are 3 units short of 10 = 30 - 20, so it will take you two
+ * boosted moves to surmount wall K+1.  You could stop there with an
+ * excess of 1 unit (3 + 2*4 - 10), and add to that 1 whatever boost
+ * you find there.  BUT, if the height of the *next* wall after that,
+ * at index K+2, is <= 30, you could choose to use your 1 unit excess
+ * to go one *more* unit of distance, and land on top of wall K+2
+ * with 0 excess, and pick up the boost there instead.
  * 
+ * In other words, instead of just climbing to the top of the wall
+ * K+1 and stopping there, you can use your last move's momentum to
+ * jump over K+1 and land on wall K+2.
+ * If boost(K+2) - boost(K+2) > 1, the extra energy you would get
+ * by choosing to land on wall K+2 would work to your advantage.
+ *
  * So, going up a stairway of K unit-height steps 2K units
  * of energy.  
  * 
