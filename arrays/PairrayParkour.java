@@ -111,12 +111,12 @@ abstract class PairrayParkourRecursive extends PairrayParkour
     }
 }
 
-abstract class PairrayParkourWithAuxArray extends PairrayParkour
+abstract class PairrayParkourWithAuxArrays extends PairrayParkour
 {
     protected int mMinHops[];
 
     // base class Constructor
-    protected PairrayParkourWithAuxArray(int[] inputArray)
+    protected PairrayParkourWithAuxArrays(int[] inputArray)
     {
         if (inputArray == null || inputArray.length < 1)
             throw new IllegalArgumentException(this.getClass().getSimpleName()
@@ -216,7 +216,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
     }
 }
 
-class PairrayParkourDynamicProgramming extends PairrayParkourWithAuxArray
+class PairrayParkourDynamicProgramming extends PairrayParkourWithAuxArrays
 {
     protected long mAssigns;  // upper bound on the number of assignments to aux array
 
