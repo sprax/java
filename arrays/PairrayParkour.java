@@ -31,6 +31,10 @@ import sprax.test.Sz;
  * until it is used up.  The "boost energy" you get at the top of each
  * wall can be used repeatedly until you have moved to a later wall.
  * In short, "boost" is re-usable; "momentum" is not.
+ * 
+ * (Variation: "climbing" uses up all excess energy first, so if 
+ * you cannot jump over, across, or down to a wall, you will have
+ * no excess when you try to move on from it.)
  *
  * If your current energy is less than the height increase of the
  * next wall, and your current location's boost is positive, you will
