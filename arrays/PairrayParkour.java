@@ -6,31 +6,35 @@ import sprax.test.Sz;
 /**
  * Context: Parkour over an arbitrary line-up of obstacles.  Confronted
  * by a series of walls, you try to compute how to run, climb, or jump
- * over them, in th order they appear, in the most efficient series of
+ * over them, in the order they appear, in the most efficient series of
  * moves possible.
  *
  * Question: Find the minimum number of parkour moves needed to traverse
  * an array of pairs (which may also be represented as a pair of arrays).
- * At each array index, you get a pair of values, which we could call
- * height and energy.  You can picture this array as representing a 
+ * At each array index, you get a pair of values.  Let's call them
+ * "height" and "boost."  You can picture this array as representing a 
  * series of wall-like obstacles.  It takes a certain amount of energy
  * to jump or climb to the top of a wall, which is proportional to its
- * height.  But once on top, you find a spring-board or catapult or 
- * human cannon or something that gives you some other amount of energy
- * that you can use to go forward, and upward, if necessary, to get to
- * the top of the next wall -- or, if you have enough energy, to jump
- * over the next wall and get to the top or the near side of a later
- * wall.  
- * The height of the walls and the energy its takes to make any move
- * are thus measured in the same units.
+ * height.  But once on top, you find a spring-board, zip-line, catapult, 
+ * jet pack, or whatever, and it gives you some additional amount of energy
+ * that you can use to go forward and upward to get to the top of the 
+ * next wall -- or, if you have enough energy, to jump over the next 
+ * wall and get to the top or the near side of a later wall.  Let's call
+ * this added energy "boost."
+ * 
+ * So height and boost are both measured in units of energy, and that's
+ * what is given to you in the array pairs.  Horizontal distance can
+ * also be converted to energy as one unit per index.
  * It takes one unit of energy to go forward one horizontal distance
- * unit, and one unit to go up one height unit, but zero units to jump
- * downward.
+ * unit (or one array index), and one unit to go up one height unit,
+ * but zero units to jump downward.  So it takes 2 units to go up one
+ * step (1 forward, 1 upward), but only one unit to go down a step 
+ * (1 forward, 0 downward).
  *
  * You can keep or use any excess energy from previous moves ("momentum")
  * until it is used up.  The "boost energy" you get at the top of each
- * wall can be used repeatedly until you have moved to a later wall.
- * In short, "boost" is re-usable; "momentum" is not.
+ * wall can be used repeatedly until you have moved to the top of a later
+ * wall.  In short, "boost" is re-usable; "momentum" is not.
  * 
  * (Variation: "climbing" uses up all excess energy first, so if 
  * you cannot jump over, across, or down to a wall, you will have
@@ -79,23 +83,23 @@ import sprax.test.Sz;
  * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1,2,3)
  * Up & down, 3 moves: [(0, 4), (3, 5), (6, 0), (4, 1), (0, 0)] (skip K = 2)
  * 
- * H/Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
- * 8                                                                  ____
- * 7                                                              ____|
- * 6                                      _____                   |
- * 5                                      |   |       _____       |
- * 4                      _____           |   |   ____|   |   ____|
- * 3                  ____|   |       ____|   |___|       |   |
- * 2                  |       |___    |                   |   |
- * 1          _____   |           |___|                   |   |
- * 0      ____|   |___|                                   |___|
- * H/Boost  2   3   0   B   B   B   B   B   B   B   B   B   B   B   B   B
- * 
+ * H/Boost  3
+ * 8                                                                  _____
+ * 7                                                              ____|   |
+ * 6                                      _____                   |       |
+ * 5                                      |   |       _____       |       |____
+ * 4                      _____           |   |   ____|   |   ____|           |
+ * 3                  ____|   |       ____|   |___|       |   |               |
+ * 2                  |       |___    |                   |   |               |
+ * 1          _____   |           |___|                   |   |               |____
+ * 0       ___|   |___|                                   |___|                   |
+ * Height   0   1   0   3   4   2   1   3   6   3   4   5   0   4   7   8   5   1
+ *   Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20
  */
 public abstract class PairrayParkour
 {
 	/** The "interface" method: */
-	public abstract int countHops(int[] iA);
+	public abstract int countHops(int[] heights, int[] boosts);
 
 	/** Show iterations or other measures of complexity */
 	protected abstract void showCounts();
@@ -120,12 +124,12 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
     protected int mMinHops[];
 
     // base class Constructor
-    protected PairrayParkourWithAuxArrays(int[] inputArray)
+    protected PairrayParkourWithAuxArrays(int[] heights, int[] boosts)
     {
-        if (inputArray == null || inputArray.length < 1)
+        if (heights == null || heights.length < 1)
             throw new IllegalArgumentException(this.getClass().getSimpleName()
             		+ " needs non-null, non-empty input array");
-        mMinHops = new int[inputArray.length];
+        mMinHops = new int[heights.length];
     }
 }
 
@@ -136,10 +140,10 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
     @Override
-	public int countHops(int[] iA)
+	public int countHops(int[] heights, int[] boosts)
 	{
-		assert(iA != null);
-		int length = iA.length;
+		assert(heights != null);
+		int length = heights.length;
 		if (length < 1)
 			return 0;
 
