@@ -5,9 +5,14 @@ import sprax.test.Sz;
 
 /**
  * Array Hopper Problem:
- * Question: Find the minimum number of steps to reach the end of array from start
- * Each array value gives the max size of the next step, but you may also take a
- * smaller step.  Usually the arrays are specified to be non-negative.
+ * Question: Find the minimum number of steps to reach the end of an array
+ * where at each array index, you may take a step of any size <= the array
+ * value there (step_size(i) <= A[j]).
+ * You start at A[0], and the "end" of array A is at A.length (that is,
+ * one address *after* the last value in the array ("end" is like the end()
+ * method in STL or C++'s standard collections).
+ * Array values need not be positive.  If you were to land on index k where
+ * A[k] < 1, you would not be able to step forward, but you could step backward.
  */
 public abstract class ArrayHopper
 {
@@ -222,6 +227,7 @@ class ArrayHopperTest
         int iA[] = { 1, 2, 2, 0, 3, 0, 0, 2 }; // expected answer: 6
         int iB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         int iC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
+        int iD[] = { 1, 2, 3, 0 }; // expected answer: 3
         //int aiA[][] = { iA, iB, iC };
 
 		ArrayHopper hopperGRF = new ArrayHopperGreedyRecurseForward();
@@ -238,6 +244,9 @@ class ArrayHopperTest
 
         Sx.putsArray("iC: ", iC);
         numWrong += testHoppers(hoppers, iC, 4);
+
+        Sx.putsArray("iD: ", iD);
+        numWrong += testHoppers(hoppers, iD, 3);
 
         Sz.end(testName, numWrong);
 		return numWrong;
