@@ -6,45 +6,45 @@ import sprax.test.Sz;
 /**
  * Context: Parkour over an arbitrary line-up of obstacles.  Confronted
  * by a series of walls, you try to compute how to run, climb, or jump
- * over them, in the order they appear, in the most efficient series of
- * moves possible.
+ * over all of them, in the order they appear, in the most efficient
+ * series of moves possible.
  *
  * Question: Find the minimum number of parkour moves needed to traverse
- * an array of pairs (which may also be represented as a pair of arrays).
- * At each array index, you get a pair of values.  Let's call them
- * "height" and "boost."  You can picture this array as representing a 
- * series of wall-like obstacles.  It takes a certain amount of energy
- * to jump or climb to the top of a wall, which is proportional to its
- * height.  But once on top, you find a spring-board, zip-line, catapult, 
- * jet pack, or whatever, and it gives you some additional amount of energy
- * that you can use to go forward and upward to get to the top of the 
- * next wall -- or, if you have enough energy, to jump over the next 
- * wall and get to the top or the near side of a later wall.  Let's call
- * this added energy "boost."
+ * to the end of an array of pairs (which may also be represented as a
+ * pair of arrays).  You can picture this array as representing a series
+ * of wall-like obstacles, one at each index.  So at each array index,
+ * you get a pair of values.  Let's call them "height" and "boost."
+ * It takes a certain amount of energy to jump or climb to the top of
+ * a wall, which is proportional to its height.  But once on top, you
+ * find a spring-board, zip-line, catapult, jet pack, or whatever, and
+ * it gives you some additional amount of energy -- that's the boost.
+ * You can use this boost to go forward and upward to get to the top of
+ * the next wall -- or, if you have enough energy, to jump over it and
+ * get to the top or the near side of a later wall.
  * 
- * So height and boost are both measured in units of energy, and that's
- * what is given to you in the array pairs.  Horizontal distance can
- * also be converted to energy as one unit per index.
- * It takes one unit of energy to go forward one horizontal distance
- * unit (or one array index), and one unit to go up one height unit,
+ * So height and boost are both measured in units of energy.
+ * Horizontal distance can also be converted to energy as one unit per
+ * index.  It takes one unit of energy to go forward or backward one
+ * array index, and one unit to go up one height unit,
  * but zero units to jump downward.  So it takes 2 units to go up one
  * step (1 forward, 1 upward), but only one unit to go down a step 
  * (1 forward, 0 downward).
  *
  * You can keep or use any excess energy from previous moves ("momentum")
- * until it is used up.  The "boost energy" you get at the top of each
+ * until it is used up.  The boost that you get at the top of each
  * wall can be used repeatedly until you have moved to the top of a later
  * wall.  In short, "boost" is re-usable; "momentum" is not.
  * 
- * (Variation: "climbing" uses up all excess energy first, so if 
- * you cannot jump over, across, or down to a wall, you will have
+ * (Bonus variation: Make "climbing" use up any excess energy first.
+ * Then if you ever have to climb -- because you cannot jump over or
+ * down to a wall, or run across the top of it -- then you will have
  * no excess when you try to move on from it.)
  *
- * If your current energy is less than the height increase of the
+ * If your current energy is less than the relative height of the
  * next wall, and your current location's boost is positive, you will
  * need to re-use that boost in more than one move to surmount that
  * next wall.  But if the local boost is zero or less, then you are
- * stuck and cannot progress.  That's game over, you lose.
+ * stuck and cannot progress.  That's game over -- you lose.
  *
  * For example, let's say you bring excess energy 3 to the top of some
  * wall K, which then gives you boost energy 4.  Your current energy
@@ -71,6 +71,10 @@ import sprax.test.Sz;
  * you can re-used it for climbing the side of a wall, you must
  * have landed on the flat just before the wall to have picked
  * it up in the first place.
+ *
+ * You start at index 0, and the "end" of array A is at A.length (that is,
+ * one address *after* the last value in the array (so "end" is like the
+ * end() method in STL or C++'s standard collections).
  *
  * Numerical examples, where the obstacle course is represented by
  * a list of pairs of the form (height, boost):
@@ -306,15 +310,15 @@ class PairrayParkourTest
 		Sz.begin(testName);
 		int numWrong = 0;
 
-        int hA[] = { 1, 2, 2, 0, 3, 0, 0, 2 }; // expected answer: 6
-        int bA[] = { 1, 2, 2, 0, 3, 0, 0, 2 }; // expected answer: 6
+        int hA[] = { 1, 2, 3, 0 }; // expected Ahopper answer: 3
+        int bA[] = { 2, 2, 1, 0 }; // expected Parkour answer: 3, only one way
 
         int hB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         int bB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
 
         int hC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         int bC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
-        
+
         int pairs[][] = { hA, bA, hB, bB, hC, bC};
         int heights[] = pairs[0];
         int boosts[] = pairs[1];
@@ -326,8 +330,8 @@ class PairrayParkourTest
 		PairrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
 
         Sx.putsArray("heights: ", heights);
-        Sx.putsArray("boosts: ", boosts);
-        numWrong += testParkours(parkours, heights, boosts, 5);
+        Sx.putsArray("boosts:  ", boosts);
+        numWrong += testParkours(parkours, heights, boosts, 3);
 
         Sz.end(testName, numWrong);
 		return numWrong;
