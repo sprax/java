@@ -310,14 +310,17 @@ class PairrayParkourTest
 		Sz.begin(testName);
 		int numWrong = 0;
 
-        int hA[] = { 1, 2, 3, 0 }; // expected Ahopper answer: 3
-        int bA[] = { 2, 2, 1, 0 }; // expected Parkour answer: 3, only one way
+        int hA[] = { 1, 2, 0 }; // expected Parkour answer: 2, only one way
+        int bA[] = { 2, 2, 0 }; // expected Ahopper answer: 2 (first move 1, not 2)
 
-        int hB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
-        int bB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
+        int hB[] = { 1, 2, 2, 1 }; // expected Parkour answer: 3 (2 ways, via index 2 or 3)
+        int bB[] = { 2, 2, 1, 1 }; // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
 
-        int hC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
-        int bC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
+        int hC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
+        int bC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
+
+        int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
+        int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
         int pairs[][] = { hA, bA, hB, bB, hC, bC};
         int heights[] = pairs[0];
