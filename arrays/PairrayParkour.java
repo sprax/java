@@ -322,7 +322,7 @@ class PairrayParkourTest
         int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
         int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
-        int pairs[][] = { hA, bA, hB, bB, hC, bC};
+        int pairs[][] = { hA, bA, hB, bB, hC, bC, hD, bD};
         int heights[] = pairs[0];
         int boosts[] = pairs[1];
 
