@@ -323,18 +323,19 @@ class PairrayParkourTest
         int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
         int pairs[][] = { hA, bA, hB, bB, hC, bC, hD, bD};
-        int heights[] = pairs[0];
-        int boosts[] = pairs[1];
 
-		PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward();
-		PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst();
-		PairrayParkour ParkourNDP = new PairrayParkourDynamicProgramming(heights, boosts);
 
-		PairrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
-
-        Sx.putsArray("heights: ", heights);
-        Sx.putsArray("boosts:  ", boosts);
-        numWrong += testParkours(parkours, heights, boosts, 3);
+		for (int j = 0; j < pairs.length; ) {
+            int heights[] = pairs[j++];
+            int boosts[] = pairs[j++];
+            Sx.putsArray("heights: ", heights);
+            Sx.putsArray("boosts:  ", boosts);
+            PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward();
+            PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst();
+            PairrayParkour ParkourNDP = new PairrayParkourDynamicProgramming(heights, boosts);
+            PairrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
+            numWrong += testParkours(parkours, heights, boosts, 3);
+        }
 
         Sz.end(testName, numWrong);
 		return numWrong;
