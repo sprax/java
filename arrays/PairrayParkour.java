@@ -294,12 +294,13 @@ class PairrayParkourTest
 		return Sz.showWrong(minNumHops, expectedMinNumHops);
 	}
 
-	public static int testParkours(PairrayParkour[] parkours, int heights[], int boosts[], int expectedMinNumHops)
+	public static int testParkours( PairrayParkour[] parkours, int heights[], int boosts[]
+								  , int expMinMoves, int expMinJumps)
 	{
 	    int numWrong = 0;
 		for (PairrayParkour parkour : parkours)
 		{
-	        numWrong += test_PairrayParkour(parkour, heights, boosts, expectedMinNumHops);
+	        numWrong += test_PairrayParkour(parkour, heights, boosts, expMinMoves);
 		}
 		return numWrong;
 	}
@@ -316,25 +317,26 @@ class PairrayParkourTest
         int hB[] = { 1, 2, 2, 1 }; // expected Parkour answer: 3 (2 ways, via index 2 or 3)
         int bB[] = { 2, 2, 1, 1 }; // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
 
-        int hC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
-        int bC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
+        int hC[] = { 0, 2, 1, 2, 1, 3, 2, 4 }; // expected answer: 5
+        int bC[] = { 4, 1, 1, 4, 0, 2, 1, 1 }; // expected answer: 3
 
         int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
         int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
         int pairs[][] = { hA, bA, hB, bB, hC, bC, hD, bD};
+        int expectP[] = { 2, 3, 5, 0 };
+        int expectH[] = { 2, 3, 3, 0 };
 
-
-		for (int j = 0; j < pairs.length; ) {
-            int heights[] = pairs[j++];
-            int boosts[] = pairs[j++];
+		for (int j = 0; j < expectP.length; j++) {
+            int heights[] = pairs[2*j];
+            int boosts[]  = pairs[2*j + 1];
             Sx.putsArray("heights: ", heights);
             Sx.putsArray("boosts:  ", boosts);
             PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward();
             PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst();
             PairrayParkour ParkourNDP = new PairrayParkourDynamicProgramming(heights, boosts);
             PairrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
-            numWrong += testParkours(parkours, heights, boosts, 3);
+            numWrong += testParkours(parkours, heights, boosts, expectP[j], expectH[j]);
         }
 
         Sz.end(testName, numWrong);
