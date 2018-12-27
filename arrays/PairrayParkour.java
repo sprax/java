@@ -34,11 +34,6 @@ import sprax.test.Sz;
  * until it is used up.  The boost that you get at the top of each
  * wall can be used repeatedly until you have moved to the top of a later
  * wall.  In short, "boost" is re-usable; "momentum" is not.
- * 
- * (Bonus variation: Make "climbing" use up any excess energy first.
- * Then if you ever have to climb -- because you cannot jump over or
- * down to a wall, or run across the top of it -- then you will have
- * no excess when you try to move on from it.)
  *
  * If your current energy is less than the relative height of the
  * next wall, and your current location's boost is positive, you will
@@ -47,11 +42,11 @@ import sprax.test.Sz;
  * stuck and cannot progress.  That's game over -- you lose.
  *
  * For example, let's say you bring excess energy 3 to the top of some
- * wall K, which then gives you boost energy 4.  Your current energy
- * becomes 3 + 4 = 7.  If that wall K's height is 20 and the next wall's
+ * wall at index K, which then gives you boost energy 4.  Your current
+ * energy becomes 3 + 4 = 7.  If wall height is 20 and the next wall's
  * is 30, you are 3 units short of 10 = 30 - 20, so it will take you two
- * boosted moves to surmount wall K+1.  You could stop there with an
- * excess of 1 unit (3 + 2*4 - 10), and add to that 1 whatever boost
+ * boosted moves to surmount wall K+1.  You *could* stop there with an
+ * excess of 1 unit (3 + 2*4 - 10), and add to that 1 to whatever boost
  * you find there.  BUT, if the height of the *next* wall after that,
  * at index K+2, is <= 30, you could choose to use your 1 unit excess
  * to go one *more* unit of distance, and land on top of wall K+2
@@ -67,8 +62,8 @@ import sprax.test.Sz;
  * that if you have current energy M, you can jump across a trough
  * of any width < M and begin climbing the wall you at the same
  * height from which you jumped.  But you only pick up boost
- * energy from top of a wall, not from the sides.  Even though
- * you can re-used it for climbing the side of a wall, you must
+ * energy from the top of a wall, not from the sides.  Even though
+ * you can re-use it for climbing the side of a wall, you must
  * have landed on the flat just before the wall to have picked
  * it up in the first place.
  *
@@ -103,7 +98,7 @@ import sprax.test.Sz;
 public abstract class PairrayParkour
 {
 	/** The "interface" method: */
-	public abstract int countHops(int[] heights, int[] boosts);
+	public abstract int countHops();
 
 	/** Show iterations or other measures of complexity */
 	protected abstract void showCounts();
@@ -162,7 +157,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 	}
 
 	@Override
-	public int countHops(int[] heights, int[] boosts)
+	public int countHops()
 	{
 		// reset counts
 		mCalls = 0;
@@ -204,36 +199,42 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
 	}
 
 	@Override
-    public int countHops(int heights[], int boosts[])
+    public int countHops()
     {
 		mCalls = 0;
 		mLoops = 0;
-        for (int maxHops = 1; maxHops < mLength; maxHops++)
-        {
-            int minHops = countHopsRBF(heights, boosts, 0, 0, maxHops);
-            if (minHops < Integer.MAX_VALUE)
-                return minHops;
-        }
-        return Integer.MAX_VALUE;
+        return countHopsRBF(0, 0, 0, Integer.MAX_VALUE);
     }
 
-    int countHopsRBF(int heights[], int boosts[], int pos, int hops, int maxHops)
+    int countHopsRBF(int idx, int xse, int hops, int minSoFar)
     {
-        assert(pos < mLength);
+        assert(idx < mLength);
         mCalls++;
 
-        int nowHop = hops + 1;
-        if (nowHop > maxHops)
-        	return Integer.MAX_VALUE;
-
-        int maxHopSize = heights[pos];
-        if (pos + maxHopSize >= mLength)
-            return nowHop;
+        int hopsNow = hops + 1;
+        if (hopsNow > minSoFar)			// A shorter path was already found.
+        	return Integer.MAX_VALUE;	// So return "infinite" signal.
 
         mLoops++;
-        for (int hopSize = 0; ++hopSize <= maxHopSize; )
+        
+        int heightNow = mHeights[idx];
+        for (int energy = xse + mBoosts[idx], pos = idx + 1; --energy >= 0; pos++)
         {
-            int minHops = countHopsRBF(heights, boosts, pos + hopSize, nowHop, maxHops);
+        	int heightDif = mHeights[pos] - heightNow;
+        	if (heightDif > energy) {
+        		if (mBoosts[idx] <= 0) {
+        			return Integer.MAX_VALUE;	// dead end: cannot jump or climb the top
+        		}
+        		heightNow += energy;	// use up all energy before re-using boost to climb
+        		heightDif -= energy;	// remaining vertical distance to the top
+        		hopsNow += heightDif / mBoosts[idx];	// how many more boosted climbing moves to the top
+        		xse = heightDif % mBoosts[idx];			// excess energy upon arrival at the top
+        	}
+
+        	if (pos >= mLength) {
+        		return hopsNow;			// arrived at the end!   Return how many moves it took.
+        	}
+            int minHops = countHopsRBF(pos, xse, hopsNow, minSoFar);
             if (minHops < Integer.MAX_VALUE)
                 return minHops;
         }
@@ -250,41 +251,35 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 	}
 
 	@Override
-	public int countHops(int heights[], int boosts[])
+	public int countHops()
 	{
 	    mAssigns = 0;
 
-	    // sanity check
-	    if (heights == null || heights.length < 1 || heights[0] < 1)
-	        return Integer.MAX_VALUE;
-
 	    // init aux array
-	    if (mMinHops.length < heights.length)
-	        mMinHops = new int[heights.length];
 	    for (int j = 1; j < mMinHops.length; j++) {     // mMinHops[0] remains 0
 	        mMinHops[j] = Integer.MAX_VALUE;
 	    }
 
 	    // init conditions: first hop is special
-	    mAssigns = mMinHops.length + heights[0];			   	// worst case is "expected" usual case
-        for (int pos = heights[0]; pos > 0; pos--) {        	// mMinHops[0] remains 0
-            if (pos >= heights.length)
+	    mAssigns = mMinHops.length + mHeights[0];			   	// worst case is "expected" usual case
+        for (int pos = mHeights[0]; pos > 0; pos--) {        	// mMinHops[0] remains 0
+            if (pos >= mHeights.length)
                 return 1;                              	// reached the goal in one hop
             mMinHops[pos] = 1;
         }
 
-	    for (int j = 1; j < heights.length; j++) {
-	        int maxPos = j + heights[j];
+	    for (int j = 1; j < mHeights.length; j++) {
+	        int maxPos = j + mHeights[j];
 	        int hopNum = 1 + mMinHops[j];              	// 1 more than min num hops it took to get here.
 	        for (int pos = maxPos; pos > j; pos--) {   	// mMinHops[0] remains 0
-	            if (pos >= heights.length) {
+	            if (pos >= mHeights.length) {
 	            	mAssigns += maxPos - pos;
 	                return hopNum;                     	// off the end in one more hop
 	            }
 	            if (mMinHops[pos] > hopNum)
 	                mMinHops[pos] = hopNum;
 	        }
-	        mAssigns += heights[j];						    // still here
+	        mAssigns += mHeights[j];						    // still here
 	    }
 		return 0;
 	}
@@ -301,7 +296,7 @@ class PairrayParkourTest
 	public static int test_PairrayParkour(PairrayParkour arrayParkour, int heights[], int boosts[], int expectedMinNumHops)
 	{
 		String className = arrayParkour.getClass().getSimpleName();
-		int minNumHops = arrayParkour.countHops(heights, boosts);
+		int minNumHops = arrayParkour.countHops();
 		Sx.format("%s.countHops(...)\t hops: %d\t", className, minNumHops);
 		arrayParkour.showCounts();
 		return Sz.showWrong(minNumHops, expectedMinNumHops);
