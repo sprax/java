@@ -216,7 +216,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
 
         int hopsNow = hops + 1;
         if (hopsNow > minSoFar)	{		// A shorter path was already found.
-        	Sx.format("RETURN MAX, beg, ex energy %d at idx %d\n", xse, idx);
+        	Sx.format("RETURN BEG FUNC, M=%d, idx=%d, xse=%d, MAX=%d\n", mCalls, idx, xse, Integer.MAX_VALUE);
         	return Integer.MAX_VALUE;	// So return "infinite" signal.
         }
         mLoops++;
@@ -225,7 +225,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         for (int energy = xse + mBoosts[idx], pos = idx + 1; --energy >= 0; pos++)
         {
         	if (pos >= mLength) {
-            	Sx.format("RETURN M=%d, hops=%d NOW at idx=%d,  energy=%d\n", mCalls, hopsNow, idx, energy);
+            	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, eng=%d\n", mCalls, hopsNow, idx, xse, energy);
         		return hopsNow;			// arrived at the end!   Return how many moves it took.
         	}
         	int heightInc = mHeights[pos] - heightNow;
@@ -241,19 +241,19 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         		hopsNow += heightInc / mBoosts[idx];	// how many more boosted climbing moves to the top
         		xse = heightInc % mBoosts[idx];			// excess energy upon arrival at the top
         	} else if (heightInc == energy) {
-        		Sx.format("energy %d => 0 xse\n", xse);
-        		xse = 0;
+        		Sx.format("energy %d => 0 xse\n", energy);
+                return countHopsRBF(pos, 0, hopsNow, minSoFar);
         	} else {
         		xse = energy - heightInc;
         	}
             int numHops = countHopsRBF(pos, xse, hopsNow, minSoFar);
         	Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, energy);
-
             if (minSoFar > numHops) {
             	minSoFar = numHops;
+            	////	return minSoFar;
             }
         }
-    	Sx.format("RETURN %d END sofar, energy %d at idx %d\n", minSoFar, xse, idx);
+    	Sx.format("RETURN M=%d, msf=%d at END, energy %d at idx %d\n", mCalls, minSoFar, xse, idx);
         return minSoFar;
     }
 }
@@ -335,7 +335,7 @@ class PairrayParkourTest
 		Sz.begin(testName);
 		int numWrong = 0;
 
-        int hA[] = { 1, 2, 3 }; // expected Parkour answer: 2, only one way
+        int hA[] = { 1, 2, 3 }; // expected Parkour answer: 3, only one way
         int bA[] = { 2, 2, 2 }; // expected Ahopper answer: 2 (first move 1, not 2)
 
         int hB[] = { 1, 2, 2, 1 }; // expected Parkour answer: 3 (2 ways, via index 2 or 3)
@@ -348,7 +348,7 @@ class PairrayParkourTest
         int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
         int pairs[][] = { hA, bA, hB, bB, hC, bC, hD, bD};
-        int expectP[] = { 2, 3, 5, 0 };
+        int expectP[] = { 3, 3, 5, 0 };
         int expectH[] = { 2, 3, 3, 0 };
 
         int begTrial = 0, endTrial = begTrial + 1; // expectP.length;
