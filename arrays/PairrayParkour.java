@@ -107,14 +107,30 @@ public abstract class PairrayParkour
 
 	/** Show iterations or other measures of complexity */
 	protected abstract void showCounts();
+	
+    // base class Constructor
+    protected PairrayParkour(int[] heights, int[] boosts)
+    {
+        if (heights == null || heights.length < 1 || boosts == null || boosts.length != heights.length)
+            throw new IllegalArgumentException(this.getClass().getSimpleName()
+            		+ " needs non-null, non-empty, same-size input arrays");
+        mBoosts = boosts;
+        mHeights = heights;
+        mLength = heights.length;
+    }
+    
+    protected int mLength;
+    protected int mHeights[], mBoosts[];
 }
 
 abstract class PairrayParkourRecursive extends PairrayParkour
 {
-    protected long mCalls;  // times recursive method is called
-    protected long mLoops;  // times recursive method begins a loop of calling itself (loops <= calls)
+    protected PairrayParkourRecursive(int[] heights, int[] boosts) {
+		super(heights, boosts);
+	}
 
-    // No constructor
+	protected int mCalls;  // times recursive method is called
+    protected int mLoops;  // times recursive method begins a loop of calling itself (loops <= calls)
 
     @Override
     protected void showCounts()
@@ -130,10 +146,8 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
     // base class Constructor
     protected PairrayParkourWithAuxArrays(int[] heights, int[] boosts)
     {
-        if (heights == null || heights.length < 1)
-            throw new IllegalArgumentException(this.getClass().getSimpleName()
-            		+ " needs non-null, non-empty input array");
-        mMinHops = new int[heights.length];
+		super(heights, boosts);
+        mMinHops = new int[mLength];
     }
 }
 
@@ -143,39 +157,39 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
  */
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
-    @Override
+    protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
+		super(heights, boosts);
+	}
+
+	@Override
 	public int countHops(int[] heights, int[] boosts)
 	{
-		assert(heights != null);
-		int length = heights.length;
-		if (length < 1)
-			return 0;
-
 		// reset counts
 		mCalls = 0;
 		mLoops = 0;
-		int count = countHopsGreedyRecurse(heights, boosts, length, 0, 0, Integer.MAX_VALUE - 1);
-	    return count;
+		return countHopsGreedyRecurse(0, 0, 0, Integer.MAX_VALUE - 1);
 	}
 
-	int countHopsGreedyRecurse(int heights[], int boosts[], int len, int pos, int numHopsNow, int minNumHops)
+	int countHopsGreedyRecurse(int pos, int xse, int numHopsNow, int minNumHops)
 	{
 	    mCalls++;
 
 		if (numHopsNow > minNumHops)
 			return numHopsNow;           // return failure ASAP
 
-		if (pos >= len)
+		if (pos >= mLength)
 		{
 			return numHopsNow;           // return success
 		}
 		mLoops++;
-		for (int hopSize = heights[pos]; hopSize > 0; hopSize--)
-		{
-			int numHops = countHopsGreedyRecurse(heights, boosts, len, pos + hopSize, numHopsNow + 1, minNumHops);
-			if (minNumHops > numHops)
-				minNumHops = numHops;
-		}
+//		for (int energy = xse + mBoosts[pos]; energy > 0; energy--)
+//		{
+//			if (energy < mHeights)
+//			
+//			int numHops = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
+//			if (minNumHops > numHops)
+//				minNumHops = numHops;
+//		}
 		return minNumHops;
 	}
 }
@@ -185,28 +199,27 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
  */
 class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
 {
-    @Override
+    protected PairrayParkourRecurseBreadthFirst(int[] heights, int[] boosts) {
+		super(heights, boosts);
+	}
+
+	@Override
     public int countHops(int heights[], int boosts[])
     {
-        assert(heights != null);
-        int length = heights.length;
-        if (length < 2)
-            return 0;
-
 		mCalls = 0;
 		mLoops = 0;
-        for (int maxHops = 1; maxHops < length; maxHops++)
+        for (int maxHops = 1; maxHops < mLength; maxHops++)
         {
-            int minHops = countHopsRBF(heights, boosts, length, 0, 0, maxHops);
+            int minHops = countHopsRBF(heights, boosts, 0, 0, maxHops);
             if (minHops < Integer.MAX_VALUE)
                 return minHops;
         }
         return Integer.MAX_VALUE;
     }
 
-    int countHopsRBF(int heights[], int boosts[], int length, int pos, int hops, int maxHops)
+    int countHopsRBF(int heights[], int boosts[], int pos, int hops, int maxHops)
     {
-        assert(pos < length);
+        assert(pos < mLength);
         mCalls++;
 
         int nowHop = hops + 1;
@@ -214,13 +227,13 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         	return Integer.MAX_VALUE;
 
         int maxHopSize = heights[pos];
-        if (pos + maxHopSize >= length)
+        if (pos + maxHopSize >= mLength)
             return nowHop;
 
         mLoops++;
         for (int hopSize = 0; ++hopSize <= maxHopSize; )
         {
-            int minHops = countHopsRBF(heights, boosts, length, pos + hopSize, nowHop, maxHops);
+            int minHops = countHopsRBF(heights, boosts, pos + hopSize, nowHop, maxHops);
             if (minHops < Integer.MAX_VALUE)
                 return minHops;
         }
@@ -228,11 +241,11 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
     }
 }
 
-class PairrayParkourDynamicProgramming extends PairrayParkourWithAuxArrays
+class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 {
     protected long mAssigns;  // upper bound on the number of assignments to aux array
 
-    PairrayParkourDynamicProgramming(int heights[], int boosts[]) {
+    PairrayParkourDynamicProgrammingFwd(int heights[], int boosts[]) {
 		super(heights, boosts);
 	}
 
@@ -327,14 +340,15 @@ class PairrayParkourTest
         int expectP[] = { 2, 3, 5, 0 };
         int expectH[] = { 2, 3, 3, 0 };
 
-		for (int j = 0; j < expectP.length; j++) {
+        int begTrial = 1, endTrial = begTrial + 2; // expectP.length;
+		for (int j = begTrial; j < endTrial; j++) {
             int heights[] = pairs[2*j];
             int boosts[]  = pairs[2*j + 1];
             Sx.putsArray("heights: ", heights);
             Sx.putsArray("boosts:  ", boosts);
-            PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward();
-            PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst();
-            PairrayParkour ParkourNDP = new PairrayParkourDynamicProgramming(heights, boosts);
+            PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward(heights, boosts);
+            PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst(heights, boosts);
+            PairrayParkour ParkourNDP = new PairrayParkourDynamicProgrammingFwd(heights, boosts);
             PairrayParkour parkours[] = { ParkourGRF, ParkourRBF, ParkourNDP };
             numWrong += testParkours(parkours, heights, boosts, expectP[j], expectH[j]);
         }
