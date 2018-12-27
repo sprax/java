@@ -341,7 +341,7 @@ class PairrayParkourTest
         int hB[] = { 1, 2, 2, 1 }; // expected Parkour answer: 3 (2 ways, via index 2 or 3)
         int bB[] = { 2, 2, 1, 1 }; // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
 
-        int hC[] = { 0, 2, 1, 2, 1, 3, 2, 4 }; // expected answer: 5
+        int hC[] = { 0, 2, 1, 2, 1, 3, 2, 4 }; // expected answer: 4
         int bC[] = { 4, 1, 1, 4, 0, 2, 1, 1 }; // expected answer: 3
 
         int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
@@ -351,7 +351,7 @@ class PairrayParkourTest
         int expectP[] = { 3, 3, 5, 0 };
         int expectH[] = { 2, 3, 3, 0 };
 
-        int begTrial = 0, endTrial = begTrial + 1; // expectP.length;
+        int begTrial = 0, endTrial = begTrial + 3; // expectP.length;
 		for (int j = begTrial; j < endTrial; j++) {
             int heights[] = pairs[2*j];
             int boosts[]  = pairs[2*j + 1];
