@@ -70,7 +70,7 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 		// reset counts
 		mCalls = 0;
 		mLoops = 0;
-		return countHopsGreedyRecurse(iA, length, 0, 0, Integer.MAX_VALUE - 1);
+		return countHopsGreedyRecurse(iA, length, 0, 0, Integer.MAX_VALUE);
 	}
 
 	int countHopsGreedyRecurse(int[] iA, int len, int pos, int numHopsNow, int minNumHops)
@@ -166,7 +166,7 @@ class ArrayHopperDynamicProgramming extends ArrayHopperWithAuxArray
 	    if (mMinHops.length < iA.length)
 	        mMinHops = new int[iA.length];
 	    for (int j = 1; j < mMinHops.length; j++) {     // mMinHops[0] remains 0
-	        mMinHops[j] = Integer.MAX_VALUE;
+	        mMinHops[j] = Integer.MAX_VALUE - 1;
 	    }
 
 	    // init conditions: first hop is special
@@ -231,6 +231,7 @@ class ArrayHopperTest
         int iB[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         int iC[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: 3
         int iD[] = { 1, 2, 3, 0 }; // expected answer: 3
+        int iE[] = { 1, 0, 2, 0 }; // expected answer: INT_MAX
         //int aiA[][] = { iA, iB, iC };
 
 		ArrayHopper hopperGRF = new ArrayHopperGreedyRecurseForward();
@@ -250,6 +251,9 @@ class ArrayHopperTest
 
         Sx.putsArray("iD: ", iD);
         numWrong += testHoppers(hoppers, iD, 3);
+
+        Sx.putsArray("iE: ", iE);
+        numWrong += testHoppers(hoppers, iE, Integer.MAX_VALUE);
 
         Sz.end(testName, numWrong);
 		return numWrong;
