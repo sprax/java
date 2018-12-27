@@ -54,6 +54,8 @@ abstract class ArrayHopperWithAuxArray extends ArrayHopper
 
 /**
  * Naive: Re-tries steps and may have to back-track out from greed.
+ * Could be a static method, were it not for the diagnostic member
+ * variables mCalls and mLoops.
  */
 class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 {
@@ -68,8 +70,7 @@ class ArrayHopperGreedyRecurseForward extends ArrayHopperRecursive
 		// reset counts
 		mCalls = 0;
 		mLoops = 0;
-		int count = countHopsGreedyRecurse(iA, length, 0, 0, Integer.MAX_VALUE - 1);
-	    return count;
+		return countHopsGreedyRecurse(iA, length, 0, 0, Integer.MAX_VALUE - 1);
 	}
 
 	int countHopsGreedyRecurse(int[] iA, int len, int pos, int numHopsNow, int minNumHops)
@@ -109,13 +110,15 @@ class ArrayHopperRecurseBreadthFirst extends ArrayHopperRecursive
 
 		mCalls = 0;
 		mLoops = 0;
-        for (int maxHops = 1; maxHops < length; maxHops++)
-        {
-            int minHops = countHopsRBF(iA, length, 0, 0, maxHops);
-            if (minHops < Integer.MAX_VALUE)
-                return minHops;
-        }
-        return Integer.MAX_VALUE;
+        return countHopsRBF(iA, length, 0, 0, Integer.MAX_VALUE - 1);
+
+//        for (int maxHops = 1; maxHops < length; maxHops++)
+//        {
+//            int minHops = countHopsRBF(iA, length, 0, 0, maxHops);
+//            if (minHops < Integer.MAX_VALUE)
+//                return minHops;
+//        }
+//        return Integer.MAX_VALUE;
     }
 
     int countHopsRBF(int[] iA, int length, int pos, int hops, int maxHops)
