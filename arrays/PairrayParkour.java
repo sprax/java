@@ -212,22 +212,23 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
     {
 		mCalls = 0;
 		mLoops = 0;
+		mMinMoves = Integer.MAX_VALUE;
 		ArrayList<Integer> path = new ArrayList<Integer>();
-	    int minHops = countHopsRBF(0, 0, 0, Integer.MAX_VALUE, path);
+	    int minHops = countHopsRBF(0, 0, 0, path);
 	    Sx.putsArray("mMinPath: ", mMinPath);
 	    return minHops;
     }
 	
  
-    int countHopsRBF(int idx, int xse, int hops, int minSoFar, ArrayList<Integer> path)
+    int countHopsRBF(int idx, int xse, int hops, ArrayList<Integer> path)
     {
         assert(idx < mLength);
         mCalls++;
-    	////Sx.format("CALLED M=%d,  idx %d,  xse %d,  hops %d,  msf %d\n", mCalls, idx, xse, hops, minSoFar);
+    	////Sx.format("CALLED M=%d,  idx %d,  xse %d,  hops %d,  msf %d\n", mCalls, idx, xse, hops, mMinMoves);
         
 
         int hopsNow = hops + 1;
-        if (hopsNow > minSoFar)	{		// A shorter path was already found.
+        if (hopsNow > mMinMoves)	{		// A shorter path was already found.
         	Sx.format("RETURN BEG FUNC, M=%d, idx=%d, xse=%d, MAX=%d\n", mCalls, idx, xse, Integer.MAX_VALUE);
         	return Integer.MAX_VALUE;	// So return "infinite" signal.
         }
@@ -274,12 +275,12 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         	} else {
         		xse = energy - heightInc;
         	}
-            int numHops = countHopsRBF(pos, xse, hopsNow, minSoFar, path);
+            int numHops = countHopsRBF(pos, xse, hopsNow, path);
         	////Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, energy);
-            if (minSoFar > numHops) {
-            	minSoFar = numHops;								// save the new minimum
+            if (mMinMoves > numHops) {
+            	mMinMoves = numHops;								// save the new minimum
                	//// Sx.putsArray("BEST PATH SO FAR: ", path);
-            	////	return minSoFar;	// too greedy!
+            	////	return mMinMoves;	// too greedy!
             }
            	////Sx.format(">>>>>>>>>>>>>>>: PRET: ");
            	////Sx.putsArray(path);
@@ -287,8 +288,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
            	////Sx.format("<<<<<<<<<<<<<<<: POST: ");
            	////Sx.putsArray(path);
         }
-    	////Sx.format("RETURN M=%d, END msf=%d, energy %d at idx %d\n", mCalls, minSoFar, xse, idx);
-        return minSoFar;
+    	////Sx.format("RETURN M=%d, END msf=%d, energy %d at idx %d\n", mCalls, mMinMoves, xse, idx);
+        return mMinMoves;
     }
 }
 
