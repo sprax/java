@@ -116,12 +116,12 @@ public abstract class PairrayParkour
             throw new IllegalArgumentException(this.getClass().getSimpleName()
             		+ " needs non-null, non-empty, same-size input arrays");
         mBoosts = boosts;
-        mHeights = heights;
+        mHoists = heights;
         mLength = heights.length;
     }
     
     protected int mLength, mMinMoves;
-    protected int mHeights[], mBoosts[];
+    protected int mHoists[], mBoosts[];
     protected ArrayList<Integer> mMinPath;
 }
 
@@ -188,7 +188,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		mLoops++;
 //		for (int energy = xse + mBoosts[pos]; energy > 0; energy--)
 //		{
-//			if (energy < mHeights)
+//			if (energy < mHoists)
 //			
 //			int numHops = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
 //			if (minNumHops > numHops)
@@ -215,8 +215,9 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
 		mMinMoves = Integer.MAX_VALUE;
 		ArrayList<Integer> path = new ArrayList<Integer>();
 	    int minHops = countHopsRBF(0, 0, 0, path);
+	    assert(minHops == mMinMoves);
 	    Sx.putsArray("mMinPath: ", mMinPath);
-	    return minHops;
+	    return mMinMoves;
     }
 	
  
@@ -226,7 +227,6 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         mCalls++;
     	////Sx.format("CALLED M=%d,  idx %d,  xse %d,  hops %d,  msf %d\n", mCalls, idx, xse, hops, mMinMoves);
         
-
         int hopsNow = hops + 1;
         if (hopsNow > mMinMoves)	{		// A shorter path was already found.
         	Sx.format("RETURN BEG FUNC, M=%d, idx=%d, xse=%d, MAX=%d\n", mCalls, idx, xse, Integer.MAX_VALUE);
@@ -236,38 +236,39 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         	Sx.format("!!!!!!!!!!!!!!!!!!!!!!!!!! hops %d != %d path.size\n", hops, path.size());
         }
         //assert(hops == path.size());
-		path.add(idx);
+        path.add(idx);
 		int begSize = path.size();
-        
+        int hoist = mHoists[idx];
+        int boost = mBoosts[idx];
+
        	mLoops++;
-        int heightNow = mHeights[idx];
         int j = 0;
-        for (int energy = xse + mBoosts[idx], pos = idx + 1; --energy >= 0; pos++)
+        for (int energy = xse + boost, pos = idx + 1; --energy >= 0; pos++)
         {
             ////Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n", mCalls, j++, hopsNow, idx, xse, pos, energy);
         	if (pos >= mLength) {
                	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse, energy);
                	Sx.putsArray("PATH: ", path);
-            	//mMinPath = new ArrayList<Integer>(path);		// copy the new minimal path
-            	mMinPath = new ArrayList<Integer>();		// copy the new minimal path
-            	for (Integer elt : path)
-            		mMinPath.add(elt);		// copy the new minimal path
+                mMinPath = new ArrayList<Integer>(path);		// copy the new minimal path
+//            	mMinPath = new ArrayList<Integer>();		// copy the new minimal path
+//            	for (Integer elt : path)
+//            		mMinPath.add(elt);		// copy the new minimal path
                	
                 return hopsNow;			// arrived at the end!   Return how many moves it took.
         	}
-        	int heightInc = mHeights[pos] - heightNow;
+            int heightInc = mHoists[pos] - hoist;
         	if (heightInc < 0)
         		heightInc = 0;
         	if (heightInc > energy) {
-        		if (mBoosts[idx] <= 0) {
+                if (boost <= 0) {
                 	Sx.format("RETURN MAX, energy %d at idx %d\n", energy, idx);
                    	path.remove(path.size() - 1);
          			return Integer.MAX_VALUE;	// dead end: cannot jump or climb the top
         		}
-        		heightNow += energy;	// use up all energy before re-using boost to climb
-        		heightInc -= energy;	// remaining vertical distance to the top
-        		hopsNow += heightInc / mBoosts[idx];	// how many more boosted climbing moves to the top
-        		xse = heightInc % mBoosts[idx];			// excess energy upon arrival at the top
+                hoist += energy;			// use up all energy before re-using boost to climb
+                heightInc -= energy;	// remaining vertical distance to the top
+                hopsNow += heightInc / boost;	// how many more boosted climbing moves to the top
+                xse = heightInc % boost;			// excess energy upon arrival at the top
         		energy = 0;
         	} else if (heightInc == energy) {
         		xse = energy = 0;
@@ -312,25 +313,25 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 	    }
 
 	    // init conditions: first hop is special
-	    mAssigns = mMinHops.length + mHeights[0];			   	// worst case is "expected" usual case
-        for (int pos = mHeights[0]; pos > 0; pos--) {        	// mMinHops[0] remains 0
-            if (pos >= mHeights.length)
+	    mAssigns = mMinHops.length + mHoists[0];			   	// worst case is "expected" usual case
+        for (int pos = mHoists[0]; pos > 0; pos--) {        	// mMinHops[0] remains 0
+            if (pos >= mHoists.length)
                 return 1;                              	// reached the goal in one hop
             mMinHops[pos] = 1;
         }
 
-	    for (int j = 1; j < mHeights.length; j++) {
-	        int maxPos = j + mHeights[j];
+	    for (int j = 1; j < mHoists.length; j++) {
+	        int maxPos = j + mHoists[j];
 	        int hopNum = 1 + mMinHops[j];              	// 1 more than min num hops it took to get here.
 	        for (int pos = maxPos; pos > j; pos--) {   	// mMinHops[0] remains 0
-	            if (pos >= mHeights.length) {
+	            if (pos >= mHoists.length) {
 	            	mAssigns += maxPos - pos;
 	                return hopNum;                     	// off the end in one more hop
 	            }
 	            if (mMinHops[pos] > hopNum)
 	                mMinHops[pos] = hopNum;
 	        }
-	        mAssigns += mHeights[j];						    // still here
+	        mAssigns += mHoists[j];						    // still here
 	    }
 		return 0;
 	}
