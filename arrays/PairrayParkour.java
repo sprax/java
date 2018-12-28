@@ -12,12 +12,16 @@ import sprax.test.Sz;
  * series of moves possible.
  *
  * Question: Find the minimum number of parkour moves needed to traverse
- * to the end of an array of pairs (which may also be represented as a
- * pair of arrays).  You can picture this array as representing a series
- * of wall-like obstacles, one at each index.  So at each array index,
+ * to the end of a series of wall-like obstacles.  We can model such an
+ * obstacle course using lists or arrays, one obstacle at each index.
+ * Each obstacle has two properties, so we can use an array of pairs 
+ * or a pair of arrays.  Either way, at each array index,
  * you get a pair of values.  Let's call them "height" and "boost."
- * It takes a certain amount of energy to jump or climb to the top of
- * a wall, which is proportional to its height.  But once on top, you
+ * It takes a fixed amount of energy to jump or climb to the top of
+ * a wall, which is proportional to its height.  If you have more 
+ * energy, you can jump or dynamically climb *over* a wall and keep
+ * going, but you still have to expend the same amount of energy as
+ * you would to get to the top and stop there,  Once on top, though, you
  * find a spring-board, zip-line, catapult, jet pack, or whatever, and
  * it gives you some additional amount of energy -- that's the boost.
  * You can use this boost to go forward and upward to get to the top of
