@@ -210,7 +210,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
 		mLoops = 0;
 		ArrayList<Integer> path = new ArrayList<Integer>();
 	    int minHops = countHopsRBF(0, 0, 0, Integer.MAX_VALUE, path);
-	    Sx.putsArray("mMinPath:", mMinPath);
+	    Sx.putsArray("mMinPath: ", mMinPath);
 	    return minHops;
     }
 	
@@ -219,7 +219,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
     {
         assert(idx < mLength);
         mCalls++;
-    	Sx.format("CALLED M=%d,  idx %d,  xse %d,  hops %d,  msf %d\n", mCalls, idx, xse, hops, minSoFar);
+    	////Sx.format("CALLED M=%d,  idx %d,  xse %d,  hops %d,  msf %d\n", mCalls, idx, xse, hops, minSoFar);
         
 
         int hopsNow = hops + 1;
@@ -239,12 +239,10 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         int j = 0;
         for (int energy = xse + mBoosts[idx], pos = idx + 1; --energy >= 0; pos++)
         {
-            Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n"
-            		, mCalls, j++, hopsNow, idx, xse, pos, energy);
+            ////Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n", mCalls, j++, hopsNow, idx, xse, pos, energy);
         	if (pos >= mLength) {
-               	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d\n", mCalls, hopsNow, idx, xse, energy);
-               	Sx.format("---------------: PATH: ");
-               	Sx.putsArray(path);
+               	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse, energy);
+               	Sx.putsArray("PATH: ", path);
             	//mMinPath = new ArrayList<Integer>(path);		// copy the new minimal path
             	mMinPath = new ArrayList<Integer>();		// copy the new minimal path
             	for (Integer elt : path)
@@ -273,19 +271,19 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         		xse = energy - heightInc;
         	}
             int numHops = countHopsRBF(pos, xse, hopsNow, minSoFar, path);
-        	Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, energy);
+        	////Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, energy);
             if (minSoFar > numHops) {
             	minSoFar = numHops;								// save the new minimum
-               	Sx.putsArray("BEST PATH SO FAR:", path);
+               	//// Sx.putsArray("BEST PATH SO FAR: ", path);
             	////	return minSoFar;	// too greedy!
             }
-           	Sx.format(">>>>>>>>>>>>>>>: PRET: ");
-           	Sx.putsArray(path);
+           	////Sx.format(">>>>>>>>>>>>>>>: PRET: ");
+           	////Sx.putsArray(path);
         	path.subList(begSize, path.size()).clear();
-           	Sx.format("<<<<<<<<<<<<<<<: POST: ");
-           	Sx.putsArray(path);
+           	////Sx.format("<<<<<<<<<<<<<<<: POST: ");
+           	////Sx.putsArray(path);
         }
-    	Sx.format("RETURN M=%d, END msf=%d, energy %d at idx %d\n", mCalls, minSoFar, xse, idx);
+    	////Sx.format("RETURN M=%d, END msf=%d, energy %d at idx %d\n", mCalls, minSoFar, xse, idx);
         return minSoFar;
     }
 }
