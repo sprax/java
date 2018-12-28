@@ -230,7 +230,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         int j = 0;
         for (int energy = xse + mBoosts[idx], pos = idx + 1; --energy > 0; pos++)
         {
-            Sx.format("LOOP_J M=%d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n"
+            Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n"
             		, mCalls, j++, hopsNow, idx, xse, pos, energy);
         	if (pos >= mLength) {
                	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d\n", mCalls, hopsNow, idx, xse, energy);
@@ -251,6 +251,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         		heightInc -= energy;	// remaining vertical distance to the top
         		hopsNow += heightInc / mBoosts[idx];	// how many more boosted climbing moves to the top
         		xse = heightInc % mBoosts[idx];			// excess energy upon arrival at the top
+                return countHopsRBF(pos, xse, hopsNow, minSoFar, path);
         	} else if (heightInc == energy) {
         		// Sx.format("energy %d => 0 xse\n", energy);
                 return countHopsRBF(pos, 0, hopsNow, minSoFar, path);
@@ -263,7 +264,11 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
             	minSoFar = numHops;
             	////	return minSoFar;
             } else {
-            	path.subList(begSize, path.size()).clear();
+               	Sx.format(">>>>>>>>>>>>>>>: PRET: ");
+               	Sx.putsArray(path);
+            	path.subList(begSize+1, path.size()).clear();
+               	Sx.format("<<<<<<<<<<<<<<<: POST: ");
+               	Sx.putsArray(path);
             }
         }
     	Sx.format("RETURN M=%d, END msf=%d, energy %d at idx %d\n", mCalls, minSoFar, xse, idx);
