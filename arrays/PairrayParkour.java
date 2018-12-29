@@ -257,22 +257,24 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
             int posUp = mHoists[pos] - maxUp;		// shortcut
             if (posUp > 0) {
                 rmNrg -= posUp;
-                maxUp += posUp;
+                if (rmNrg < 0) {
+                    if (boost <= 0) {
+                        Sx.format("RETURN MAX, energy %d at idx %d\n", rmNrg, idx);
+                        path.remove(path.size() - 1);
+             	        return Integer.MAX_VALUE;	// dead end: cannot jump or climb the top
+            		}
+                    hoist += rmNrg + posUp;			// use up all energy before re-using boost to climb
+                    posUp -= rmNrg;					// remaining vertical distance to the top
+                    hopsNow += posUp / boost;		// how many more boosted climbing moves to the top
+                    xse = posUp % boost;			// excess energy upon arrival at the top
+                    rmNrg = 0;
+                } else {
+            	    maxUp += posUp;
+                }
             }
             if (rmNrg >= 0) {
-            	xse = rmNrg;
-            } else {          	
-                if (boost <= 0) {
-                	Sx.format("RETURN MAX, energy %d at idx %d\n", rmNrg, idx);
-                   	path.remove(path.size() - 1);
-         			return Integer.MAX_VALUE;	// dead end: cannot jump or climb the top
-        		}
-                hoist += rmNrg;			// use up all energy before re-using boost to climb
-                posUp -= rmNrg;	// remaining vertical distance to the top
-                hopsNow += posUp / boost;	// how many more boosted climbing moves to the top
-                xse = posUp % boost;			// excess energy upon arrival at the top
-        		rmNrg = 0;
-        	}
+                xse = rmNrg;
+            }          	
             int numHops = countHopsRBF(pos, xse, hopsNow, path);
         	////Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, rmNrg);
             if (mMinMoves > numHops) {
