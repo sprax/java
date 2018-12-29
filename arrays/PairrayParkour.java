@@ -186,9 +186,9 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			return numHopsNow;           // return success
 		}
 		mLoops++;
-//		for (int energy = xse + mBoosts[pos]; energy > 0; energy--)
+//		for (int rmNrg = xse + mBoosts[pos]; rmNrg > 0; rmNrg--)
 //		{
-//			if (energy < mHoists)
+//			if (rmNrg < mHoists)
 //			
 //			int numHops = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
 //			if (minNumHops > numHops)
@@ -238,46 +238,43 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive
         //assert(hops == path.size());
         path.add(idx);
 		int begSize = path.size();
-        int hoist = mHoists[idx];
         int boost = mBoosts[idx];
+        int hoist = mHoists[idx];
+        int maxUp = hoist;
+
 
        	mLoops++;
         int j = 0;
-        for (int energy = xse + boost, pos = idx + 1; --energy >= 0; pos++)
+        for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++)
         {
-            ////Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n", mCalls, j++, hopsNow, idx, xse, pos, energy);
+            ////Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d  energy=%d\n", mCalls, j++, hopsNow, idx, xse, pos, rmNrg);
         	if (pos >= mLength) {
-               	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse, energy);
+               	Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse, rmNrg);
                	Sx.putsArray("PATH: ", path);
-                mMinPath = new ArrayList<Integer>(path);		// copy the new minimal path
-//            	mMinPath = new ArrayList<Integer>();		// copy the new minimal path
-//            	for (Integer elt : path)
-//            		mMinPath.add(elt);		// copy the new minimal path
-               	
+                mMinPath = new ArrayList<Integer>(path);		// copy the new minimal path               	
                 return hopsNow;			// arrived at the end!   Return how many moves it took.
         	}
-            int heightInc = mHoists[pos] - hoist;
-        	if (heightInc < 0)
-        		heightInc = 0;
-        	if (heightInc > energy) {
+            int posUp = mHoists[pos] - maxUp;		// shortcut
+            if (posUp > 0) {
+                rmNrg -= posUp;
+                maxUp += posUp;
+            }
+            if (rmNrg >= 0) {
+            	xse = rmNrg;
+            } else {          	
                 if (boost <= 0) {
-                	Sx.format("RETURN MAX, energy %d at idx %d\n", energy, idx);
+                	Sx.format("RETURN MAX, energy %d at idx %d\n", rmNrg, idx);
                    	path.remove(path.size() - 1);
          			return Integer.MAX_VALUE;	// dead end: cannot jump or climb the top
         		}
-                hoist += energy;			// use up all energy before re-using boost to climb
-                heightInc -= energy;	// remaining vertical distance to the top
-                hopsNow += heightInc / boost;	// how many more boosted climbing moves to the top
-                xse = heightInc % boost;			// excess energy upon arrival at the top
-        		energy = 0;
-        	} else if (heightInc == energy) {
-        		xse = energy = 0;
-        		// Sx.format("energy %d => 0 xse\n", energy);
-        	} else {
-        		xse = energy - heightInc;
+                hoist += rmNrg;			// use up all energy before re-using boost to climb
+                posUp -= rmNrg;	// remaining vertical distance to the top
+                hopsNow += posUp / boost;	// how many more boosted climbing moves to the top
+                xse = posUp % boost;			// excess energy upon arrival at the top
+        		rmNrg = 0;
         	}
             int numHops = countHopsRBF(pos, xse, hopsNow, path);
-        	////Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, energy);
+        	////Sx.format("result M=%d, numHops=%d  hopsNow=%d at idx=%d,  energy=%d\n", mCalls, numHops, hopsNow, idx, rmNrg);
             if (mMinMoves > numHops) {
             	mMinMoves = numHops;								// save the new minimum
                	//// Sx.putsArray("BEST PATH SO FAR: ", path);
