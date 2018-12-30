@@ -48,13 +48,14 @@ import sprax.test.Sz;
  *
  * For example, let's say you bring excess energy 3 to the top of some wall at
  * index K, which then gives you boost energy 4. Your current energy becomes 3 +
- * 4 = 7. If wall height is 20 and the next wall's is 30, you are 3 units short
- * of 10 = 30 - 20, so it will take you two boosted moves to surmount wall K+1.
+ * 4 = 7. If this wall's height is 20 and the next wall's is 30, you are 3 units
+ * short of 10 = 30 - 20, so it will take you two boosted moves to surmount wall K+1.
  * You *could* stop there with an excess of 1 unit (3 + 2*4 - 10), and add to
  * that 1 to whatever boost you find there. BUT, if the height of the *next*
  * wall after that, at index K+2, is <= 30, you could choose to use your 1 unit
  * excess to go one *more* unit of distance, and land on top of wall K+2 with 0
- * excess, and pick up the boost there instead.
+ * excess.  You would then start your next move from K+2 with only the boost 
+ * energy you find there.
  *
  * In other words, instead of just climbing to the top of the wall K+1 and
  * stopping there, you can use your last move's momentum to jump over K+1 and
@@ -147,43 +148,7 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour {
 	}
 }
 
-/**
- * Naive: Re-tries steps and may have to back-track out from greed.
- */
-class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive {
-	protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
-		super(heights, boosts);
-	}
-
-	@Override
-	public int countHops() {
-		// reset counts
-		mCalls = 0;
-		mLoops = 0;
-		return countHopsGreedyRecurse(0, 0, 0, Integer.MAX_VALUE - 1);
-	}
-
-	int countHopsGreedyRecurse(int pos, int xse, int numHopsNow, int minNumHops) {
-		mCalls++;
-
-		if (numHopsNow > minNumHops)
-			return numHopsNow; // return failure ASAP
-
-		if (pos >= mLength) {
-			return numHopsNow; // return success
-		}
-		mLoops++;
-//		for (int rmNrg = xse + mBoosts[pos]; rmNrg > 0; rmNrg--)
-//		{
-//			if (rmNrg < mHoists)
-//			
-//			int numHops = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
-//			if (minNumHops > numHops)
-//				minNumHops = numHops;
-//		}
-		return minNumHops;
-	}
-}
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Naive: Repeats many steps
@@ -247,8 +212,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
 					}
-					hoist += rmNrg + posUp; // use up all energy before re-using boost to climb
-					posUp -= rmNrg; // remaining vertical distance to the top
+					hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
+					posUp -= rmNrg;               // remaining vertical distance to the top
 					int climbMoves = posUp / boost;
 					hopsNow += climbMoves; // how many more boosted climbing moves to the top
 					path.addAll(Collections.nCopies(climbMoves, pos));
@@ -282,6 +247,47 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Naive: Re-tries steps and may have to back-track out from greed.
+ */
+class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive {
+	protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
+		super(heights, boosts);
+	}
+
+	@Override
+	public int countHops() {
+		// reset counts
+		mCalls = 0;
+		mLoops = 0;
+		return countHopsGreedyRecurse(0, 0, 0, Integer.MAX_VALUE - 1);
+	}
+
+	int countHopsGreedyRecurse(int pos, int xse, int numHopsNow, int minNumHops) {
+		mCalls++;
+
+		if (numHopsNow > minNumHops)
+			return numHopsNow; // return failure ASAP
+
+		if (pos >= mLength) {
+			return numHopsNow; // return success
+		}
+		mLoops++;
+//		for (int rmNrg = xse + mBoosts[pos]; rmNrg > 0; rmNrg--)
+//		{
+//			if (rmNrg < mHoists)
+//			
+//			int numHops = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
+//			if (minNumHops > numHops)
+//				minNumHops = numHops;
+//		}
+		return minNumHops;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
 class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
 	protected long mAssigns; // upper bound on the number of assignments to aux array
 
