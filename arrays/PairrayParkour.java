@@ -1,6 +1,8 @@
 package sprax.arrays;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import sprax.sprout.Sx;
 import sprax.test.Sz;
@@ -247,7 +249,10 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 					}
 					hoist += rmNrg + posUp; // use up all energy before re-using boost to climb
 					posUp -= rmNrg; // remaining vertical distance to the top
-					hopsNow += posUp / boost; // how many more boosted climbing moves to the top
+					int climbMoves = posUp / boost;
+					hopsNow += climbMoves; // how many more boosted climbing moves to the top
+					path.addAll(Collections.nCopies(climbMoves, pos));
+					
 					xse = posUp % boost; // excess energy upon arrival at the top
 					rmNrg = 0;
 				} else {
@@ -347,28 +352,30 @@ class PairrayParkourTest {
 		String testName = PairrayParkour.class.getName() + ".unit_test";
 		Sz.begin(testName);
 		int numWrong = 0;
-
-		int hA[] = { 1, 2, 3 }; // expected Parkour answer: 3, only one way
-		int bA[] = { 2, 2, 2 }; // expected Ahopper answer: 2 (first move 1, not 2)
-
-		int hB[] = { 1, 2, 2, 1 }; // expected Parkour answer: 3 (2 ways, via index 2 or 3)
-		int bB[] = { 2, 2, 1, 1 }; // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
-
-		int hC[] = { 0, 2, 1, 2, 1, 3, 2, 4 }; // expected answer: 4
-		int bC[] = { 4, 1, 1, 4, 0, 2, 1, 1 }; // expected answer: 3
+		
+		int hobos[][] = {
+			{ 1, 2, 3 }, 	// expected Parkour answer: 3, only one way
+			{ 2, 2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
+			{ 1, 2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
+			{ 2, 2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
+			{ 1, 5 },		// P 4
+			{ 2, 1 },		// H 1
+			{ 0, 2, 1, 2, 1, 3, 2, 4 },			// expected answer: 4
+			{ 4, 1, 1, 4, 0, 2, 1, 1 },			// expected answer: 3
+		};
+		
 		int pC[] = { 0, 1, 3, 6 };
 
 		int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 		int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
-		int pairs[][] = { hA, bA, hB, bB, hC, bC, hD, bD };
-		int expectP[] = { 3, 3, 5, 0 };
-		int expectH[] = { 2, 3, 3, 0 };
+		int expectP[] = { 3, 3, 5, 5, 0 };
+		int expectH[] = { 2, 3, 1, 3, 0 };
 
-		int begTrial = 0, endTrial = begTrial + 2; // expectP.length;
+		int begTrial = 1, endTrial = begTrial + 2; // expectP.length;
 		for (int j = begTrial; j < endTrial; j++) {
-			int heights[] = pairs[2 * j];
-			int boosts[] = pairs[2 * j + 1];
+			int heights[] = hobos[2 * j];
+			int boosts[] = hobos[2 * j + 1];
 			Sx.putsArray("heights: ", heights);
 			Sx.putsArray("boosts:  ", boosts);
 			PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward(heights, boosts);
