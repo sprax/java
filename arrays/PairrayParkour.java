@@ -207,24 +207,29 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			if (posUp > 0) {
 				rmNrg -= posUp;
 				if (rmNrg < 0) {
+					Sx.format("BEG climb: posUp %d > 0, rmNrg %d < 0, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
 					if (boost <= 0) {
 						Sx.format("RETURN MAX, energy %d at idx %d\n", rmNrg, idx);
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
 					}
-					hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
-					posUp -= rmNrg;               // remaining vertical distance to the top
-					int climbMoves = posUp / boost;
+					int tr = rmNrg;
+					int tp = posUp;
+					//hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
+					//posUp -= rmNrg;               // remaining vertical distance to the top
+					int climbMoves = -rmNrg / boost;
 					hopsNow += climbMoves; // how many more boosted climbing moves to the top
 					path.addAll(Collections.nCopies(climbMoves, pos));
 					
 					xse = posUp % boost; // excess energy upon arrival at the top
 					rmNrg = 0;
+					Sx.format("END climb: posUp %d > 0, rmNrg %d == 0, boost %d, hoist %d (from += %d + %d), climbMoves (posUp/boost) %d, hopsNow %d\n"
+							 , posUp, rmNrg, boost, hoist, tr, tp, climbMoves, hopsNow);
 				} else {
 					maxUp += posUp;
 				}
 			}
-			if (rmNrg >= 0) {
+			if (rmNrg >= 0) {		// FIXME: simplify
 				xse = rmNrg;
 			}
 			int numHops = countHopsRBF(pos, xse, hopsNow, path);
@@ -375,7 +380,7 @@ class PairrayParkourTest {
 		int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 		int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
-		int expectP[] = { 3, 3, 5, 5, 0 };
+		int expectP[] = { 3, 3, 3, 5, 0 };
 		int expectH[] = { 2, 3, 1, 3, 0 };
 
 		int begTrial = 1, endTrial = begTrial + 2; // expectP.length;

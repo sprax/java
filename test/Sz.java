@@ -42,7 +42,7 @@ public class Sz
     }
 
     public static void end(String testName, int numWrong) {
-        System.out.format("END   %s,  wrong %d,  %s\n", testName, numWrong, Sz.passFail(numWrong));
+        System.out.format("END   %s,  wrong %2d,  %s\n", testName, numWrong, Sz.passFail(numWrong));
     }
 
     public static void ender(String testName, int numCases, int numWrong) {
