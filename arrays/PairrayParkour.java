@@ -177,8 +177,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		assert (idx < mLength);
 		assert (xse >= 0);
 		mCalls++;
-		//// Sx.format("CALLED M=%d, idx %d, xse %d, hops %d, msf %d\n", mCalls, idx,
-		//// xse, hops, mMinMoves);
+	    Sx.format("CALLED M=%d, idx %d, xse %d, hops %d, msf %d\n", mCalls, idx,
+		          xse, hops, mMinMoves);
 
 		int hopsNow = hops + 1;
 		if (hopsNow > mMinMoves) { // A shorter path was already found.
@@ -216,7 +216,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
 					}
-					int climbMoves = (int)Math.ceil((posUp - rmNrg) / (float)boost);
+					////int climbMoves = (int)Math.ceil((posUp - rmNrg) / (float)boost);
+					int climbMoves = (int)((posUp - rmNrg) / (float)boost);
 					hopsNow += climbMoves; // how many more boosted climbing moves to the top
 					path.addAll(Collections.nCopies(climbMoves, pos));
 					
@@ -228,8 +229,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 				}
 			}
 			int numHops = countHopsRBF(pos, rmNrg, hopsNow, path);
-			//// Sx.format("result M=%d, numHops=%d hopsNow=%d at idx=%d, energy=%d\n",
-			//// mCalls, numHops, hopsNow, idx, rmNrg);
+			Sx.format("result M=%d, numHops=%d hopsNow=%d at idx=%d, energy=%d\n",
+					  mCalls, numHops, hopsNow, idx, rmNrg);
 			if (mMinMoves > numHops) {
 				mMinMoves = numHops; // save the new minimum
 				//// Sx.putsArray("BEST PATH SO FAR: ", path);
