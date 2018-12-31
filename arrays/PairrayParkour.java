@@ -220,14 +220,16 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 					int tp = posUp;
 					hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
 					//posUp -= rmNrg;               // remaining vertical distance to the top
-					int climbMoves = relHeight / boost;
+					int climbMoves = (int)Math.ceil((float)relHeight / boost);
 					hopsNow += climbMoves; // how many more boosted climbing moves to the top
 					path.addAll(Collections.nCopies(climbMoves, pos));
 					
-					xse = relHeight % boost; // excess energy upon arrival at the top
+					// excess energy upon arrival at the top:
+					int mod = relHeight % boost;
+					xse = mod > 0 ? boost - mod : 0;
 					rmNrg = xse;
-					Sx.format("END climb: posUp %d ? %d rmNrg, boost %d, hoist %d, climbMoves (relHeight/boost) %d, hopsNow %d\n"
-							 , posUp, rmNrg, boost, hoist, climbMoves, hopsNow);
+					Sx.format("END climb: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsNow %d\n"
+							 , posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsNow);
 					maxUp += posUp;
 				} else {
 					maxUp += posUp;
