@@ -208,7 +208,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			if (posUp > 0) {
 				rmNrg -= posUp;
 				if (rmNrg < 0) {
-					Sx.format("BEG climb: posUp %d > 0, rmNrg %d < 0, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
+					Sx.format("BEG climb: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist); //FIXME
 					if (boost <= 0) {
 						Sx.format("RETURN MAX, energy %d at idx %d\n", rmNrg, idx);
 						path.remove(path.size() - 1);
@@ -374,6 +374,8 @@ class PairrayParkourTest {
 			{ 3, 1, 1 },		// H 1
 			{ 1, 6, 4, 5, 3 },		// P 5
 			{ 2, 2, 0, 1, 2 },		// H 1
+			{ 1, 7, 4, 4, 3 },		// P 4
+			{ 4, 0, 1, 2, 0 },		// H 1
 			{ 0, 2, 1, 2, 1, 3, 2, 4 },			// expected answer: 4
 			{ 4, 1, 1, 4, 0, 2, 1, 1 },			// expected answer: 3
 		};
@@ -386,7 +388,7 @@ class PairrayParkourTest {
 		int expectP[] = { 3, 3, 4, 6, 0 };
 		int expectH[] = { 2, 3, 1, 1, 0 };
 
-		int begTrial = 0, endTrial = begTrial + 4; // expectP.length;
+		int begTrial = 0, endTrial = begTrial + 5; // expectP.length;
 		for (int j = begTrial; j < endTrial; j++) {
 			int heights[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
