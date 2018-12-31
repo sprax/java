@@ -117,6 +117,7 @@ public abstract class PairrayParkour {
 		mBoosts = boosts;
 		mHoists = heights;
 		mLength = heights.length;
+		mMinPath = new ArrayList<Integer>();
 	}
 
 	protected int mLength, mMinMoves;
@@ -369,8 +370,8 @@ class PairrayParkourTest {
 			{ 2, 2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
 			{ 1, 2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
 			{ 2, 2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
-			{ 1, 5 },		// P 3
-			{ 2, 1 },		// H 1
+			{ 1, 7, 6 },		// P 3
+			{ 3, 1, 1 },		// H 1
 			{ 1, 6, 4, 5, 3 },		// P 5
 			{ 2, 2, 0, 1, 2 },		// H 1
 			{ 0, 2, 1, 2, 1, 3, 2, 4 },			// expected answer: 4
@@ -382,7 +383,7 @@ class PairrayParkourTest {
 		int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 		int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
 
-		int expectP[] = { 3, 3, 3, 6, 0 };
+		int expectP[] = { 3, 3, 4, 6, 0 };
 		int expectH[] = { 2, 3, 1, 1, 0 };
 
 		int begTrial = 0, endTrial = begTrial + 4; // expectP.length;
