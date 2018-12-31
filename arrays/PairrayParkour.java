@@ -165,13 +165,17 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		mMinMoves = Integer.MAX_VALUE;
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		int minHops = countHopsRBF(0, 0, 0, path);
-		assert (minHops == mMinMoves);
+		if (minHops != mMinPath.size()) {
+			Sx.format("-------------------------- hops %d ? %d != %d mMinPath.size\n", minHops, mMinMoves, mMinPath.size());
+		}
+		//assert (minHops == mMinMoves);
 		Sx.putsArray("mMinPath: ", mMinPath);
 		return mMinMoves;
 	}
 
 	int countHopsRBF(int idx, int xse, int hops, ArrayList<Integer> path) {
 		assert (idx < mLength);
+		assert (xse >= 0);
 		mCalls++;
 		//// Sx.format("CALLED M=%d, idx %d, xse %d, hops %d, msf %d\n", mCalls, idx,
 		//// xse, hops, mMinMoves);
@@ -203,36 +207,27 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				return hopsNow; // arrived at the end! Return how many moves it took.
 			}
-			int posUp = mHoists[pos] - maxUp; // shortcut
+			int posUp = mHoists[pos] - maxUp; 	// shortcut
 			if (posUp > 0) {
-				rmNrg -= posUp;
-				if (rmNrg < 0) {
-					Sx.format("BEG climb: posUp %d > 0, rmNrg %d < 0, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
+				if (posUp > rmNrg) {			// must climb
+					Sx.format("BEG climb: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
 					if (boost <= 0) {
 						Sx.format("RETURN MAX, energy %d at idx %d\n", rmNrg, idx);
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
 					}
-					int tr = rmNrg;
-					int tp = posUp;
-					//hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
-					//posUp -= rmNrg;               // remaining vertical distance to the top
-					int climbMoves = -rmNrg / boost;
+					int climbMoves = (int)Math.ceil((posUp - rmNrg) / (float)boost);
 					hopsNow += climbMoves; // how many more boosted climbing moves to the top
 					path.addAll(Collections.nCopies(climbMoves, pos));
 					
-					xse = posUp % boost; // excess energy upon arrival at the top
-					rmNrg = 0;
-					Sx.format("END climb: posUp %d > 0, rmNrg %d == 0, boost %d, hoist %d (from += %d + %d), climbMoves (posUp/boost) %d, hopsNow %d\n"
-							 , posUp, rmNrg, boost, hoist, tr, tp, climbMoves, hopsNow);
+					rmNrg = (posUp - rmNrg) % boost; // excess energy upon arrival at the top
+					Sx.format("END climb: posUp %d ? %d rmNrg, boost %d, hoist %d, climbMoves (posUp/boost) %d, hopsNow %d\n"
+							 , posUp, rmNrg, boost, hoist, climbMoves, hopsNow);
 				} else {
 					maxUp += posUp;
 				}
 			}
-			if (rmNrg >= 0) {		// FIXME: simplify
-				xse = rmNrg;
-			}
-			int numHops = countHopsRBF(pos, xse, hopsNow, path);
+			int numHops = countHopsRBF(pos, rmNrg, hopsNow, path);
 			//// Sx.format("result M=%d, numHops=%d hopsNow=%d at idx=%d, energy=%d\n",
 			//// mCalls, numHops, hopsNow, idx, rmNrg);
 			if (mMinMoves > numHops) {
@@ -406,5 +401,7 @@ class PairrayParkourTest {
 
 	public static void main(String[] args) {
 		unit_test(1);
+		Sx.format("Math.ceil(7.0/4.0): %f and %d\n", Math.ceil(7.0/4.0), (int)(Math.ceil(7.0/4.0)));
+		Sx.format("Math.ceil(10.0/2.0): %f and %d\n", Math.ceil(10.0/2.0), (int)(Math.ceil(10.0/2.0)));
 	}
 }
