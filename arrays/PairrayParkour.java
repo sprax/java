@@ -166,29 +166,41 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		mMinMoves = Integer.MAX_VALUE;
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		int minHops = countHopsRBF(0, 0, 0, path);
-		assert (minHops == mMinMoves);
+		if (minHops != path.size()) {
+			Sx.format("-------------------------- hops %d != %d path.size\n", minHops, path.size());
+		}
+		// assert (minHops == mMinMoves);
 		Sx.putsArray("mMinPath: ", mMinPath);
 		return mMinMoves;
 	}
 
+	
 	int countHopsRBF(int idx, int xse, int hops, ArrayList<Integer> path)
 	{
-		assert(idx < mLength);
+		// Count this call and check arguments:
 		mCalls++;
-		Sx.format("\nBEG %3d, idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d, path: "
-				 , mCalls, idx, xse, mHoists[idx], mBoosts[idx], mMinMoves, hops);
-		Sx.putsArray(path);
-
-		int hopsNow = hops + 1;
-		if (hopsNow > mMinMoves) { // A shorter path was already found.
-			Sx.format("RET %3d, idx %d AT TOP BECAUSE hops %d > %d mMinMoves, path: ", mCalls, idx, hopsNow, mMinMoves);
-			Sx.putsArray(path);
-			return Integer.MAX_VALUE; // So return "infinite" signal.
-		}
+		assert(idx < mLength);
 		if (hops != path.size()) {
 			Sx.format("!!!!!!!!!!!!!!!!!!!!!!!!!! hops %d != %d path.size\n", hops, path.size());
 		}
 		// assert(hops == path.size());
+
+		if (idx == 5) {
+			Sx.format("\nBEG %3d, idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d, path: "
+					 , mCalls, idx, xse, mHoists[idx], mBoosts[idx], mMinMoves, hops);
+			Sx.putsArray(path);
+		}
+
+		// Short circuit if this path would be longer than the min already found:
+		int hopsBeg = hops + 1;
+		if (hopsBeg > mMinMoves) { // A shorter path was already found.
+			Sx.format("RET %3d, idx %d AT TOP BECAUSE hops %d > %d mMinMoves, path: ", mCalls, idx, hopsBeg, mMinMoves);
+			Sx.putsArray(path);
+			return Integer.MAX_VALUE;
+		}
+
+		// Look for a new path to the end:
+		int hopsEnd = Integer.MAX_VALUE; // Default to dead-end or "infinite" signal.
 		path.add(idx);
 		int begSize = path.size();
 		int boost = mBoosts[idx];
@@ -201,18 +213,18 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		int j = 0;
 		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++) {
 			//// Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d energy=%d\n",
-			//// mCalls, j++, hopsNow, idx, xse, pos, rmNrg);
+			//// mCalls, j++, hopsBeg, idx, xse, pos, rmNrg);
 			if (pos >= mLength) {
-				Sx.format("RET %3d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse, rmNrg);
+				Sx.format("RET %3d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsBeg, idx, xse, rmNrg);
 				Sx.putsArray("PATH: ", path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
-				return hopsNow; // arrived at the end! Return how many moves it took.
+				return hopsBeg; // arrived at the end! Return how many moves it took.
 			}
 			int posUp = mHoists[pos] - maxUp; // shortcut
 			if (posUp > 0) {
 				rmNrg -= posUp;
 				if (rmNrg < 0) {
-					Sx.format("BEG climb: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg+posUp, boost, hoist); //FIXME
+//					Sx.format("[[[ %3d: posUp %d > %d rmNrg, boost %d, hoist %d\n", mCalls, posUp, rmNrg+posUp, boost, hoist); //FIXME
 					if (boost <= 0) {
 						Sx.format("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
 						path.remove(path.size() - 1);
@@ -224,15 +236,17 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 					hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
 					//posUp -= rmNrg;               // remaining vertical distance to the top
 					int climbMoves = (int)Math.ceil((float)relHeight / boost);
-					hopsNow += climbMoves; // how many more boosted climbing moves to the top
+					hopsBeg += climbMoves; // how many more boosted climbing moves to the top
 					path.addAll(Collections.nCopies(climbMoves, pos));
 					
 					// excess energy upon arrival at the top:
 					int mod = relHeight % boost;
 					xse = mod > 0 ? boost - mod : 0;
 					rmNrg = xse;
-					Sx.format("END climb: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsNow %d\n"
-							 , posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsNow);
+					if (idx == 5) {
+						Sx.format("]]] %3d: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsBeg %d\n"
+								 , mCalls, posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsBeg);						
+					}
 					maxUp += posUp;
 				} else {
 					maxUp += posUp;
@@ -241,12 +255,11 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			if (rmNrg >= 0) {		// FIXME: simplify
 				xse = rmNrg;
 			}
-			int numHops = countHopsRBF(pos, xse, hopsNow, path);
-			//// Sx.format("result M=%d, numHops=%d hopsNow=%d at idx=%d, energy=%d\n",
-			//// mCalls, numHops, hopsNow, idx, rmNrg);
-			if (mMinMoves > numHops) {
-				mMinMoves = numHops; // save the new minimum
-				//// Sx.putsArray("BEST PATH SO FAR: ", path);
+			hopsEnd = countHopsRBF(pos, xse, hopsBeg, path);
+			Sx.format("res %3d, hopsEnd=%d hopsBeg=%d at idx=%d, energy=%d\n", mCalls, hopsEnd, hopsBeg, idx, rmNrg);
+			if (mMinMoves > hopsEnd) {
+				mMinMoves = hopsEnd; // save the new minimum
+				Sx.putsArray("BEST PATH SO FAR: ", path);
 				//// return mMinMoves; // too greedy!
 			}
 			//// Sx.format(">>>>>>>>>>>>>>>: PRET: ");
@@ -255,9 +268,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			//// Sx.format("<<<<<<<<<<<<<<<: POST: ");
 			//// Sx.putsArray(path);
 		}
-		//// Sx.format("RET M=%d, END msf=%d, energy %d at idx %d\n", mCalls,
-		//// mMinMoves, xse, idx);
-		return mMinMoves;
+		//// Sx.format("RET %3d END, idx %d, msf=%d\n", mCalls, idx, mMinMoves);
+		return hopsEnd;
 	}
 }
 
@@ -293,9 +305,9 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive {
 //		{
 //			if (rmNrg < mHoists)
 //			
-//			int numHops = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
-//			if (minNumHops > numHops)
-//				minNumHops = numHops;
+//			int hopsEnd = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
+//			if (minNumHops > hopsEnd)
+//				minNumHops = hopsEnd;
 //		}
 		return minNumHops;
 	}
@@ -384,14 +396,15 @@ class PairrayParkourTest {
 			{ 2, 2, 0, 1, 2 },			// H 1
 			{ 1, 7, 4, 4, 3 },			// P 4
 			{ 4, 0, 1, 2, 0 },			// H 2
-			{ 0, 2, 1, 2, 1, 3, 2, 5 },			// expected answer: 4
-			{ 4, 1, 1, 4, 0, 2, 1, 1 },			// expected answer: 3
+			{ 0, 2, 1, 2, 1, 3, 2, 5, 1, },			// expected answer: 5
+			{ 4, 1, 1, 4, 0, 2, 1, 1, 1, },			// expected answer: 3
 		};
 		
-		int expectP[] = { 3, 3, 4, 6, 4, 4 };
+		int expectP[] = { 3, 3, 4, 6, 4, 7 };
 		int expectH[] = { 2, 3, 1, 1, 2, 0 };
 
-		int begTrial = 3, endTrial = expectP.length; //  begTrial + 2; // 
+		int begTrial = expectP.length - 1;
+		int endTrial = expectP.length; //  begTrial + 2; // 
 		for (int j = begTrial; j < endTrial; j++) {
 			int heights[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
