@@ -171,14 +171,18 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		return mMinMoves;
 	}
 
-	int countHopsRBF(int idx, int xse, int hops, ArrayList<Integer> path) {
-		assert (idx < mLength);
+	int countHopsRBF(int idx, int xse, int hops, ArrayList<Integer> path)
+	{
+		assert(idx < mLength);
 		mCalls++;
-		Sx.format("\nCALLED A M=%d, idx %d, xse %d, hops %d, hoist %d, msf %d\n", mCalls, idx, xse, hops, mHoists[idx], mMinMoves);
+		Sx.format("\nBEG %3d, idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d, path: "
+				 , mCalls, idx, xse, mHoists[idx], mBoosts[idx], mMinMoves, hops);
+		Sx.putsArray(path);
 
 		int hopsNow = hops + 1;
 		if (hopsNow > mMinMoves) { // A shorter path was already found.
-			Sx.format("RETURN BEG FUNC, M=%d, idx=%d, xse=%d, MAX=%d\n", mCalls, idx, xse, Integer.MAX_VALUE);
+			Sx.format("RET %3d, idx %d AT TOP BECAUSE hops %d > %d mMinMoves, path: ", mCalls, idx, hopsNow, mMinMoves);
+			Sx.putsArray(path);
 			return Integer.MAX_VALUE; // So return "infinite" signal.
 		}
 		if (hops != path.size()) {
@@ -192,15 +196,14 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		int maxUp = hoist;
 
 		mLoops++;
-		Sx.format("CALLED B M=%d, idx %d, xse %d, hops %d, hoist %d, boost %d\n", mCalls, idx, xse, hops, hoist, boost);
+		// Sx.format("CALLED B M=%d, idx %d, xse %d, hops %d, hoist %d, boost %d\n", mCalls, idx, xse, hops, hoist, boost);
 
 		int j = 0;
 		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++) {
 			//// Sx.format("LOOP_J M=%2d, %2d, hops=%d, idx=%d, xse=%d, pos=%d energy=%d\n",
 			//// mCalls, j++, hopsNow, idx, xse, pos, rmNrg);
 			if (pos >= mLength) {
-				Sx.format("RETURN BEG LOOP, M=%d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse,
-						rmNrg);
+				Sx.format("RET %3d, hops=%d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsNow, idx, xse, rmNrg);
 				Sx.putsArray("PATH: ", path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				return hopsNow; // arrived at the end! Return how many moves it took.
@@ -211,7 +214,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 				if (rmNrg < 0) {
 					Sx.format("BEG climb: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg+posUp, boost, hoist); //FIXME
 					if (boost <= 0) {
-						Sx.format("RETURN MAX at DEAD END, energy %d at idx %d, boost %d\n", rmNrg, idx, boost);
+						Sx.format("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
 					}
@@ -252,7 +255,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			//// Sx.format("<<<<<<<<<<<<<<<: POST: ");
 			//// Sx.putsArray(path);
 		}
-		//// Sx.format("RETURN M=%d, END msf=%d, energy %d at idx %d\n", mCalls,
+		//// Sx.format("RET M=%d, END msf=%d, energy %d at idx %d\n", mCalls,
 		//// mMinMoves, xse, idx);
 		return mMinMoves;
 	}
@@ -375,25 +378,20 @@ class PairrayParkourTest {
 			{ 2, 2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
 			{ 1, 2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
 			{ 2, 2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
-			{ 1, 7, 6 },		// P 3
-			{ 3, 1, 1 },		// H 1
-			{ 1, 6, 4, 5, 3 },		// P 5
-			{ 2, 2, 0, 1, 2 },		// H 1
-			{ 1, 7, 4, 4, 3 },		// P 4
-			{ 4, 0, 1, 2, 0 },		// H 2
-			{ 0, 2, 1, 2, 1, 3, 2, 4 },			// expected answer: 4
+			{ 1, 7, 6 },				// P 3
+			{ 3, 1, 1 },				// H 1
+			{ 1, 6, 4, 5, 3 },			// P 5
+			{ 2, 2, 0, 1, 2 },			// H 1
+			{ 1, 7, 4, 4, 3 },			// P 4
+			{ 4, 0, 1, 2, 0 },			// H 2
+			{ 0, 2, 1, 2, 1, 3, 2, 5 },			// expected answer: 4
 			{ 4, 1, 1, 4, 0, 2, 1, 1 },			// expected answer: 3
 		};
 		
-		int pC[] = { 0, 1, 3, 6 };
+		int expectP[] = { 3, 3, 4, 6, 4, 4 };
+		int expectH[] = { 2, 3, 1, 1, 2, 0 };
 
-		int hD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
-		int bD[] = { 9, 9, 7, 6, 5, 4, 3, 2, 1, 0, 9, 9, 7, 6, 5, 4, 3, 2, 1, 0 }; // expected answer: ?
-
-		int expectP[] = { 3, 3, 4, 6, 4 };
-		int expectH[] = { 2, 3, 1, 1, 2 };
-
-		int begTrial = 3, endTrial = begTrial + 2; // expectP.length;
+		int begTrial = 3, endTrial = expectP.length; //  begTrial + 2; // 
 		for (int j = begTrial; j < endTrial; j++) {
 			int heights[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
