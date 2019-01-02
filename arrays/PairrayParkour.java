@@ -39,39 +39,51 @@ import sprax.test.Sz;
  * repeatedly until you have moved to the top of a later wall. In short, "boost"
  * is re-usable; "momentum" is not.
  *
- * If your current energy is less than the relative height of the next wall, and
- * your current location's boost is positive, you will need to re-use that boost
- * in more than one move to surmount that next wall. But if the local boost is
- * zero or less, then you are stuck and cannot progress. That's game over -- you
- * lose.
+ * Furthermore, you can stick to walls like Spider-Man, which means that if you
+ * have current energy M, you can jump across a trough of any width < M and
+ * begin climbing the wall you at the same height from which you jumped, plus
+ * any excess energy you had at the start of the jump. But you only pick up
+ * boost energy from the top of a wall, not from the sides. So the boost you can
+ * re-use it for climbing the side of a wall comes from the top of the wall
+ * where you jumped, not where you are now (i.e., not from the top of the wall
+ * you are trying to surmount, nor necessarily from the flat just before the
+ * wall you are climbing.
+ *
+ * Sometimes you will be forced to climb, not just run or jump. If your current
+ * energy is less than the relative height of the next wall, and your current
+ * location's boost is positive, you will need to re-use that boost in more than
+ * one move to surmount that next wall. But if the local boost is zero or less,
+ * then you are stuck and cannot progress. That's game over -- you lose.
  *
  * For example, let's say you bring excess energy 3 to the top of some wall at
  * index K, which then gives you boost energy 4. Your current energy becomes 3 +
  * 4 = 7. If this wall's height is 20 and the next wall's is 30, you are 3 units
- * short of 10 = 30 - 20, so it will take you two boosted moves to surmount wall K+1.
+ * short of 10 = 30 - 20, so it will take you two boosted moves to surmount wall
+ * K+1.
+ *
+ * ALTERNATIVE A (implemented for reference): You *MUST* stop there with an
+ * excess of 1 unit (3 + 2*4 - 10), and add to that 1 to whatever boost you find
+ * there. In other words, if you are climbing a vertical wall, you cannot change
+ * your direction to an angle low enough to cross a whole horizontal unit of
+ * distance and get past the top of the wall to the next one. Instead, you must
+ * land on the top before you can redirect your momentum forward instead of
+ * downward.
+ *
+ * ALTERNATIVE B (not in effect, not implemented, and seemingly harder to do):
  * You *could* stop there with an excess of 1 unit (3 + 2*4 - 10), and add to
  * that 1 to whatever boost you find there. BUT, if the height of the *next*
  * wall after that, at index K+2, is <= 30, you could choose to use your 1 unit
  * excess to go one *more* unit of distance, and land on top of wall K+2 with 0
- * excess.  You would then start your next move from K+2 with only the boost 
- * energy you find there.
+ * excess. You would then start your next move from K+2 with only the boost
+ * energy you find there. In other words, instead of just climbing to the top of
+ * the wall K+1 and stopping there, you can use your last move's momentum to
+ * jump over K+1 and land on wall K+2. If boost(K+2) - boost(K+2) > 1, the extra
+ * energy you would get by choosing to land on wall K+2 would work to your
+ * advantage.
  *
- * In other words, instead of just climbing to the top of the wall K+1 and
- * stopping there, you can use your last move's momentum to jump over K+1 and
- * land on wall K+2. If boost(K+2) - boost(K+2) > 1, the extra energy you would
- * get by choosing to land on wall K+2 would work to your advantage.
- *
- * Furthermore, you can stick to walls like Spider-Man, which means that if you
- * have current energy M, you can jump across a trough of any width < M and
- * begin climbing the wall you at the same height from which you jumped. But you
- * only pick up boost energy from the top of a wall, not from the sides. Even
- * though you can re-use it for climbing the side of a wall, you must have
- * landed on the flat just before the wall to have picked it up in the first
- * place.
- *
- * You start at index 0, and the "end" of array A is at A.length (that is, one
- * address *after* the last value in the array (so "end" is like the end()
- * method in STL or C++'s standard collections).
+ * EITHER WAY: You start at index 0, and the "end" of array A is at A.length
+ * (that is, one address *after* the last value in the array (so "end" is like
+ * the end() method in STL or C++'s standard collections).
  *
  * Numerical examples, where the obstacle course is represented by a list of
  * pairs of the form (height, boost):
