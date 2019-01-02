@@ -1003,10 +1003,11 @@ public class Sx
     
 
 	public static void debugArray(int nDbg, ArrayList<Integer> A) {
-        if (nDbg > sDbg)
+        if (nDbg > sDbg) {
             for (int j = 0; j < A.size(); j++)
                 printListInt(A.get(j));
         	puts();
+        }
 	}
     
     public static void debugArray(int nDbg, int AA[][])
