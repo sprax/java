@@ -1001,6 +1001,14 @@ public class Sx
             putsArray(A);
     }
     
+
+	public static void debugArray(int nDbg, ArrayList<Integer> A) {
+        if (nDbg > sDbg)
+            for (int j = 0; j < A.size(); j++)
+                printListInt(A.get(j));
+        	puts();
+	}
+    
     public static void debugArray(int nDbg, int AA[][])
     {
         if (nDbg > sDbg)
@@ -1032,7 +1040,7 @@ public class Sx
     public static void formln(String formats, Object... args)
     {
         System.out.format(formats, args);
-        puts()
+        puts();
     }
     
     public static void debug(int nDbg, String formats, Object... args)
@@ -1286,4 +1294,5 @@ public class Sx
     {
         unit_test(1);
     }
+
 }
