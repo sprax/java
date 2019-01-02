@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
-import sprax.questions.BinPack;
+import sprax.iq.BinPack;
 import sprax.test.Sz;
 
 /**

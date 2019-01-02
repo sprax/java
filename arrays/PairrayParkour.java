@@ -119,7 +119,7 @@ public abstract class PairrayParkour {
 		mMinPath = new ArrayList<Integer>();
 	}
 
-	protected int mDbg = 1;
+	protected int mDbg = 0;
 	protected int mLength, mMinMoves;
 	protected int mHoists[], mBoosts[];
 	protected ArrayList<Integer> mMinPath;
@@ -179,10 +179,10 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		mMinMoves = Integer.MAX_VALUE;
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		int minHops = countHopsRBF(0, 0, 0, path);
-		if (minHops != path.size()) {
-			Sx.format("-------------------------- hops %d != %d path.size\n", minHops, path.size());
+		if (minHops != mMinPath.size()) {
+			Sx.format("-------------------------- hops %d != %d path.size\n", minHops, mMinPath.size());
 		}
-		// assert (minHops == mMinMoves);
+		assert (minHops == mMinMoves);
 		Sx.putsArray("mMinPath: ", mMinPath);
 		return mMinMoves;
 	}
@@ -224,10 +224,10 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		int j = 0;
 		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++)
 		{
-			Sx.format("%3d %3d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
+			dbgf("%3d %3d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
 					  j++, mCalls, idx, xse, hopsBeg, pos, rmNrg);
 			if (pos >= mLength) {
-				Sx.format("RET %3d, OVER END, hops=%3d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsBeg, idx, xse, rmNrg);
+				dbgf("RET %3d, OVER END, hops=%3d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsBeg, idx, xse, rmNrg);
 				Sx.putsArray("PATH: ", path);
 				return hopsBeg; // arrived at the end! Return how many moves it took.
 			}
@@ -237,9 +237,9 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			if (posUp > 0) {
 				rmNrg -= posUp;
 				if (rmNrg < 0) {
-					Sx.format("[[[ %3d: posUp %d > %d rmNrg, boost %d, hoist %d\n", mCalls, posUp, rmNrg+posUp, boost, hoist); //FIXME
+					dbgf("[[[ %3d: posUp %d > %d rmNrg, boost %d, hoist %d\n", mCalls, posUp, rmNrg+posUp, boost, hoist); //FIXME
 					if (boost <= 0) {
-						Sx.format("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
+						dbgf("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
 					}
@@ -254,8 +254,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 					int mod = relHeight % boost;
 					ergsNow = mod > 0 ? boost - mod : 0;
 					if (idx != 0) {
-						Sx.format("]]] %3d: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsBeg %d\n"
-								 , mCalls, posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsBeg);						
+						dbgf("]]] %3d: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsBeg %d\n"
+							, mCalls, posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsBeg);						
 					}
 				} else {
 					ergsNow = rmNrg;
@@ -264,23 +264,23 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			}
 			//////////////////////////////////////////////// RECURSE:
 			hopsEnd = countHopsRBF(pos, ergsNow, hopsNow, path);
-			Sx.format("res %3d, hopsEnd=%d hopsBeg=%d at idx=%d, xse=%d, rem=%d, path: ", mCalls, hopsEnd, hopsBeg, idx, xse, rmNrg);
+			dbgf("res %3d, hopsEnd=%d hopsBeg=%d at idx=%d, xse=%d, rem=%d, path: ", mCalls, hopsEnd, hopsBeg, idx, xse, rmNrg);
 			Sx.putsArray(path);
 			if (mMinMoves > hopsEnd) {
 				mMinMoves = hopsEnd; // save the new minimum
-				Sx.putsArray("BEST PATH SO FAR: ", path);
-				Sx.format("MIN %3d, FOUND MIN hops=%3d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsBeg, idx, xse, rmNrg);
+				//Sx.putsArray("BEST PATH SO FAR: ", path);
+				dbgf(0, "MIN %3d, FOUND MIN hops=%3d, idx=%d, xse=%d, energy=%d. ", mCalls, hopsBeg, idx, xse, rmNrg);
 				Sx.putsArray("PATH: ", path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				//// return mMinMoves; // too greedy!
 			}
-			//// Sx.format(">>>>>>>>>>>>>>>: PRET: ");
+			//// dbgf(">>>>>>>>>>>>>>>: PRET: ");
 			//// Sx.putsArray(path);
 			path.subList(begSize, path.size()).clear();
-			//// Sx.format("<<<<<<<<<<<<<<<: POST: ");
+			//// dbgf("<<<<<<<<<<<<<<<: POST: ");
 			//// Sx.putsArray(path);
 		}
-		Sx.format("RET %3d END, idx %d, msf=%d\n", mCalls, idx, mMinMoves);
+		dbgf("RET %3d END, idx %d, msf=%d\n", mCalls, idx, mMinMoves);
 		return hopsEnd;
 	}
 }
