@@ -1,4 +1,4 @@
-package sprax.numbers;
+package sprax.number;
 
 /**
  * FibonacciInt32 -- just the first 42 Fibonacci numbers, which fit into a 32-bit int.
@@ -52,9 +52,6 @@ public class Constants
     static public final double NAT_LOG_2 = Math.log(2.0); // Note:  log2(x) = log(x)/log(2)
     static public final double LOG_2_RECIP = 1.0/Math.log(2.0); // Note:  log2(x) = log(x) * (1/log(2))
     
-    
-
-
 
 
     public static int unit_test(int lvl)

@@ -1,7 +1,6 @@
 package sprax.arrays;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import sprax.sprout.Sx;
@@ -120,6 +119,7 @@ public abstract class PairrayParkour {
 		mMinPath = new ArrayList<Integer>();
 	}
 
+	protected int mDbg = 1;
 	protected int mLength, mMinMoves;
 	protected int mHoists[], mBoosts[];
 	protected ArrayList<Integer> mMinPath;
@@ -136,6 +136,19 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 	@Override
 	protected void showCounts() {
 		Sx.puts("calls: " + mCalls + "  loops: " + mLoops);
+	}
+
+	protected void dbgs(String str) {
+		Sx.debug(mDbg, "%s\n", str);
+	}
+
+	protected void dbgf(int nDbg, String formats, Object... args) {
+		Sx.debug(nDbg, "%3d ", mCalls);
+		Sx.debug(nDbg, formats, args);
+	}
+
+	protected void dbgf(String formats, Object... args) {
+		dbgf(mDbg, formats, args);
 	}
 }
 
@@ -180,21 +193,19 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		// Count this call and check arguments:
 		mCalls++;
 		assert(idx < mLength);
-//		if (hops != path.size()) {
-//			Sx.format("!!!!!!!!!!!!!!!!!!!!!!!!!! hops %d != %d path.size\n", hops, path.size());
-//		}
 		assert(hops == path.size());
 
 		if (idx != 0) {
-			Sx.format("\nBEG %3d, idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
-					 , mCalls, idx, xse, mHoists[idx], mBoosts[idx], mMinMoves, hops);
+			dbgf("");
+			dbgf(mDbg, "BEG idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
+			    , mCalls, idx, xse, mHoists[idx], mBoosts[idx], mMinMoves, hops);
 			Sx.putsArray(path);
 		}
 
 		// Short circuit if this path would be longer than the min already found:
 		int hopsBeg = hops + 1;
 		if (hopsBeg > mMinMoves) { // A shorter path was already found.
-			Sx.format("RET %3d, idx %d AT TOP BECAUSE hops %d > %d mMinMoves, path: ", mCalls, idx, hopsBeg, mMinMoves);
+			dbgf("RET %3d, idx %d AT TOP BECAUSE hops %d > %d mMinMoves, path: ", mCalls, idx, hopsBeg, mMinMoves);
 			Sx.putsArray(path);
 			return Integer.MAX_VALUE;
 		}

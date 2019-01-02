@@ -1029,6 +1029,12 @@ public class Sx
         System.out.format(formats, args);
     }
     
+    public static void formln(String formats, Object... args)
+    {
+        System.out.format(formats, args);
+        puts()
+    }
+    
     public static void debug(int nDbg, String formats, Object... args)
     {
         if (nDbg > sDbg)
