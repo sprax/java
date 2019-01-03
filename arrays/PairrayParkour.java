@@ -161,20 +161,20 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 		Sx.debug(mDebug);
 	}
 
-	protected void dbgf(int nDbg, String formats, Object... args) {
-		Sx.debug(nDbg, "%3d ", mCalls);
+	protected void dbgs(int nDbg, String formats, Object... args) {
+		Sx.debug(nDbg, "%4d ", mCalls);
 		Sx.debug(nDbg, formats, args);
 	}
 
-	protected void dbgf(String formats, Object... args) {
-		dbgf(mDebug, formats, args);
+	protected void dbgs(String formats, Object... args) {
+		dbgs(mDebug, formats, args);
 	}
 
-	protected void dbgf(int nDbg, final ArrayList<Integer> path) {
+	protected void dbgs(int nDbg, final ArrayList<Integer> path) {
 		Sx.debugArray(nDbg, path);
 	}
 
-	protected void dbgf(ArrayList<Integer> path) {
+	protected void dbgs(ArrayList<Integer> path) {
 		Sx.debugArray(mDebug, path);
 	}
 
@@ -222,53 +222,51 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 	int countHopsRBF(int idx, int xse, int hops, ArrayList<Integer> path)
 	{
 		// Count this call and check arguments:
-		mCalls++;
+		int myCall = mCalls++;
 		assert(idx < mLength);
 		assert(hops == path.size());
 
 		dbgs("");
-		dbgf(mDebug+1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
+		dbgs(mDebug+1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d\t path: "
 				, idx, xse, mHoists[idx], mBoosts[idx], mMoves, hops);
-		dbgf(mDebug+1, path);
+		dbgs(mDebug+1, path);
 
 		// Short circuit if this path would be longer than the min already found:
 		int hopsBeg = hops + 1;
 		if (hopsBeg > mMoves) { // A shorter path was already found.
-			dbgf("CUT: idx %d AT TOP BECAUSE hops %d > %d mMoves,  path: ", idx, hopsBeg, mMoves);
-			dbgf(path);
+			dbgs("CUT: idx %d AT TOP BECAUSE hops %d > %d mMoves,  path: ", idx, hopsBeg, mMoves);
+			dbgs(path);
 			return Integer.MAX_VALUE;
 		}
 
 		// Look for a new path to the end:
 		int hopsEnd = Integer.MAX_VALUE; // Default to dead-end or "infinite" signal.
 		path.add(idx);
-		int begSize = path.size();
 		int boost = mBoosts[idx];
 		int hoist = mHoists[idx];
 		int maxUp = hoist;
 
 		mLoops++;
-		// Sx.format("CALLED B M=%d, idx %d, xse %d, hops %d, hoist %d, boost %d\n", mCalls, idx, xse, hops, hoist, boost);
-
 		int j = 0;
 		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++)
 		{
-			dbgf("J=%d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
+			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
 				j++, idx, xse, hopsBeg, pos, rmNrg);
 			if (pos >= mLength) {
-				dbgf("RET: OVER END, hops=%3d, idx=%d, xse=%d, energy=%d. ", hopsBeg, idx, xse, rmNrg);
-				dbgf(path);
+				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, energy=%d. ", hopsBeg, idx, xse, rmNrg);
+				dbgs(path);
 				return hopsBeg; // arrived at the end! Return how many moves it took.
 			}
 			int hopsNow = hopsBeg;
 			int ergsNow = rmNrg;
-			int posUp = mHoists[pos] - maxUp; // shortcut
+			int posUp = mHoists[pos] - maxUp;
 			if (posUp > 0) {
 				maxUp += posUp;
 				if (posUp > rmNrg) {
-					dbgf(mDebug+0, "climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist); //FIXME
+					dbgs(mDebug+1, "climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
 					if (boost <= 0) {
-						dbgf("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
+						dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
+							, mCalls, idx, rmNrg, boost);
 						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
 					}
@@ -282,10 +280,8 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 					// Set total remaining energy: 0 if we must stop at the top (i.e. not climb/jump through
 					// the last portion of this wall to a later wall) -OR- ergsNow to allow climb-through:
 					rmNrg = 0;			// rmNrg = ergsNow; <-- Is this the only change we would need to make?
-					if (idx != 0) {
-						dbgf(mDebug+1, "climb END: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, hops: %d + %d\n"
-							, posUp, rmNrg, boost, hoist, idx, xse, hopsBeg, climbMoves);
-					}
+					dbgs(mDebug+1, "climb END: posUp %d, boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
+						, posUp, boost, ergsNow, idx, mHoists[pos], hopsBeg, climbMoves);
 				} else {
 					rmNrg -= posUp;		// subtract the energy it takes to surmount highest obstacle
 					ergsNow = rmNrg;	// energy available now in the non-climbing case
@@ -293,22 +289,19 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			}
 			/////////////////////////////////////////// RECURSE:
 			hopsEnd = countHopsRBF(pos, ergsNow, hopsNow, path);
-			dbgf("res, hopsEnd=%d hopsBeg=%d at idx=%d, xse=%d, rem=%d, path: ", hopsEnd, hopsBeg, idx, xse, rmNrg);
-			dbgf(path);
+			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
+					, myCall, hopsBeg, hopsEnd, idx, xse, rmNrg);
+			dbgs(mDebug+1, path);
 			if (mMoves > hopsEnd) {
 				mMoves = hopsEnd; // save the new minimum
-				dbgf(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
-				dbgf(mDebug+1, path);
+				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
+				dbgs(mDebug+1, path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				//// return mMoves; // too greedy!
 			}
-			//// dbgf(">>>>>>>>>>>>>>>: PRET: ");
-			//// dbgf(path);
-			path.subList(begSize, path.size()).clear();
-			//// dbgf("<<<<<<<<<<<<<<<: POST: ");
-			//// dbgf(path);
+			path.subList(hopsBeg, path.size()).clear();
 		}
-		dbgf("END, idx %d, min moves so far: %d\n", idx, mMoves);
+		dbgs("END, idx %d, min moves so far: %d\n", idx, mMoves);
 		return hopsEnd;
 	}
 }
