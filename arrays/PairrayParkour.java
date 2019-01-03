@@ -202,7 +202,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 
 	@Override
 	public int countHops() {
-		mDebug = 0;
+		mDebug = 1;
 		mCalls = 0;
 		mLoops = 0;
 		mMoves = Integer.MAX_VALUE;
@@ -226,9 +226,9 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		assert(hops == path.size());
 
 		dbgs("");
-		dbgf(mDebug + 1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
+		dbgf(mDebug+1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
 				, idx, xse, mHoists[idx], mBoosts[idx], mMoves, hops);
-		dbgf(mDebug + 1, path);
+		dbgf(mDebug+1, path);
 
 		// Short circuit if this path would be longer than the min already found:
 		int hopsBeg = hops + 1;
@@ -264,62 +264,33 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			int posUp = mHoists[pos] - maxUp; // shortcut
 			if (posUp > 0) {
 				maxUp += posUp;
-				if (true) {		// FIXME!!!!
-					////rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
-					if (posUp > rmNrg) {
-						dbgf("climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist); //FIXME
-						if (boost <= 0) {
-							dbgf("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
-							path.remove(path.size() - 1);
-							return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
-						}
-						int relHeight = posUp - rmNrg;
-						//posUp -= rmNrg;               // remaining vertical distance to the top
-						int climbMoves = (int)Math.ceil((float)relHeight / boost);
-						hopsNow = hopsBeg + climbMoves; // how many more boosted climbing moves to the top
-						path.addAll(Collections.nCopies(climbMoves, pos));
-						
-						// excess energy upon arrival at the top:
-						int mod = relHeight % boost;
-						ergsNow = mod > 0 ? boost - mod : 0;
-						rmNrg = 0;	// Must stop at the top, not climb/jump through the last portion of this wall to another
-						if (idx != 0) {
-							dbgf("climb END: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsBeg %d\n"
-								, posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsBeg);						
-						}
-					} else {
-						rmNrg -= posUp;
-						ergsNow = rmNrg;
+				if (posUp > rmNrg) {
+					dbgf(mDebug+0, "climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist); //FIXME
+					if (boost <= 0) {
+						dbgf("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg, boost);
+						path.remove(path.size() - 1);
+						return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
+					}
+					posUp -= rmNrg;             	// vertical distance to the top after using all remaining energy
+					int climbMoves = (int)Math.ceil((float)posUp / boost);
+					hopsNow = hopsBeg + climbMoves; // how many more boosted climbing moves to the top
+					path.addAll(Collections.nCopies(climbMoves, pos));
+					// Compute excess energy upon arrival at the top:
+					int mod = posUp % boost;
+					ergsNow = mod > 0 ? boost - mod : 0;
+					// Set total remaining energy: 0 if we must stop at the top (i.e. not climb/jump through
+					// the last portion of this wall to a later wall) -OR- ergsNow to allow climb-through:
+					rmNrg = 0;			// rmNrg = ergsNow; <-- Is this the only change we would need to make?
+					if (idx != 0) {
+						dbgf(mDebug+1, "climb END: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, hops: %d + %d\n"
+							, posUp, rmNrg, boost, hoist, idx, xse, hopsBeg, climbMoves);
 					}
 				} else {
-					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
-					if (rmNrg < 0) {
-						dbgf("climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg+posUp, boost, hoist); //FIXME
-						if (boost <= 0) {
-							dbgf("RET %3d at idx %d because energy %d & boost: %d DEAD END\n", mCalls, idx, rmNrg+posUp, boost);
-							path.remove(path.size() - 1);
-							return Integer.MAX_VALUE; // dead end: cannot jump or climb the top
-						}
-						int relHeight = -rmNrg;
-						hoist += rmNrg + posUp; 	  // use up all energy before re-using boost to climb
-						//posUp -= rmNrg;               // remaining vertical distance to the top
-						int climbMoves = (int)Math.ceil((float)relHeight / boost);
-						hopsNow = hopsBeg + climbMoves; // how many more boosted climbing moves to the top
-						path.addAll(Collections.nCopies(climbMoves, pos));
-						
-						// excess energy upon arrival at the top:
-						int mod = relHeight % boost;
-						ergsNow = mod > 0 ? boost - mod : 0;
-						if (idx != 0) {
-							dbgf("climb END: posUp %d ? %d rmNrg, boost %d, hoist %d, idx %d, xse %d, climbMoves (relHeight/boost) %d, hopsBeg %d\n"
-								, posUp, rmNrg, boost, hoist, idx, xse, climbMoves, hopsBeg);						
-						}
-					} else {					
-						ergsNow = rmNrg;
-					}
+					rmNrg -= posUp;		// subtract the energy it takes to surmount highest obstacle
+					ergsNow = rmNrg;	// energy available now in the non-climbing case
 				}
 			}
-			//////////////////////////////////////////////// RECURSE:
+			/////////////////////////////////////////// RECURSE:
 			hopsEnd = countHopsRBF(pos, ergsNow, hopsNow, path);
 			dbgf("res, hopsEnd=%d hopsBeg=%d at idx=%d, xse=%d, rem=%d, path: ", hopsEnd, hopsBeg, idx, xse, rmNrg);
 			dbgf(path);
@@ -336,7 +307,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			//// dbgf("<<<<<<<<<<<<<<<: POST: ");
 			//// dbgf(path);
 		}
-		dbgf("END, idx %d, msf=%d\n", idx, mMoves);
+		dbgf("END, idx %d, min moves so far: %d\n", idx, mMoves);
 		return hopsEnd;
 	}
 }
