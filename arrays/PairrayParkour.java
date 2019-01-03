@@ -209,9 +209,10 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		int minHops = countHopsRBF(0, 0, 0, path);
 		if (minHops != mMinPath.size()) {
+			// The last path tried need not be optimal, so this is OK:
 			Sx.debug(mDebug-1, "NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
 		}
-		assert (minHops == mMoves);
+		assert(minHops == mMoves);
 		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
 		Sx.debugArray(mDebug+2, mMinPath);
 		return mMoves;
