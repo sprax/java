@@ -133,8 +133,8 @@ public abstract class PairrayParkour {
 		mMinPath = new ArrayList<Integer>();
 	}
 
-	protected int mDbg = 1;
-	protected int mLength, mMinMoves;
+	protected int mDebug = 1;
+	protected int mLength, mMoves;
 	protected int mHoists[], mBoosts[];
 	protected ArrayList<Integer> mMinPath;
 }
@@ -153,11 +153,11 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 	}
 
 	protected void dbgs(String str) {
-		Sx.debug(mDbg, "%s\n", str);
+		Sx.debug(mDebug, "%s\n", str);
 	}
 
 	protected void dbgs() {
-		Sx.debug(mDbg);
+		Sx.debug(mDebug);
 	}
 
 	protected void dbgf(int nDbg, String formats, Object... args) {
@@ -166,7 +166,7 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 	}
 
 	protected void dbgf(String formats, Object... args) {
-		dbgf(mDbg, formats, args);
+		dbgf(mDebug, formats, args);
 	}
 
 	protected void dbgf(int nDbg, final ArrayList<Integer> path) {
@@ -174,7 +174,7 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 	}
 
 	protected void dbgf(ArrayList<Integer> path) {
-		Sx.debugArray(mDbg, path);
+		Sx.debugArray(mDebug, path);
 	}
 
 }
@@ -201,19 +201,19 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 
 	@Override
 	public int countHops() {
-		mDbg = 1;
+		mDebug = 0;
 		mCalls = 0;
 		mLoops = 0;
-		mMinMoves = Integer.MAX_VALUE;
+		mMoves = Integer.MAX_VALUE;
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		int minHops = countHopsRBF(0, 0, 0, path);
 		if (minHops != mMinPath.size()) {
-			Sx.format("NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
+			Sx.debug(mDebug-1, "NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
 		}
-		assert (minHops == mMinMoves);
-		Sx.format("MinMoves %2d: ", mMinMoves);
-		Sx.putsArray(mMinPath);
-		return mMinMoves;
+		assert (minHops == mMoves);
+		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
+		Sx.debugArray(mDebug+2, mMinPath);
+		return mMoves;
 	}
 
 
@@ -225,14 +225,14 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		assert(hops == path.size());
 
 		dbgs("");
-		dbgf(mDbg + 1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
-				, idx, xse, mHoists[idx], mBoosts[idx], mMinMoves, hops);
-		dbgf(mDbg + 1, path);
+		dbgf(mDebug + 1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d,  path: "
+				, idx, xse, mHoists[idx], mBoosts[idx], mMoves, hops);
+		dbgf(mDebug + 1, path);
 
 		// Short circuit if this path would be longer than the min already found:
 		int hopsBeg = hops + 1;
-		if (hopsBeg > mMinMoves) { // A shorter path was already found.
-			dbgf("CUT: idx %d AT TOP BECAUSE hops %d > %d mMinMoves,  path: ", idx, hopsBeg, mMinMoves);
+		if (hopsBeg > mMoves) { // A shorter path was already found.
+			dbgf("CUT: idx %d AT TOP BECAUSE hops %d > %d mMoves,  path: ", idx, hopsBeg, mMoves);
 			dbgf(path);
 			return Integer.MAX_VALUE;
 		}
@@ -293,12 +293,12 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			hopsEnd = countHopsRBF(pos, ergsNow, hopsNow, path);
 			dbgf("res, hopsEnd=%d hopsBeg=%d at idx=%d, xse=%d, rem=%d, path: ", hopsEnd, hopsBeg, idx, xse, rmNrg);
 			dbgf(path);
-			if (mMinMoves > hopsEnd) {
-				mMinMoves = hopsEnd; // save the new minimum
-				dbgf(mDbg+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
-				dbgf(mDbg+1, path);
+			if (mMoves > hopsEnd) {
+				mMoves = hopsEnd; // save the new minimum
+				dbgf(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
+				dbgf(mDebug+1, path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
-				//// return mMinMoves; // too greedy!
+				//// return mMoves; // too greedy!
 			}
 			//// dbgf(">>>>>>>>>>>>>>>: PRET: ");
 			//// dbgf(path);
@@ -306,7 +306,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			//// dbgf("<<<<<<<<<<<<<<<: POST: ");
 			//// dbgf(path);
 		}
-		dbgf("END, idx %d, msf=%d\n", idx, mMinMoves);
+		dbgf("END, idx %d, msf=%d\n", idx, mMoves);
 		return hopsEnd;
 	}
 }
@@ -446,19 +446,22 @@ class PairrayParkourTest {
 		int begTrial = 0;					// expectP.length - 2;
 		int endTrial = expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
-			int heights[] = hobos[2 * j];
+			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
-			Sx.putsArray("heights:   ", heights);
-			Sx.putsArray("boosts:    ", boosts);
-			PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward(heights, boosts);
-			PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst(heights, boosts);
-			PairrayParkour ParkourNDP = new PairrayParkourDynamicProgrammingFwd(heights, boosts);
+			Sx.format("\n\t  Test Course %d:\n", j);
+			Sx.format("Hoists %3d: ", hoists.length);
+			Sx.putsArray(hoists);
+			Sx.format("Boosts %3d: ", boosts.length);
+			Sx.putsArray(boosts);
+			PairrayParkour ParkourGRF = new PairrayParkourGreedyRecurseForward(hoists, boosts);
+			PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst(hoists, boosts);
+			PairrayParkour ParkourNDP = new PairrayParkourDynamicProgrammingFwd(hoists, boosts);
 			PairrayParkour parkours[] = {
 					// ParkourGRF,
 					ParkourRBF,
 					// ParkourNDP,
 			};
-			numWrong += testParkours(parkours, heights, boosts, expectP[j], expectH[j]);
+			numWrong += testParkours(parkours, hoists, boosts, expectP[j], expectH[j]);
 		}
 
 		Sz.end(testName, numWrong);
