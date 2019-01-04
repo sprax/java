@@ -245,13 +245,12 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 		int boost = mBoosts[idx];
 		int hoist = mHoists[idx];
 		int maxUp = hoist;
+		boolean mustStopBecauseClimbed = false;
 
 		mLoops++;
 		int j = 0;
 		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++)
 		{
-			boolean mustStopBecauseClimbed = false;
-
 			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
 				j++, idx, xse, hopsBeg, pos, rmNrg);
 			if (pos >= mLength) {
@@ -259,7 +258,6 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 				dbgs(path);
 				return hopsBeg; // arrived at the end! Return how many moves it took.
 			}
-			int hopsNow = hopsBeg;
 			int posUp = mHoists[pos] - maxUp;
 			if (posUp > 0) {
 				maxUp += posUp;
@@ -281,14 +279,14 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 					rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
 
 					// Add the boosted climbing moves to the total and to the path list
-					hopsNow = hopsBeg + climbMoves;
+					hopsBeg = hopsBeg + climbMoves;
 					path.addAll(Collections.nCopies(climbMoves, pos));
 					dbgs(mDebug+1, "climb END: posUp %d, boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
 						, posUp, boost, rmNrg, idx, mHoists[pos], hopsBeg, climbMoves);
 				}
 			}
 			/////////////////////////////////////////// RECURSE:
-			hopsEnd = countHopsRBF(pos, rmNrg, hopsNow, path);
+			hopsEnd = countHopsRBF(pos, rmNrg, hopsBeg, path);
 			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
 					, myCall, hopsBeg, hopsEnd, idx, xse, rmNrg);
 			dbgs(mDebug+1, path);
@@ -301,6 +299,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			}
 			path.subList(hopsBeg, path.size()).clear();
 			if (mustStopBecauseClimbed) {
+				mustStopBecauseClimbed = false;
 				break;
 			}
 		}
