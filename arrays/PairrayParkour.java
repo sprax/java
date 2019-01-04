@@ -1,6 +1,7 @@
 package sprax.arrays;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import sprax.sprout.Sx;
@@ -166,7 +167,7 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 		Sx.debug(nDbg, formats, args);
 	}
 
-	protected void dbgs(String formats, Object... args) {
+	protected void dbgs(final String formats, Object... args) {
 		dbgs(mDebug, formats, args);
 	}
 
@@ -174,7 +175,15 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 		Sx.debugArray(nDbg, path);
 	}
 
+	protected void dbgs(int nDbg, final int[] path) {
+		Sx.debugArray(nDbg, path);
+	}
+
 	protected void dbgs(ArrayList<Integer> path) {
+		Sx.debugArray(mDebug, path);
+	}
+
+	protected void dbgs(int[] path) {
 		Sx.debugArray(mDebug, path);
 	}
 
@@ -202,7 +211,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 
 	@Override
 	public int countHops() {
-		mDebug = 1;
+		mDebug = 0;
 		mCalls = 0;
 		mLoops = 0;
 		mMoves = Integer.MAX_VALUE;
@@ -313,38 +322,120 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 /**
  * Naive: Re-tries steps and may have to back-track out from greed.
  */
-class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive {
+class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
+{
+	protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
+	
+	
 	protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
 		super(heights, boosts);
 	}
 
 	@Override
 	public int countHops() {
-		// reset counts
+		mDebug = 0;
 		mCalls = 0;
 		mLoops = 0;
-		return countHopsGreedyRecurse(0, 0, 0, Integer.MAX_VALUE - 1);
+		mMoves = Integer.MAX_VALUE;
+		int path[] = new int[mLength];
+		int moves = countHopsGreedyRecurse(0, 0, 0, path);
+		//assert(moves == mMoves);
+		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
+		Sx.debugArray(mDebug+2, mMinPath);
+		return mMoves;
 	}
 
-	int countHopsGreedyRecurse(int pos, int xse, int numHopsNow, int minNumHops) {
-		mCalls++;
+	int countHopsGreedyRecurse(int idx, int xse, int hops, int path[])
+	{
+		// Count this call and check arguments:
+		int myCall = mCalls++;
+		assert(idx < mLength);
+		assert(hops < path.length);
 
-		if (numHopsNow > minNumHops)
-			return numHopsNow; // return failure ASAP
+		dbgs("");
+		dbgs(mDebug+1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d\t path: "
+				, idx, xse, mHoists[idx], mBoosts[idx], mMoves, hops);
+		dbgs(mDebug+1, path);
 
-		if (pos >= mLength) {
-			return numHopsNow; // return success
+		// Short circuit if this path would be longer than the min already found:
+		int hopsBeg = hops + 1;
+		if (hopsBeg > mMoves) { // A shorter path was already found.
+			dbgs("CUT: idx %d AT TOP BECAUSE hops %d > %d mMoves,  path: ", idx, hopsBeg, mMoves);
+			dbgs(path);
+			return Integer.MAX_VALUE;
 		}
+
+		// Look for a new path to the end:
+		int hopsNow = hopsBeg;			 // FIXME: swap these?
+		int hopsEnd = Integer.MAX_VALUE; // Default to dead-end or "infinite" signal.
+		path[hops] = idx;
+		int boost = mBoosts[idx];
+		int hoist = mHoists[idx];
+		int maxUp = hoist;
+		boolean mustStopBecauseClimbed = false;
+
 		mLoops++;
-//		for (int rmNrg = xse + mBoosts[pos]; rmNrg > 0; rmNrg--)
-//		{
-//			if (rmNrg < mHoists)
-//			
-//			int hopsEnd = countHopsGreedyRecurse(pos + hopSize, numHopsNow + 1, minNumHops);
-//			if (minNumHops > hopsEnd)
-//				minNumHops = hopsEnd;
-//		}
-		return minNumHops;
+		int j = 0;
+		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++)
+		{
+			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
+				j++, idx, xse, hopsBeg, pos, rmNrg);
+			if (pos >= mLength) {
+				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, energy=%d. ", hopsBeg, idx, xse, rmNrg);
+				dbgs(path);
+				return hopsBeg; // arrived at the end! Return how many moves it took.
+			}
+			int posUp = mHoists[pos] - maxUp;
+			if (posUp > 0) {
+				maxUp += posUp;
+				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
+				if (rmNrg < 0) {
+					dbgs(mDebug+1, "climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
+					if (boost <= 0) {
+						dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
+							, mCalls, idx, rmNrg, boost);
+						//// path.remove(path.size() - 1);	// caller should just reduce its "working length"
+						return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
+					}
+					mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
+
+					// -rmNrg is now the vertical distance to the top after using all remaining energy
+					// Use to calculate the number of boost climbing moves and the excess at the top
+					int climbMoves = (int)Math.ceil((float)-rmNrg / boost);
+					int mod = -rmNrg % boost;
+					rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
+
+					// Add the boosted climbing moves to the total and to the path list
+					hopsNow = hopsBeg + climbMoves;
+					for (int k = hopsBeg; k < hopsNow; k++) {
+						path[k] = pos;
+					}
+					// path.addAll(Collections.nCopies(climbMoves, pos));
+					dbgs(mDebug+1, "climb END: posUp %d, boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
+						, posUp, boost, rmNrg, idx, mHoists[pos], hopsNow, climbMoves);
+				}
+			}
+			/////////////////////////////////////////// RECURSE:
+			hopsEnd = countHopsGreedyRecurse(pos, rmNrg, hopsNow, path);
+			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
+					, myCall, hopsBeg, hopsEnd, idx, xse, rmNrg);
+			dbgs(mDebug+1, path);
+			if (mMoves > hopsEnd) {
+				mMoves = hopsEnd; // save the new minimum
+				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsNow, idx, xse, rmNrg);	// FIXME: clarify
+				dbgs(mDebug+1, path);
+				mIntPath = Arrays.copyOf(path, hopsEnd);      // copy the new minimal path
+				//// mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
+				//// return mMoves; // too greedy!
+			}
+			hopsNow = hopsBeg;	//// path.subList(hopsBeg, path.size()).clear();	// caller should just reduce its "working length"
+			if (mustStopBecauseClimbed) {
+				mustStopBecauseClimbed = false;
+				break;
+			}
+		}
+		dbgs("END, idx %d, min moves so far: %d\n", idx, mMoves);
+		return hopsEnd;
 	}
 }
 
@@ -454,7 +545,7 @@ class PairrayParkourTest {
 			PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst(hoists, boosts);
 			PairrayParkour ParkourNDP = new PairrayParkourDynamicProgrammingFwd(hoists, boosts);
 			PairrayParkour parkours[] = {
-					// ParkourGRF,
+					ParkourGRF,
 					ParkourRBF,
 					// ParkourNDP,
 			};
