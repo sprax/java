@@ -325,11 +325,12 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
 	protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
-	
-	
+
+
 	protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
 		super(heights, boosts);
 	}
+
 
 	@Override
 	public int countHops() {
@@ -337,20 +338,25 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		mCalls = 0;
 		mLoops = 0;
 		mMoves = Integer.MAX_VALUE;
-		int path[] = new int[mLength];
-		int moves = countHopsGreedyRecurse(0, 0, 0, path);
-		//assert(moves == mMoves);
+		ArrayList<Integer> path = new ArrayList<Integer>();
+		int minHops = countHopsGreedyRecurse(0, 0, 0, path);
+		if (minHops != mMinPath.size()) {
+			// The last path tried need not be optimal, so this is OK:
+			Sx.debug(mDebug-1, "NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
+		}
+		assert(minHops == mMoves);
 		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
 		Sx.debugArray(mDebug+2, mMinPath);
 		return mMoves;
 	}
 
-	int countHopsGreedyRecurse(int idx, int xse, int hops, int path[])
+
+	int countHopsGreedyRecurse(int idx, int xse, int hops, ArrayList<Integer> path)
 	{
 		// Count this call and check arguments:
 		int myCall = mCalls++;
 		assert(idx < mLength);
-		assert(hops < path.length);
+		assert(hops == path.size());
 
 		dbgs("");
 		dbgs(mDebug+1, "BEG: idx %d, xse %d, hgt %d, bst %d, msf %d, hops %d\t path: "
@@ -366,9 +372,8 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		}
 
 		// Look for a new path to the end:
-		int hopsNow = hopsBeg;			 // FIXME: swap these?
 		int hopsEnd = Integer.MAX_VALUE; // Default to dead-end or "infinite" signal.
-		path[hops] = idx;
+		path.add(idx);
 		int boost = mBoosts[idx];
 		int hoist = mHoists[idx];
 		int maxUp = hoist;
@@ -394,7 +399,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 					if (boost <= 0) {
 						dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
 							, mCalls, idx, rmNrg, boost);
-						//// path.remove(path.size() - 1);	// caller should just reduce its "working length"
+						path.remove(path.size() - 1);
 						return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
 					}
 					mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
@@ -406,29 +411,25 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 					rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
 
 					// Add the boosted climbing moves to the total and to the path list
-					hopsNow = hopsBeg + climbMoves;
-					for (int k = hopsBeg; k < hopsNow; k++) {
-						path[k] = pos;
-					}
-					// path.addAll(Collections.nCopies(climbMoves, pos));
+					hopsBeg = hopsBeg + climbMoves;
+					path.addAll(Collections.nCopies(climbMoves, pos));
 					dbgs(mDebug+1, "climb END: posUp %d, boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
-						, posUp, boost, rmNrg, idx, mHoists[pos], hopsNow, climbMoves);
+						, posUp, boost, rmNrg, idx, mHoists[pos], hopsBeg, climbMoves);
 				}
 			}
 			/////////////////////////////////////////// RECURSE:
-			hopsEnd = countHopsGreedyRecurse(pos, rmNrg, hopsNow, path);
+			hopsEnd = countHopsGreedyRecurse(pos, rmNrg, hopsBeg, path);
 			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
 					, myCall, hopsBeg, hopsEnd, idx, xse, rmNrg);
 			dbgs(mDebug+1, path);
 			if (mMoves > hopsEnd) {
 				mMoves = hopsEnd; // save the new minimum
-				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsNow, idx, xse, rmNrg);	// FIXME: clarify
+				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
 				dbgs(mDebug+1, path);
-				mIntPath = Arrays.copyOf(path, hopsEnd);      // copy the new minimal path
-				//// mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
+				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				//// return mMoves; // too greedy!
 			}
-			hopsNow = hopsBeg;	//// path.subList(hopsBeg, path.size()).clear();	// caller should just reduce its "working length"
+			path.subList(hopsBeg, path.size()).clear();
 			if (mustStopBecauseClimbed) {
 				mustStopBecauseClimbed = false;
 				break;
@@ -438,6 +439,8 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		return hopsEnd;
 	}
 }
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
