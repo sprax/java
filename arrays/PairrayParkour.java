@@ -203,6 +203,11 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour {
 
 /**
  * Naive: Repeats many steps
+ * Means: For each reachable wall top, try to complete a path forward to the end
+ * of the course from each further reachable wall top.  Prune only by comparing
+ * the current number of moves with the instance-wide minimum found so far.  
+ * Order: Always try the nearest neighbor first.
+ * Optimizations: climbing moves are computed in-place, not by recursion.
  */
 class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 	protected PairrayParkourRecurseBreadthFirst(int[] heights, int[] boosts) {
@@ -321,6 +326,18 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 
 /**
  * Naive: Re-tries steps and may have to back-track out from greed.
+ * Means: At each wall top, find all reachable walls ahead and try
+ * to complete a minimal path to the end by trying the farthest one
+ * first.  Greed succeeds if shorter paths are found first, before
+ * paths starting from nearer neighbors are even tried.
+ * Order: greedy = farthest first, i.e. descending distance.
+ * Note: If climbing moves are computed in place, the additional
+ * moves should make those paths sort later than any non-climbing
+ * moves.  In effect, climbing might as well be done recursively,
+ * since they would sort to the end of the call anyway.
+ * Can the main step be made tail-recursive?
+ * Go are far as you can with recursing, recurse, then back up and
+ * recurse again from there.
  */
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
@@ -379,9 +396,25 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		int maxUp = hoist;
 		boolean mustStopBecauseClimbed = false;
 
+		// First loop to find the biggest move we can make from here:
+		int maxPos = idx;
+		for (int rmNrg = xse + boost; --rmNrg >= 0 && maxPos < mLength; maxPos++) {
+			int posUp = mHoists[maxPos] - maxUp;
+			if (posUp > 0) {
+				maxUp += posUp;
+				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
+			}
+			if (rmNrg < 0) {
+				break;
+			}
+		}
+
+
+		// Second loop to try all locally available moves in descending order of reach
+
 		mLoops++;
 		int j = 0;
-		for (int rmNrg = xse + boost, pos = idx + 1; --rmNrg >= 0; pos++)
+		for (int rmNrg = xse + boost, pos = maxPos; --rmNrg >= 0 && pos >= idx; pos--)
 		{
 			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
 				j++, idx, xse, hopsBeg, pos, rmNrg);
