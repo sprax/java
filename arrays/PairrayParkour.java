@@ -342,10 +342,12 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
 	protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
+	protected int[] mNbXse;		// Allocate once; bigger than needed, but no GC.
 
 
 	protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
 		super(heights, boosts);
+		mNbXse = new int[mLength];
 	}
 
 
@@ -404,52 +406,60 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				maxUp += posUp;
 				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 			}
+			mNbXse[maxPos] = rmNrg;
 			if (rmNrg < 0) {
 				break;
 			}
 		}
 
+		// TODO: eliminate special casing:
+		if (maxPos == idx) {			// We can only climb here, not go past...
+			mNbXse[idx] = boost;		// TODO: can we use only mBoosts, not mNbXse?
+			assert(false);
+		}
+		
+		dbgs(mDebug+3, "1st LOOP: xse %d => range %d to %d,  hops %d, near xse: ", xse, idx, maxPos, hopsBeg);
+		dbgs(mDebug+3, mNbXse);
 
 		// Second loop to try all locally available moves in descending order of reach
 
 		mLoops++;
 		int j = 0;
-		for (int rmNrg = xse + boost, pos = maxPos; --rmNrg >= 0 && pos >= idx; pos--)
+		for (int pos = maxPos; pos > idx; pos--)
 		{
-			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d, rmNrg=%d\n",
-				j++, idx, xse, hopsBeg, pos, rmNrg);
+			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d\n",
+				j++, idx, xse, hopsBeg, pos);
 			if (pos >= mLength) {
-				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, energy=%d. ", hopsBeg, idx, xse, rmNrg);
+				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, path: ", hopsBeg, idx, xse);
 				dbgs(path);
 				return hopsBeg; // arrived at the end! Return how many moves it took.
 			}
-			int posUp = mHoists[pos] - maxUp;
-			if (posUp > 0) {
-				maxUp += posUp;
-				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
-				if (rmNrg < 0) {
-					dbgs(mDebug+1, "climb BEG: posUp %d > %d rmNrg, boost %d, hoist %d\n", posUp, rmNrg, boost, hoist);
-					if (boost <= 0) {
-						dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
-							, mCalls, idx, rmNrg, boost);
-						path.remove(path.size() - 1);
-						return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
-					}
-					mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
-
-					// -rmNrg is now the vertical distance to the top after using all remaining energy
-					// Use to calculate the number of boost climbing moves and the excess at the top
-					int climbMoves = (int)Math.ceil((float)-rmNrg / boost);
-					int mod = -rmNrg % boost;
-					rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
-
-					// Add the boosted climbing moves to the total and to the path list
-					hopsBeg = hopsBeg + climbMoves;
-					path.addAll(Collections.nCopies(climbMoves, pos));
-					dbgs(mDebug+1, "climb END: posUp %d, boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
-						, posUp, boost, rmNrg, idx, mHoists[pos], hopsBeg, climbMoves);
+			int rmNrg = mNbXse[pos];
+			if (rmNrg <= 0) {
+				dbgs(mDebug+1, "climb BEG: rmNrg %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
+				if (boost <= 0) {
+					dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
+						, mCalls, idx, rmNrg, boost);
+					path.remove(path.size() - 1);
+					return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
 				}
+				mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
+
+				// -rmNrg is now the vertical distance to the top after using all remaining energy
+				// Use to calculate the number of boost climbing moves and the excess at the top
+				int climbMoves = (int)Math.ceil((float)-rmNrg / boost);
+				int mod = -rmNrg % boost;
+				rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
+
+				// Add the boosted climbing moves to the total and to the path list
+				hopsBeg = hopsBeg + climbMoves;
+				path.addAll(Collections.nCopies(climbMoves, pos));
+				dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
+					, boost, rmNrg, idx, mHoists[pos], hopsBeg, climbMoves);
 			}
+				
+				
+				
 			/////////////////////////////////////////// RECURSE:
 			hopsEnd = countHopsGreedyRecurse(pos, rmNrg, hopsBeg, path);
 			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
@@ -523,7 +533,10 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
 
 }
 
-class PairrayParkourTest {
+class PairrayParkourTest
+{
+	public static final int mInf = Integer.MAX_VALUE;
+	
 	public static int test_PairrayParkour(PairrayParkour arrayParkour, int heights[], int boosts[],
 			int expectedMinNumHops) {
 		String className = arrayParkour.getClass().getSimpleName();
@@ -548,24 +561,26 @@ class PairrayParkourTest {
 		int numWrong = 0;
 		
 		int hobos[][] = {
-			{ 1, 2, 3 }, 	// expected Parkour answer: 3, only one way
-			{ 2, 2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
-			{ 1, 2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
-			{ 2, 2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
-			{ 1, 7, 6 },				// P 3
-			{ 3, 1, 1 },				// H 1
-			{ 1, 6, 4, 5, 3 },			// P 5
-			{ 2, 2, 0, 1, 2 },			// H 1
-			{ 1, 7, 4, 4, 3 },			// P 4
-			{ 4, 0, 1, 2, 0 },			// H 2
-			{ 0, 2, 1, 2, 1, 3, 2, 5, 1, },			// expected answer: 5
-			{ 4, 1, 1, 4, 0, 2, 1, 1, 1, },			// expected answer: 3
-			{ 0, 1, 0, 3, 8, 2, 1, 7, 3, 4, 8, 5, 0, 4, 7, 7, 3, 8, 10, 5, 8, },
-			{ 3, 2, 4, 2, 2, 1, 0, 3, 2, 6, 3, 3, 9, 1, 7, 1, 8, 3,  1, 3, 0, },
+				{ 0 }, 			// expected Parkour answer: NONE
+				{ 0 },			// expected Ahopper answer: NONE
+				{ 1, 2, 3 }, 	// expected Parkour answer: 3, only one way
+				{ 2, 2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
+				{ 1, 2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
+				{ 2, 2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
+				{ 1, 7, 6 },				// P 3
+				{ 3, 1, 1 },				// H 1
+				{ 1, 6, 4, 5, 3 },			// P 5
+				{ 2, 2, 0, 1, 2 },			// H 1
+				{ 1, 7, 4, 4, 3 },			// P 4
+				{ 4, 0, 1, 2, 0 },			// H 2
+				{ 0, 2, 1, 2, 1, 3, 2, 5, 1, },			// expected answer: 5
+				{ 4, 1, 1, 4, 0, 2, 1, 1, 1, },			// expected answer: 3
+				{ 0, 1, 0, 3, 8, 2, 1, 7, 3, 4, 8, 5, 0, 4, 7, 7, 3, 8, 10, 5, 8, },
+				{ 3, 2, 4, 2, 2, 1, 0, 3, 2, 6, 3, 3, 9, 1, 7, 1, 8, 3,  1, 3, 0, },
 		};
 		
-		int expectP[] = { 3, 3, 4, 6, 5, 6, 12 };
-		int expectH[] = { 2, 3, 1, 1, 2, 0,  0 };
+		int expectP[] = { mInf, 3, 3, 4, 6, 5, 6, 12 };
+		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
 		int begTrial = 0;					// expectP.length - 2;
 		int endTrial = expectP.length; 		// begTrial + 2; //
