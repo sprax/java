@@ -226,7 +226,6 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			// The last path tried need not be optimal, so this is OK:
 			Sx.debug(mDebug-1, "NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
 		}
-		assert(minHops == mMoves);
 		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
 		Sx.debugArray(mDebug+2, mMinPath);
 		return mMoves;
@@ -363,7 +362,6 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			// The last path tried need not be optimal, so this is OK:
 			Sx.debug(mDebug-1, "NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
 		}
-		assert(minHops == mMoves);
 		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
 		Sx.debugArray(mDebug+2, mMinPath);
 		return mMoves;
@@ -396,11 +394,11 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		int boost = mBoosts[idx];
 		int hoist = mHoists[idx];
 		int maxUp = hoist;
-		boolean mustStopBecauseClimbed = false;
 
 		// First loop to find the biggest non-climbing move we can make from here:
 		int maxPos = idx;
-		for (int rmNrg = xse + boost; maxPos < mLength; maxPos++) {
+		int rmNrg = xse + boost;
+		for (;;) {
 			int posUp = mHoists[maxPos] - maxUp;
 			if (posUp > 0) {
 				maxUp += posUp;
@@ -410,12 +408,11 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			if (--rmNrg < 0) {
 				break;
 			}
-		}
-
-		// TODO: eliminate special casing:
-		if (maxPos == idx) {			// We can only climb here, not go past...
-			mNbXse[idx] = boost;		// TODO: can we use only mBoosts, not mNbXse?
-			assert(false);
+			if (++maxPos >= mLength) {
+				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, path: ", hopsBeg, idx, xse);
+				dbgs(path);
+				return hopsBeg; // arrived at the end! Return how many moves it took.
+			}
 		}
 		
 		dbgs(mDebug+3, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
@@ -424,44 +421,18 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 
 		// Second loop to try all locally available moves in descending order of reach
 
+		int startPos = maxPos;
+		int relHoist = mNbXse[maxPos];	// Need local copy of member array value
+		if (relHoist < 0) {
+			startPos = maxPos - 1;	// The last move to try will be a climb 
+		}
 		mLoops++;
 		int j = 0;
-		for (int pos = maxPos; pos > idx; pos--)
-		{
+		for (int pos = startPos; pos > idx; pos--) {
 			dbgs("J=%d, idx=%d, xse=%d, hops=%d, pos=%d\n",
 				j++, idx, xse, hopsBeg, pos);
-			if (pos >= mLength) {
-				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, path: ", hopsBeg, idx, xse);
-				dbgs(path);
-				return hopsBeg; // arrived at the end! Return how many moves it took.
-			}
-			int rmNrg = mNbXse[pos] + mBoosts[pos];
-			if (rmNrg <= 0) {
-				dbgs(mDebug+1, "climb BEG: rmNrg %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
-				if (boost <= 0) {
-					dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
-						, mCalls, idx, rmNrg, boost);
-					path.remove(path.size() - 1);
-					return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
-				}
-				////mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
-
-				// -rmNrg is now the vertical distance to the top after using all remaining energy
-				// Use to calculate the number of boost climbing moves and the excess at the top
-				int climbMoves = (int)Math.ceil((float)-rmNrg / boost);
-				int mod = -rmNrg % boost;
-				rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
-
-				// Add the boosted climbing moves to the total and to the path list
-				hopsBeg = hopsBeg + climbMoves;
-				path.addAll(Collections.nCopies(climbMoves, pos));
-				dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
-					, boost, rmNrg, idx, mHoists[pos], hopsBeg, climbMoves);
-			}
-				
-				
-				
-			/////////////////////////////////////////// RECURSE:
+			rmNrg = mNbXse[pos];
+			/////////////////////////////////////////////////// RECURSE:
 			hopsEnd = countHopsGreedyRecurse(pos, rmNrg, hopsBeg, path);
 			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
 					, myCall, hopsBeg, hopsEnd, idx, xse, rmNrg);
@@ -474,9 +445,41 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				//// return mMoves; // too greedy!
 			}
 			path.subList(hopsBeg, path.size()).clear();
-			if (mustStopBecauseClimbed) {
-				mustStopBecauseClimbed = false;
-				break;
+		}
+
+		if (relHoist < 0) {	// Do the climb last
+			rmNrg = relHoist;
+			assert(rmNrg < 0);
+			dbgs(mDebug+1, "climb BEG: rmNrg %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
+			if (boost <= 0) {
+				dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
+					, mCalls, idx, rmNrg, boost);
+				path.remove(path.size() - 1);
+				return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
+			}
+
+			// -rmNrg is now the vertical distance to the top after using all remaining energy
+			// Use to calculate the number of boost climbing moves and the excess at the top
+			int climbMoves = (int)Math.ceil((float)-rmNrg / boost);
+			int mod = -rmNrg % boost;
+			rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
+
+			// Add the boosted climbing moves to the total and to the path list
+			hopsBeg = hopsBeg + climbMoves;
+			dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
+				, boost, rmNrg, idx, mHoists[maxPos], hopsBeg, climbMoves);
+			path.addAll(Collections.nCopies(climbMoves, maxPos));
+			/////////////////////////////////////////////////// RECURSE:
+			hopsEnd = countHopsGreedyRecurse(maxPos, rmNrg, hopsBeg, path);
+			dbgs(mDebug+1, "res %4d, hopsBeg=%d hopsEnd=%d at idx=%d, xse=%d, rem=%d, path: "
+					, myCall, hopsBeg, hopsEnd, idx, xse, rmNrg);
+			dbgs(mDebug+1, path);
+			if (mMoves > hopsEnd) {
+				mMoves = hopsEnd; // save the new minimum
+				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
+				dbgs(mDebug+1, path);
+				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
+				//// return mMoves; // too greedy!
 			}
 		}
 		dbgs("END, idx %d, min moves so far: %d\n", idx, mMoves);
@@ -564,27 +567,27 @@ class PairrayParkourTest
 		int hobos[][] = {
 				{ 0 }, 			// expected Parkour answer: NONE
 				{ 0 },			// expected Ahopper answer: NONE
-				{ 1, 2, 3 }, 	// expected Parkour answer: 3, only one way
-				{ 2, 2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
-				{ 1, 2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
-				{ 2, 2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
-				{ 1, 7, 6 },				// P 3
-				{ 3, 1, 1 },				// H 1
-				{ 1, 6, 4, 5, 3 },			// P 5
-				{ 2, 2, 0, 1, 2 },			// H 1
-				{ 1, 7, 4, 4, 3 },			// P 4
-				{ 4, 0, 1, 2, 0 },			// H 2
-				{ 0, 2, 1, 2, 1, 3, 2, 5, 1, },			// expected answer: 5
-				{ 4, 1, 1, 4, 0, 2, 1, 1, 1, },			// expected answer: 3
-				{ 0, 1, 0, 3, 8, 2, 1, 7, 3, 4, 8, 5, 0, 4, 7, 7, 3, 8, 10, 5, 8, },
-				{ 3, 2, 4, 2, 2, 1, 0, 3, 2, 6, 3, 3, 9, 1, 7, 1, 8, 3,  1, 3, 0, },
+				{ 1,  2, 3 }, 	// expected Parkour answer: 3, only one way
+				{ 2,  2, 2 },	// expected Ahopper answer: 2 (first move 1, not 2)
+				{ 1,  2, 2, 1 }, // expected Parkour answer: 3 (2 ways, via index 2 or 3)
+				{ 2,  2, 1, 1 }, // expected Ahopper answer: 3 (2 ways, via index 1 or 2)
+				{ 1,  9, 6 },				// P 3
+				{ 3,  1, 1 },				// H 1
+				{ 1,  6, 4, 5, 3 },			// P 5
+				{ 2,  2, 0, 1, 2 },			// H 1
+				{ 1, 11, 4, 4, 3 },			// P 4
+				{ 4,  0, 1, 2, 0 },			// H 2
+				{ 0,  2, 1, 2, 1, 3, 2, 5, 1, },			// expected answer: 5
+				{ 4,  1, 1, 4, 0, 2, 1, 1, 1, },			// expected answer: 3
+				{ 0,  1, 0, 3, 8, 2, 1, 7, 3, 4, 8, 5, 0, 4, 7, 7, 3, 8, 10, 5, 8, },
+				{ 3,  2, 4, 2, 2, 1, 0, 3, 2, 6, 3, 3, 9, 1, 7, 1, 8, 3,  1, 3, 0, },
 		};
 		
-		int expectP[] = { mInf, 3, 3, 4, 6, 5, 6, 12 };
+		int expectP[] = { mInf, 3, 3, 4, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 5;					// expectP.length - 2;
-		int endTrial = begTrial + 1;		// expectP.length; 		// begTrial + 2; //
+		int begTrial = 0;					// expectP.length - 1;
+		int endTrial = expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
