@@ -399,11 +399,6 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		int maxPos = idx;
 		int rmNrg = xse + boost;
 		for (;;) {
-			int posUp = mHoists[maxPos] - maxUp;
-			if (posUp > 0) {
-				maxUp += posUp;
-				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
-			}
 			mNbXse[maxPos] = rmNrg;
 			if (--rmNrg < 0) {
 				break;
@@ -412,6 +407,11 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, path: ", hopsBeg, idx, xse);
 				dbgs(path);
 				return hopsBeg; // arrived at the end! Return how many moves it took.
+			}
+			int posUp = mHoists[maxPos] - maxUp;
+			if (posUp > 0) {
+				maxUp += posUp;
+				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 			}
 		}
 		
@@ -583,7 +583,7 @@ class PairrayParkourTest
 				{ 3,  2, 4, 2, 2, 1, 0, 3, 2, 6, 3, 3, 9, 1, 7, 1, 8, 3,  1, 3, 0, },
 		};
 		
-		int expectP[] = { mInf, 3, 3, 4, 6, 6, 6, 12 };
+		int expectP[] = { mInf, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
 		int begTrial = 0;					// expectP.length - 1;
