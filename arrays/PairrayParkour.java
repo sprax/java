@@ -353,7 +353,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 
 	@Override
 	public int countHops() {
-		mDebug = 0;
+		mDebug = 2;
 		mCalls = 0;
 		mLoops = 0;
 		mMoves = Integer.MAX_VALUE;
@@ -398,16 +398,16 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		int maxUp = hoist;
 		boolean mustStopBecauseClimbed = false;
 
-		// First loop to find the biggest move we can make from here:
+		// First loop to find the biggest non-climbing move we can make from here:
 		int maxPos = idx;
-		for (int rmNrg = xse + boost; --rmNrg >= 0 && maxPos < mLength; maxPos++) {
+		for (int rmNrg = xse + boost; maxPos < mLength; maxPos++) {
 			int posUp = mHoists[maxPos] - maxUp;
 			if (posUp > 0) {
 				maxUp += posUp;
 				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 			}
 			mNbXse[maxPos] = rmNrg;
-			if (rmNrg < 0) {
+			if (--rmNrg < 0) {
 				break;
 			}
 		}
@@ -418,7 +418,8 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			assert(false);
 		}
 		
-		dbgs(mDebug+3, "1st LOOP: xse %d => range %d to %d,  hops %d, near xse: ", xse, idx, maxPos, hopsBeg);
+		dbgs(mDebug+3, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
+				, xse, idx, maxPos, maxUp, hopsBeg);
 		dbgs(mDebug+3, mNbXse);
 
 		// Second loop to try all locally available moves in descending order of reach
@@ -434,7 +435,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				dbgs(path);
 				return hopsBeg; // arrived at the end! Return how many moves it took.
 			}
-			int rmNrg = mNbXse[pos];
+			int rmNrg = mNbXse[pos] + mBoosts[pos];
 			if (rmNrg <= 0) {
 				dbgs(mDebug+1, "climb BEG: rmNrg %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
 				if (boost <= 0) {
@@ -443,7 +444,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 					path.remove(path.size() - 1);
 					return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
 				}
-				mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
+				////mustStopBecauseClimbed = true;	// NOTE: if set to false, don't reset hopsNow!!
 
 				// -rmNrg is now the vertical distance to the top after using all remaining energy
 				// Use to calculate the number of boost climbing moves and the excess at the top
@@ -454,7 +455,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				// Add the boosted climbing moves to the total and to the path list
 				hopsBeg = hopsBeg + climbMoves;
 				path.addAll(Collections.nCopies(climbMoves, pos));
-				dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d\n"
+				dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
 					, boost, rmNrg, idx, mHoists[pos], hopsBeg, climbMoves);
 			}
 				
@@ -582,8 +583,8 @@ class PairrayParkourTest
 		int expectP[] = { mInf, 3, 3, 4, 6, 5, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 0;					// expectP.length - 2;
-		int endTrial = expectP.length; 		// begTrial + 2; //
+		int begTrial = 5;					// expectP.length - 2;
+		int endTrial = begTrial + 1;		// expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
