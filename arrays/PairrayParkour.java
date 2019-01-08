@@ -448,9 +448,8 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		}
 
 		if (relHoist < 0) {	// Do the climb last
-			rmNrg = relHoist;
-			assert(rmNrg < 0);
-			dbgs(mDebug+1, "climb BEG: rmNrg %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
+			rmNrg = -relHoist;
+			dbgs(mDebug+1, "climb BEG: rel vert %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
 			if (boost <= 0) {
 				dbgs(mDebug+1, "RET %3d at idx %d because energy %d & boost %d: DEAD END\n"
 					, mCalls, idx, rmNrg, boost);
@@ -458,10 +457,10 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				return Integer.MAX_VALUE; 	// dead end: cannot jump or climb the top
 			}
 
-			// -rmNrg is now the vertical distance to the top after using all remaining energy
+			// rmNrg is now the vertical distance to the top after using all remaining energy
 			// Use to calculate the number of boost climbing moves and the excess at the top
-			int climbMoves = (int)Math.ceil((float)-rmNrg / boost);
-			int mod = -rmNrg % boost;
+			int climbMoves = (int)Math.ceil((float)rmNrg / boost);
+			int mod = rmNrg % boost;
 			rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
 
 			// Add the boosted climbing moves to the total and to the path list
