@@ -305,7 +305,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 			dbgs(mDebug+1, path);
 			if (mMoves > hopsEnd) {
 				mMoves = hopsEnd; // save the new minimum
-				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
+				dbgs(mDebug+1, "FOUND MIN: idx %d, xse %d, rme=%d; hops %d, PATH: ", idx, xse, rmNrg, hopsEnd);
 				dbgs(mDebug+1, path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				//// return mMoves; // too greedy!
@@ -352,7 +352,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 
 	@Override
 	public int countHops() {
-		mDebug = 2;
+		mDebug = 0;
 		mCalls = 0;
 		mLoops = 0;
 		mMoves = Integer.MAX_VALUE;
@@ -414,10 +414,10 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 			}
 		}
-		
-		dbgs(mDebug+3, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
+
+		dbgs(mDebug+1, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
 				, xse, idx, maxPos, maxUp, hopsBeg);
-		dbgs(mDebug+3, mNbXse);
+		dbgs(mDebug+1, mNbXse);
 
 		// Second loop to try all locally available moves in descending order of reach
 
@@ -439,7 +439,8 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			dbgs(mDebug+1, path);
 			if (mMoves > hopsEnd) {
 				mMoves = hopsEnd; // save the new minimum
-				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
+				dbgs(mDebug+1, "FOUND MIN, LOOP J=%d/%d: idx %d, xse %d, rme=%d; hops %d, PATH: "
+						, j, startPos - idx, idx, xse, rmNrg, hopsEnd);
 				dbgs(mDebug+1, path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				//// return mMoves; // too greedy!
@@ -475,7 +476,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			dbgs(mDebug+1, path);
 			if (mMoves > hopsEnd) {
 				mMoves = hopsEnd; // save the new minimum
-				dbgs(mDebug+1, "MIN FOUND: hops %d, idx %d, xse %d, rme=%d; PATH: ", hopsBeg, idx, xse, rmNrg);
+				dbgs(mDebug+1, "FOUND MIN, TOP OF CLIMB: idx %d, xse %d, rme=%d; hops %d, PATH: ", idx, xse, rmNrg, hopsEnd);
 				dbgs(mDebug+1, path);
 				mMinPath = new ArrayList<Integer>(path); // copy the new minimal path
 				//// return mMoves; // too greedy!
@@ -599,13 +600,13 @@ class PairrayParkourTest
 			PairrayParkour ParkourRBF = new PairrayParkourRecurseBreadthFirst(hoists, boosts);
 			PairrayParkour ParkourNDP = new PairrayParkourDynamicProgrammingFwd(hoists, boosts);
 			PairrayParkour parkours[] = {
-					ParkourGRF,
 					ParkourRBF,
+					ParkourGRF,
 					// ParkourNDP,
 			};
 			numWrong += testParkours(parkours, hoists, boosts, expectP[j], expectH[j]);
 		}
-
+		Sx.puts();
 		Sz.end(testName, numWrong);
 		return numWrong;
 	}
