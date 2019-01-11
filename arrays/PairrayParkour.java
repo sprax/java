@@ -189,13 +189,17 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 
 }
 
-abstract class PairrayParkourWithAuxArrays extends PairrayParkour {
+abstract class PairrayParkourWithAuxArrays extends PairrayParkour
+{
 	protected int mMinHops[];
+	protected int mMaxErgs[];
+	protected int mPredecs[];
 
 	// base class Constructor
 	protected PairrayParkourWithAuxArrays(int[] heights, int[] boosts) {
 		super(heights, boosts);
 		mMinHops = new int[mLength];
+		mMaxErgs = new int[mLength];
 	}
 }
 
@@ -340,7 +344,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
  */
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
-	protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
+	////protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
 	protected int[] mNbXse;		// Allocate once; bigger than needed, but no GC.
 
 
@@ -503,7 +507,9 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
 
 		// init aux array
 		for (int j = 1; j < mMinHops.length; j++) { // mMinHops[0] remains 0
-			mMinHops[j] = Integer.MAX_VALUE - 1;
+			mMinHops[j] = Integer.MAX_VALUE;
+			mMaxErgs[j] = mBoosts[j];
+			mPredecs[j] = -1;
 		}
 
 		// init conditions: first hop is special
@@ -514,17 +520,34 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
 			mMinHops[pos] = 1;
 		}
 
-		for (int j = 1; j < mHoists.length; j++) {
-			int maxPos = j + mHoists[j];
-			int hopNum = 1 + mMinHops[j]; // 1 more than min num hops it took to get here.
-			for (int pos = maxPos; pos > j; pos--) { // mMinHops[0] remains 0
-				if (pos >= mHoists.length) {
-					mAssigns += maxPos - pos;
-					return hopNum; // off the end in one more hop
+		for (int idx = 1; idx < mHoists.length; idx++) {
+			int boost = mBoosts[idx];
+			int hoist = mHoists[idx];
+			int maxUp = hoist;
+
+			// First loop to find the biggest non-climbing move we can make from here:
+			int maxPos = idx;
+			int rmNrg = xse + boost;
+			for (;;) {
+				mNbXse[maxPos] = rmNrg;
+				if (--rmNrg < 0) {
+					break;
 				}
-				if (mMinHops[pos] > hopNum)
-					mMinHops[pos] = hopNum;
+				if (++maxPos >= mLength) {
+					dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, path: ", hopsBeg, idx, xse);
+					dbgs(path);
+					return hopsBeg; // arrived at the end! Return how many moves it took.
+				}
+				int posUp = mHoists[maxPos] - maxUp;
+				if (posUp > 0) {
+					maxUp += posUp;
+					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
+				}
 			}
+
+			dbgs(mDebug+1, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
+					, xse, idx, maxPos, maxUp, hopsBeg);
+			dbgs(mDebug+1, mNbXse);
 			mAssigns += mHoists[j]; // still here
 		}
 		return 0;
