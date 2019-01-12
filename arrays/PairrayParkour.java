@@ -117,9 +117,15 @@ import sprax.test.Sz;
  * }
  * </pre>
  */
-public abstract class PairrayParkour {
+public abstract class PairrayParkour
+{
+	protected int mDebug = 1;
+	protected int mLength, mMoves;
+	protected int mHoists[], mBoosts[];
+	protected ArrayList<Integer> mMinPath;
+
 	/** The "interface" method: */
-	public abstract int countHops();
+	public abstract int countHops();	// TODO: Add initial excess energy param for index 0
 
 	/** Show iterations or other measures of complexity */
 	protected abstract void showCounts();
@@ -135,25 +141,6 @@ public abstract class PairrayParkour {
 		mMinPath = new ArrayList<Integer>();
 	}
 
-	protected int mDebug = 1;
-	protected int mLength, mMoves;
-	protected int mHoists[], mBoosts[];
-	protected ArrayList<Integer> mMinPath;
-}
-
-abstract class PairrayParkourRecursive extends PairrayParkour {
-	protected PairrayParkourRecursive(int[] heights, int[] boosts) {
-		super(heights, boosts);
-	}
-
-	protected int mCalls; // times recursive method is called
-	protected int mLoops; // times recursive method begins a loop of calling itself (loops <= calls)
-
-	@Override
-	protected void showCounts() {
-		Sx.puts("calls: " + mCalls + "  loops: " + mLoops);
-	}
-
 	protected void dbgs(String str) {
 		Sx.debug(mDebug, "%s\n", str);
 	}
@@ -163,7 +150,6 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 	}
 
 	protected void dbgs(int nDbg, String formats, Object... args) {
-		Sx.debug(nDbg, "%4d ", mCalls);
 		Sx.debug(nDbg, formats, args);
 	}
 
@@ -186,7 +172,26 @@ abstract class PairrayParkourRecursive extends PairrayParkour {
 	protected void dbgs(int[] path) {
 		Sx.debugArray(mDebug, path);
 	}
+}
 
+abstract class PairrayParkourRecursive extends PairrayParkour {
+	protected PairrayParkourRecursive(int[] heights, int[] boosts) {
+		super(heights, boosts);
+	}
+
+	protected int mCalls; // times recursive method is called
+	protected int mLoops; // times recursive method begins a loop of calling itself (loops <= calls)
+
+	@Override
+	protected void showCounts() {
+		Sx.puts("calls: " + mCalls + "  loops: " + mLoops);
+	}
+
+	@Override
+	protected void dbgs(int nDbg, String formats, Object... args) {
+		Sx.debug(nDbg, "%4d ", mCalls);
+		Sx.debug(nDbg, formats, args);
+	}
 }
 
 abstract class PairrayParkourWithAuxArrays extends PairrayParkour
@@ -493,8 +498,9 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
+/////////////////////////////////////////////////////////////////////////////
+class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
+{
 	protected long mAssigns; // upper bound on the number of assignments to aux array
 
 	PairrayParkourDynamicProgrammingFwd(int heights[], int boosts[]) {
@@ -508,7 +514,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
 		// init aux array
 		for (int j = 1; j < mMinHops.length; j++) { // mMinHops[0] remains 0
 			mMinHops[j] = Integer.MAX_VALUE;
-			mMaxErgs[j] = mBoosts[j];
+			mMaxErgs[j] = Integer.MIN_VALUE;
 			mPredecs[j] = -1;
 		}
 
@@ -520,35 +526,38 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays {
 			mMinHops[pos] = 1;
 		}
 
-		for (int idx = 1; idx < mHoists.length; idx++) {
+		for (int idx = 0; idx < mHoists.length; idx++) {
 			int boost = mBoosts[idx];
 			int hoist = mHoists[idx];
 			int maxUp = hoist;
+			int hopNum = 1 + mMinHops[idx];
 
 			// First loop to find the biggest non-climbing move we can make from here:
 			int maxPos = idx;
-			int rmNrg = xse + boost;
+			int rmNrg = mMaxErgs[idx] + boost;
 			for (;;) {
-				mNbXse[maxPos] = rmNrg;
 				if (--rmNrg < 0) {
 					break;
 				}
 				if (++maxPos >= mLength) {
-					dbgs("RET: OVER END, hops=%3d, idx=%d, xse=%d, path: ", hopsBeg, idx, xse);
-					dbgs(path);
-					return hopsBeg; // arrived at the end! Return how many moves it took.
+					dbgs("RET: OVER END, hops=%3d, idx=%d, rem energy=%d, path TBD: ", hopNum, idx, rmNrg);
+					//dbgs(path);
+					return hopNum; // arrived at the end! Return how many moves it took.
 				}
 				int posUp = mHoists[maxPos] - maxUp;
 				if (posUp > 0) {
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
+
+				mMaxErgs[maxPos] = rmNrg;
+
 			}
 
 			dbgs(mDebug+1, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
-					, xse, idx, maxPos, maxUp, hopsBeg);
-			dbgs(mDebug+1, mNbXse);
-			mAssigns += mHoists[j]; // still here
+					, rmNrg, idx, maxPos, maxUp, hopNum);
+			dbgs(mDebug+1, mMaxErgs);
+			mAssigns += mHoists[idx]; // still here
 		}
 		return 0;
 	}
