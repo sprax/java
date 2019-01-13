@@ -205,6 +205,7 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
 		super(heights, boosts);
 		mMinHops = new int[mLength];
 		mMaxErgs = new int[mLength];
+		mPredecs = new int[mLength];
 	}
 }
 
@@ -530,9 +531,13 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			int boost = mBoosts[idx];
 			int hoist = mHoists[idx];
 			int maxUp = hoist;
-			int hopNum = 1 + mMinHops[idx];
+			int minMv = mMinHops[idx];
+			if (minMv == Integer.MAX_VALUE) {
+				continue;
+			}
+			minMv++;
 
-			// First loop to find the biggest non-climbing move we can make from here:
+			// How far can we move from here?
 			int maxPos = idx;
 			int rmNrg = mMaxErgs[idx] + boost;
 			for (;;) {
@@ -540,26 +545,59 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					break;
 				}
 				if (++maxPos >= mLength) {
-					dbgs("RET: OVER END, hops=%3d, idx=%d, rem energy=%d, path TBD: ", hopNum, idx, rmNrg);
-					//dbgs(path);
-					return hopNum; // arrived at the end! Return how many moves it took.
+					dbgs("OVER END, hops=%3d, idx=%d, rem energy=%d, path TBD: ", minMv, idx, rmNrg);
+					// Arrived at the end.  If it's a new minimum, record it.
+					if (mMoves > minMv) {
+						mMoves = minMv; // save the new minimum
+						dbgs(mDebug+1, "FOUND MIN, idx %d, rme=%d; hops %d", idx, rmNrg, minMv);
 				}
 				int posUp = mHoists[maxPos] - maxUp;
 				if (posUp > 0) {
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
-
-				mMaxErgs[maxPos] = rmNrg;
-
+				if (mMinHops[maxPos] > minMv) {
+					mMinHops[maxPos] = minMv;
+					mMaxErgs[maxPos] = rmNrg;
+				} else if (mMinHops[maxPos] == minMv &&
+					mMaxErgs[maxPos] < rmNrg) {
+					mMaxErgs[maxPos] = rmNrg;
+				}
 			}
 
+			if (rmNrg < 0) {	// Do the climb last
+				if (boost > 0) {
+					rmNrg = -rmNrg;
+					dbgs(mDebug+1, "climb BEG: rel vert %d, boost %d, hoist %d\n", rmNrg, boost, hoist);
+					// rmNrg is now the vertical distance to the top after using all remaining energy
+					// Use to calculate the number of boost climbing moves and the excess at the top
+					int climbMoves = (int)Math.ceil((float)rmNrg / boost);
+					int mod = rmNrg % boost;
+					rmNrg = mod > 0 ? boost - mod : 0;	// excess at the top is the new remaining energy
+
+					// Add the boosted climbing moves to the total and to the path list
+					dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
+						, boost, rmNrg, idx, mHoists[maxPos], minMv, climbMoves);
+					minMv += climbMoves;
+					if (mMinHops[maxPos] > minMv) {
+						mMinHops[maxPos] = minMv;
+						mMaxErgs[maxPos] = rmNrg;
+					} else if (mMinHops[maxPos] == minMv &&
+						mMaxErgs[maxPos] < rmNrg) {
+						mMaxErgs[maxPos] = rmNrg;
+					}					}
+				} else {
+					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
+						, idx, rmNrg, boost);
+				}
+			}
+			dbgs("END, idx %d, min moves so far: %d\n", idx, mMoves);
 			dbgs(mDebug+1, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
-					, rmNrg, idx, maxPos, maxUp, hopNum);
+					, rmNrg, idx, maxPos, maxUp, minMv);
 			dbgs(mDebug+1, mMaxErgs);
 			mAssigns += mHoists[idx]; // still here
 		}
-		return 0;
+		return mMinHops[mLength-1];
 	}
 
 	@Override
@@ -634,7 +672,7 @@ class PairrayParkourTest
 			PairrayParkour parkours[] = {
 					ParkourRBF,
 					ParkourGRF,
-					// ParkourNDP,
+					ParkourNDP,
 			};
 			numWrong += testParkours(parkours, hoists, boosts, expectP[j], expectH[j]);
 		}
