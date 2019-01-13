@@ -550,6 +550,8 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					if (mMoves > minMv) {
 						mMoves = minMv; // save the new minimum
 						dbgs(mDebug+1, "FOUND MIN, idx %d, rme=%d; hops %d", idx, rmNrg, minMv);
+					}
+					break;
 				}
 				int posUp = mHoists[maxPos] - maxUp;
 				if (posUp > 0) {
@@ -585,7 +587,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					} else if (mMinHops[maxPos] == minMv &&
 						mMaxErgs[maxPos] < rmNrg) {
 						mMaxErgs[maxPos] = rmNrg;
-					}					}
+					}
 				} else {
 					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
 						, idx, rmNrg, boost);
