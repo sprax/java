@@ -1010,6 +1010,12 @@ public class Sx
         }
 	}
     
+    public static void debugArray(int nDbg, String preLabel, int A[])
+    {
+        if (nDbg > sDbg)
+            putsArray(preLabel, A);
+    }
+    
     public static void debugArray(int nDbg, int AA[][])
     {
         if (nDbg > sDbg)

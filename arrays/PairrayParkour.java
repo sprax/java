@@ -165,6 +165,10 @@ public abstract class PairrayParkour
 		Sx.debugArray(nDbg, path);
 	}
 
+	protected void dbgs(int nDbg, final String prefix, final int[] path) {
+		Sx.debugArray(nDbg, prefix, path);
+	}
+
 	protected void dbgs(ArrayList<Integer> path) {
 		Sx.debugArray(mDebug, path);
 	}
@@ -566,6 +570,9 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					mMaxErgs[maxPos] = rmNrg;
 				}
 			}
+			dbgs(mDebug+1, "MID: MinHops: ", mMinHops);
+			dbgs(mDebug+1, "MID: MaxErgs: ", mMaxErgs);
+
 
 			if (rmNrg < 0) {	// Do the climb last
 				if (boost > 0) {
