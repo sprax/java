@@ -557,10 +557,6 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			dbgs(mDebug+1, "BEG ITER: idx %d,  boost %d, hoist %d, minMv %d\n"
 					, idx, rmNrg, boost, hoist, minMv);
 
-			mMinPath.add(idx);
-			mMinPath.add(idx);	// FIXME
-			mMinPath.add(idx);
-
 			int maxPos = idx;
 			for (;;) {
 				if (++maxPos >= mLength) {
@@ -584,15 +580,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 				if (--rmNrg < 0) {
 					break;
 				}
-				if (mMinHops[maxPos] > minMv) {
-					mMinHops[maxPos] = minMv;
-					mMaxErgs[maxPos] = rmNrg;
-					mMinPath.set(minMv, maxPos);
-				} else if (mMinHops[maxPos] == minMv &&
-					mMaxErgs[maxPos] < rmNrg) {
-					mMaxErgs[maxPos] = rmNrg;
-					mMinPath.set(minMv, maxPos);
-				}
+				updateMinMaxPath(minMv, rmNrg, maxPos);
 			}
 			dbgs(mDebug+1, "MID: MinHops: ", mMinHops);
 			dbgs(mDebug+1, "MID: MaxErgs: ", mMaxErgs);
@@ -612,15 +600,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
 						, boost, rmNrg, idx, mHoists[maxPos], minMv, climbMoves);
 					minMv += climbMoves;
-					if (mMinHops[maxPos] > minMv) {
-						mMinHops[maxPos] = minMv;
-						mMaxErgs[maxPos] = rmNrg;
-						mMinPath.set(minMv, maxPos);
-					} else if (mMinHops[maxPos] == minMv &&
-						mMaxErgs[maxPos] < rmNrg) {
-						mMaxErgs[maxPos] = rmNrg;
-						mMinPath.set(minMv, maxPos);
-					}
+					updateMinMaxPath(minMv, rmNrg, maxPos);
 				} else {
 					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
 						, idx, rmNrg, boost);
@@ -634,6 +614,22 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		}
 		////showCounts();
 		return mMoves;
+	}
+
+	protected void updateMinMaxPath(int minMv, int rmNrg, int pos)
+	{
+		if (mMinHops[pos] > minMv) {
+			mMinHops[pos] = minMv;
+			mMaxErgs[pos] = rmNrg;
+		} else if (mMinHops[pos] == minMv &&
+			mMaxErgs[pos] < rmNrg) {
+			mMaxErgs[pos] = rmNrg;
+		}
+		if (mMinPath.size() <= minMv) {
+			mMinPath.add(pos);
+		} else {
+			mMinPath.set(minMv, pos);
+		}
 	}
 
 	@Override
@@ -693,8 +689,8 @@ class PairrayParkourTest
 		int expectP[] = { mInf, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 6;					// expectP.length - 1;
-		int endTrial = begTrial + 1;		// expectP.length; 		// begTrial + 2; //
+		int begTrial = 0;					// expectP.length - 1;
+		int endTrial = 7;	// begTrial + 1;		// expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
