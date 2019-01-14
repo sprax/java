@@ -100,7 +100,7 @@ import sprax.test.Sz;
  * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1,2,3)
  * Up & down, 3 moves: [(0, 4), (3, 5), (6, 0), (4, 1), (0, 0)] (skip K = 2)
  * 
- * H/Boost  3   2   4   2   2   1   0   3   2   6   3   3   9   1   7   1   8   3   1   3   0
+ * Height   0   1   0   3   8   2   1   7   3   4   8   5   0   4   7   7   3   8  10   5   8
  * 10                                                                             _____
  * 9                                              _____                           |   |
  * 8                      _____                   |   |                       ____|   |   _____
@@ -112,15 +112,18 @@ import sprax.test.Sz;
  * 2                  |       |___    |                   |   |                               |
  * 1          _____   |           |___|                   |   |                               |
  * 0       ___|   |___|                                   |___|                               |
- * Height   0   1   0   3   8   2   1   7   3   4   8   5   0   4   7   7   3   8  10   5   8
+ * H/Boost  3   2   4   2   2   1   0   3   2   6   3   3   9   1   7   1   8   3   1   3   0
  *   Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20
  * }
  * </pre>
  */
 public abstract class PairrayParkour
 {
+	public static final int SUPER_MAX = Integer.MAX_VALUE;
+	public static final int SUPER_MIN = Integer.MIN_VALUE;
+
 	protected int mDebug = 1;
-	protected int mLength, mMoves;
+	protected int mLength, mMoves = SUPER_MAX;
 	protected int mHoists[], mBoosts[];
 	protected ArrayList<Integer> mMinPath;
 
@@ -524,12 +527,12 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		}
 
 		// init conditions: first hop is special
-		mAssigns = mMinHops.length + mHoists[0]; // worst case is "expected" usual case
-		for (int pos = mHoists[0]; pos > 0; pos--) { // mMinHops[0] remains 0
-			if (pos >= mHoists.length)
-				return 1; // reached the goal in one hop
-			mMinHops[pos] = 1;
-		}
+//		mAssigns = mLength * 3; // worst case is "expected" usual case
+//		for (int pos = mHoists[0]; pos > 0; pos--) { // mMinHops[0] remains 0
+//			if (pos >= mHoists.length)
+//				return 1; // reached the goal in one hop
+//			mMinHops[pos] = 1;
+//		}
 
 		for (int idx = 0; idx < mHoists.length; idx++) {
 			int boost = mBoosts[idx];
@@ -542,18 +545,21 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			minMv++;
 
 			// How far can we move from here?
-			int maxPos = idx;
 			int rmNrg = mMaxErgs[idx] + boost;
+			int maxPos = idx;
+
+			dbgs(mDebug+1, "BEG ITER: idx %d,  boost %d, hoist %d, minMv %d\n"
+					, idx, rmNrg, boost, hoist, minMv);
+
+			
 			for (;;) {
-				if (--rmNrg < 0) {
-					break;
-				}
 				if (++maxPos >= mLength) {
+					minMv++;
 					dbgs("OVER END, hops=%3d, idx=%d, rem energy=%d, path TBD: ", minMv, idx, rmNrg);
 					// Arrived at the end.  If it's a new minimum, record it.
 					if (mMoves > minMv) {
 						mMoves = minMv; // save the new minimum
-						dbgs(mDebug+1, "FOUND MIN, idx %d, rme=%d; hops %d", idx, rmNrg, minMv);
+						dbgs(mDebug+1, "FOUND MIN, idx %d, rme=%d; hops %d\n", idx, rmNrg, minMv);
 					}
 					break;
 				}
@@ -561,6 +567,9 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 				if (posUp > 0) {
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
+				}
+				if (--rmNrg < 0) {
+					break;
 				}
 				if (mMinHops[maxPos] > minMv) {
 					mMinHops[maxPos] = minMv;
@@ -572,7 +581,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			}
 			dbgs(mDebug+1, "MID: MinHops: ", mMinHops);
 			dbgs(mDebug+1, "MID: MaxErgs: ", mMaxErgs);
-
+			dbgs(mDebug+1, "After 1st inner-loop:  rmNrg %d\n", rmNrg);
 
 			if (rmNrg < 0) {	// Do the climb last
 				if (boost > 0) {
@@ -600,13 +609,13 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 						, idx, rmNrg, boost);
 				}
 			}
-			dbgs("END, idx %d, min moves so far: %d\n", idx, mMoves);
-			dbgs(mDebug+1, "1st LOOP: xse %d => range %d to %d, maxUp %d, hops %d, near xse: "
+			dbgs(mDebug+1, "END ITER: xse %d => range %d to %d, maxUp %d, hops %d, mMaxErgs: "
 					, rmNrg, idx, maxPos, maxUp, minMv);
 			dbgs(mDebug+1, mMaxErgs);
-			mAssigns += mHoists[idx]; // still here
+			Sx.puts();
+			////mAssigns += mHoists[idx]; // still here
 		}
-		return mMinHops[mLength-1];
+		return mMoves;
 	}
 
 	@Override
@@ -665,8 +674,8 @@ class PairrayParkourTest
 		int expectP[] = { mInf, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 0;					// expectP.length - 1;
-		int endTrial = expectP.length; 		// begTrial + 2; //
+		int begTrial = 3;					// expectP.length - 1;
+		int endTrial = begTrial + 1;		// expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
