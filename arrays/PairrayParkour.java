@@ -205,14 +205,12 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
 {
 	protected int mMinHops[];
 	protected int mMaxErgs[];
-	protected int mPredecs[];
 
 	// base class Constructor
 	protected PairrayParkourWithAuxArrays(int[] heights, int[] boosts) {
 		super(heights, boosts);
 		mMinHops = new int[mLength];
 		mMaxErgs = new int[mLength];
-		mPredecs = new int[mLength];
 	}
 }
 
@@ -379,11 +377,15 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 			// The last path tried need not be optimal, so this is OK:
 			Sx.debug(mDebug-1, "NOTE: minHops %d != %d mMinPath.size\n", minHops, mMinPath.size());
 		}
-		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
-		Sx.debugArray(mDebug+2, mMinPath);
+		showCounts();
 		return mMoves;
 	}
 
+	@Override
+	public void showCounts() {
+		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
+		Sx.debugArray(mDebug+2, mMinPath);
+	}
 
 	int countHopsGreedyRecurse(int idx, int xse, int hops, ArrayList<Integer> path)
 	{
@@ -518,12 +520,12 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 	@Override
 	public int countHops() {
 		mAssigns = 0;
+		mDebug = 2;
 
 		// init aux array
 		for (int j = 1; j < mMinHops.length; j++) { // mMinHops[0] remains 0
 			mMinHops[j] = Integer.MAX_VALUE;
 			mMaxErgs[j] = Integer.MIN_VALUE;
-			mPredecs[j] = -1;
 		}
 
 		// init conditions: first hop is special
@@ -542,11 +544,12 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			if (minMv == Integer.MAX_VALUE) {
 				continue;
 			}
-			minMv++;
+			if (++minMv > mMoves) {
+				dbgs("CUT early at idx %d cuz minMv %d > %d mMoves\n", idx, minMv, mMoves);
+			}
 
 			// How far can we move from here?
 			int rmNrg = mMaxErgs[idx] + boost;
-			int maxPos = idx;
 			if (rmNrg <= 0) {
 				continue;
 			}
@@ -554,7 +557,11 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			dbgs(mDebug+1, "BEG ITER: idx %d,  boost %d, hoist %d, minMv %d\n"
 					, idx, rmNrg, boost, hoist, minMv);
 
-			
+			mMinPath.add(idx);
+			mMinPath.add(idx);	// FIXME
+			mMinPath.add(idx);
+
+			int maxPos = idx;
 			for (;;) {
 				if (++maxPos >= mLength) {
 					minMv++;
@@ -562,8 +569,11 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					// Arrived at the end.  If it's a new minimum, record it.
 					if (mMoves > minMv) {
 						mMoves = minMv; // save the new minimum
-						dbgs(mDebug+1, "FOUND MIN, idx %d, rme=%d; hops %d\n", idx, rmNrg, minMv);
+						dbgs(mDebug+1, "FOUND MIN, idx %d, rme=%d; hops %d, path: ", idx, rmNrg, minMv);
+						dbgs(mMinPath);
 					}
+
+					Sx.puts();
 					break;
 				}
 				int posUp = mHoists[maxPos] - maxUp;
@@ -577,9 +587,11 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 				if (mMinHops[maxPos] > minMv) {
 					mMinHops[maxPos] = minMv;
 					mMaxErgs[maxPos] = rmNrg;
+					mMinPath.set(minMv, maxPos);
 				} else if (mMinHops[maxPos] == minMv &&
 					mMaxErgs[maxPos] < rmNrg) {
 					mMaxErgs[maxPos] = rmNrg;
+					mMinPath.set(minMv, maxPos);
 				}
 			}
 			dbgs(mDebug+1, "MID: MinHops: ", mMinHops);
@@ -603,9 +615,11 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					if (mMinHops[maxPos] > minMv) {
 						mMinHops[maxPos] = minMv;
 						mMaxErgs[maxPos] = rmNrg;
+						mMinPath.set(minMv, maxPos);
 					} else if (mMinHops[maxPos] == minMv &&
 						mMaxErgs[maxPos] < rmNrg) {
 						mMaxErgs[maxPos] = rmNrg;
+						mMinPath.set(minMv, maxPos);
 					}
 				} else {
 					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
@@ -618,14 +632,16 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			Sx.puts();
 			////mAssigns += mHoists[idx]; // still here
 		}
+		////showCounts();
 		return mMoves;
 	}
 
 	@Override
 	protected void showCounts() {
-		Sx.puts("aux assigns: " + mAssigns);
+		////Sx.puts("aux assigns: " + mAssigns);
+		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
+		Sx.debugArray(mDebug+2, mMinPath);
 	}
-
 }
 
 class PairrayParkourTest
@@ -677,8 +693,8 @@ class PairrayParkourTest
 		int expectP[] = { mInf, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 0;					// expectP.length - 1;
-		int endTrial = expectP.length; 		// begTrial + 2; //
+		int begTrial = 6;					// expectP.length - 1;
+		int endTrial = begTrial + 1;		// expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
@@ -692,8 +708,8 @@ class PairrayParkourTest
 			PairrayParkour ParkourNDP = new PairrayParkourDynamicProgrammingFwd(hoists, boosts);
 			PairrayParkour parkours[] = {
 					ParkourRBF,
-					ParkourGRF,
 					ParkourNDP,
+					ParkourGRF,
 			};
 			numWrong += testParkours(parkours, hoists, boosts, expectP[j], expectH[j]);
 		}
