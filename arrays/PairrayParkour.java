@@ -547,6 +547,9 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			// How far can we move from here?
 			int rmNrg = mMaxErgs[idx] + boost;
 			int maxPos = idx;
+			if (rmNrg <= 0) {
+				continue;
+			}
 
 			dbgs(mDebug+1, "BEG ITER: idx %d,  boost %d, hoist %d, minMv %d\n"
 					, idx, rmNrg, boost, hoist, minMv);
@@ -674,8 +677,8 @@ class PairrayParkourTest
 		int expectP[] = { mInf, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 3;					// expectP.length - 1;
-		int endTrial = begTrial + 1;		// expectP.length; 		// begTrial + 2; //
+		int begTrial = 0;					// expectP.length - 1;
+		int endTrial = expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
