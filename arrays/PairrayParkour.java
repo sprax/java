@@ -44,17 +44,18 @@ import sprax.test.Sz;
  * have current energy M, you can jump across a trough of any width < M and
  * begin climbing the wall you at the same height from which you jumped, plus
  * any excess energy you had at the start of the jump. But you only pick up
- * boost energy from the top of a wall, not from the sides. So the boost you can
- * re-use it for climbing the side of a wall comes from the top of the wall
- * where you jumped, not where you are now (i.e., not from the top of the wall
- * you are trying to surmount, nor necessarily from the flat just before the
- * wall you are climbing.
+ * boost energy from the top of a wall, not from the sides. So the boost that
+ * you can re-use for climbing the side of a wall comes from the top of the wall
+ * where you jumped, not where you are now, if they are different.  It does not
+ * come from the top of the wall you are trying to surmount, nor necessarily 
+ * from the flat just before the wall you are climbing.
  *
- * Sometimes you will be forced to climb, not just run or jump. If your current
- * energy is less than the relative height of the next wall, and your current
- * location's boost is positive, you will need to re-use that boost in more than
- * one move to surmount that next wall. But if the local boost is zero or less,
- * then you are stuck and cannot progress. That's game over -- you lose.
+ * Sometimes you will be forced to climb, not just run or jump. If your remaining
+ * energy at your current location is positive but less than the relative height
+ * of the next, and your current location's boost is positive, then you can (and
+ * must) re-use that boost in more than one move to surmount that next wall.
+ * But if the local boost is zero or less, then you are stuck and cannot progress.
+ * That's game over -- you lose.
  *
  * For example, let's say you bring excess energy 3 to the top of some wall at
  * index K, which then gives you boost energy 4. Your current energy becomes 3 +
@@ -62,6 +63,14 @@ import sprax.test.Sz;
  * short of 10 = 30 - 20, so it will take you two boosted moves to surmount wall
  * K+1.
  *
+ * In general, the boost always comes from where you started the move.
+ * There may be more than one way to climb a wall; it depends on the boost from
+ * where you jump and/or start climbing.  If you have enough remaining energy
+ * to to jump to a wall, as in energy >= 1 on the space before it, you can jump
+ * and climb.  If your energy is (or would be) 0 just before the wall, then you
+ * cannot jump start the climb, but must stop at the space before and climb using
+ * boost alone.
+ * 
  * ALTERNATIVE A (implemented for reference): You *MUST* stop there with an
  * excess of 1 unit (3 + 2*4 - 10), and add to that 1 to whatever boost you find
  * there. In other words, if you are climbing a vertical wall, you cannot change
@@ -231,7 +240,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 
 	@Override
 	public int countHops() {
-		mDebug = 2;
+		mDebug = 0;
 		mCalls = 0;
 		mLoops = 0;
 		ArrayList<Integer> path = new ArrayList<Integer>();
@@ -524,7 +533,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 	@Override
 	public int countHops() {
 		mAssigns = 0;
-		mDebug = 0;
+		mDebug = 2;
 
 		// init aux array
 		for (int j = 1; j < mMinHops.length; j++) { // mMinHops[0] remains 0
@@ -578,10 +587,10 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
-				if (--rmNrg < 0) {
+				updateMinMaxPath(minMv, rmNrg, maxPos);
+				if (--rmNrg <= 0) {
 					break;
 				}
-				updateMinMaxPath(minMv, rmNrg, maxPos);
 			}
 			dbgs(mDebug+1, "MID: MinHops: ", mMinHops);
 			dbgs(mDebug+1, "MID: MaxErgs: ", mMaxErgs);
