@@ -524,10 +524,12 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 /////////////////////////////////////////////////////////////////////////////
 class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 {
-	protected long mAssigns; // upper bound on the number of assignments to aux array
+	protected long 	mAssigns; // upper bound on the number of assignments to aux array
+	protected int[]	mPredecs; // predecessor indix array
 
 	PairrayParkourDynamicProgrammingFwd(int heights[], int boosts[]) {
 		super(heights, boosts);
+		mPredecs = new int[mLength];
 	}
 
 	@Override
@@ -539,6 +541,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		for (int j = 1; j < mMinHops.length; j++) { // mMinHops[0] remains 0
 			mMinHops[j] = SUPER_MAX;
 			mMaxErgs[j] = SUPER_MIN;
+			mPredecs[j] = -1;
 		}
 
 		mMinPath.add(0);
@@ -628,21 +631,18 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		return mMoves;
 	}
 
-	protected void updateMinMaxPath(int pos, int minMv, int rmNrg)
+	protected void updateMinMaxPath(int pos, int minMv, int rmNrg, int idxPre)
 	{
 		dbgs("++++++++++++++++++++++++++++++++++++ update: Sz %d, minMv %d, rmNrg %d, pos %d\n"
 			, mMinPath.size(),  minMv, rmNrg, pos);
 		if (mMinHops[pos] > minMv) {
 			mMinHops[pos] = minMv;
 			mMaxErgs[pos] = rmNrg;
+			mPredecs[pos] = idxPre;
 		} else if (mMinHops[pos] == minMv &&
 			mMaxErgs[pos] < rmNrg) {
 			mMaxErgs[pos] = rmNrg;
-		}
-		if (mMinPath.size() <= minMv) {
-			mMinPath.add(pos);
-		} else {
-			mMinPath.set(minMv, pos);
+			mPredecs[pos] = idxPre;
 		}
 	}
 
