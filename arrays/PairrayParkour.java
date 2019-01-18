@@ -531,7 +531,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 	}
 
 	@Override
-	public int countHops() {
+	public int countHops() {	/// index-priority
 		mAssigns = 0;
 		mDebug = 2;
 
@@ -541,6 +541,8 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			mMaxErgs[j] = SUPER_MIN;
 		}
 
+		mMinPath.add(0);
+		
 		// init conditions: first hop is special
 //		mAssigns = mLength * 3; // worst case is "expected" usual case
 //		for (int pos = mHoists[0]; pos > 0; pos--) { // mMinHops[0] remains 0
@@ -587,7 +589,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
-				updateMinMaxPath(minMv, rmNrg, maxPos);
+				updateMinMaxPath(maxPos, minMv, rmNrg);
 				if (--rmNrg <= 0) {
 					break;
 				}
@@ -610,7 +612,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
 						, boost, rmNrg, idx, mHoists[maxPos], minMv, climbMoves);
 					minMv += climbMoves;
-					updateMinMaxPath(minMv, rmNrg, maxPos);
+					updateMinMaxPath(maxPos, minMv, rmNrg);
 				} else {
 					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
 						, idx, rmNrg, boost);
@@ -626,8 +628,10 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		return mMoves;
 	}
 
-	protected void updateMinMaxPath(int minMv, int rmNrg, int pos)
+	protected void updateMinMaxPath(int pos, int minMv, int rmNrg)
 	{
+		dbgs("++++++++++++++++++++++++++++++++++++ update: Sz %d, minMv %d, rmNrg %d, pos %d\n"
+			, mMinPath.size(),  minMv, rmNrg, pos);
 		if (mMinHops[pos] > minMv) {
 			mMinHops[pos] = minMv;
 			mMaxErgs[pos] = rmNrg;
