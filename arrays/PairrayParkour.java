@@ -570,8 +570,8 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 				break;
 			}
 
-			dbgs(mDebug+1, "BEG ITER: idx %d,  boost %d, hoist %d, minMv %d\n"
-					, idx, rmNrg, boost, hoist, minMv);
+			dbgs(mDebug+1, "BEG ITER: idx %d, rmNrg %d,  boost %d, hoist %d, WHAT %d, minMv %d\n"
+					, idx, rmNrg, boost, hoist, mHoists[idx], minMv);
 
 			int maxPos = idx;
 			for (;;) {
@@ -592,7 +592,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
-				updateMinMaxPath(maxPos, minMv, rmNrg);
+				updateMinMaxPath(maxPos, minMv, rmNrg, idx);
 				if (--rmNrg <= 0) {
 					break;
 				}
@@ -615,7 +615,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
 						, boost, rmNrg, idx, mHoists[maxPos], minMv, climbMoves);
 					minMv += climbMoves;
-					updateMinMaxPath(maxPos, minMv, rmNrg);
+					updateMinMaxPath(maxPos, minMv, rmNrg, idx);
 				} else {
 					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
 						, idx, rmNrg, boost);
