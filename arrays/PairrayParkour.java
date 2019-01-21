@@ -560,7 +560,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			int maxUp = hoist;
 			int minMv = mMinHops[idx];
 			if (++minMv >= mMoves) {
-				dbgs("CUT early at idx %d cuz minMv %d > %d mMoves\n", idx, minMv, mMoves);
+				dbgs("CUT early at idx %d cuz minMv %d >= %d mMoves\n", idx, minMv, mMoves);
 			}
 
 			// How far can we move from here?
@@ -592,8 +592,8 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
-				updateMinMaxPath(maxPos, minMv, rmNrg, idx);
-				if (--rmNrg <= 0) {
+				updateMinMaxPath(idx, maxPos, minMv, --rmNrg);
+				if (rmNrg <= 0) {
 					break;
 				}
 			}
@@ -615,7 +615,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					dbgs(mDebug+1, "climb END: boost %d, ergs %d, idx %d, new ht %d, hops: %d + %d climbing\n"
 						, boost, rmNrg, idx, mHoists[maxPos], minMv, climbMoves);
 					minMv += climbMoves;
-					updateMinMaxPath(maxPos, minMv, rmNrg, idx);
+					updateMinMaxPath(idx, maxPos, minMv, rmNrg);
 				} else {
 					dbgs(mDebug+1, "No climbing at idx %d because energy %d & boost %d: DEAD END\n"
 						, idx, rmNrg, boost);
@@ -631,11 +631,11 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		return mMoves;
 	}
 
-	protected void updateMinMaxPath(int pos, int minMv, int rmNrg, int idxPre)
+	protected void updateMinMaxPath(int idxPre, int pos, int minMv, int rmNrg)
 	{
-		dbgs("++++++++++++++++++++++++++++++++++++ update: Sz %d, minMv %d, rmNrg %d, pos %d\n"
-			, mMinPath.size(),  minMv, rmNrg, pos);
-		if (mMinHops[pos] > minMv) {
+		dbgs("++++++++++++++++++++++++++++++++++++ update: idxPre %d, pos %d,  minMv %d, rmNrg %d\n"
+			, idxPre, pos, minMv, rmNrg);
+		if (mMinHops[pos] > minMv && rmNrg >= 0) {
 			mMinHops[pos] = minMv;
 			mMaxErgs[pos] = rmNrg;
 			mPredecs[pos] = idxPre;
@@ -706,7 +706,7 @@ class PairrayParkourTest
 		int expectH[] = { mInf, 1, 2, 3, 1, 1, 2, 0,  0 };
 
 		int begTrial = 0;					// expectP.length - 1;
-		int endTrial = 3;	// begTrial + 1;		// expectP.length; 		// begTrial + 2; //
+		int endTrial = expectP.length; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
