@@ -592,7 +592,10 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 					maxUp += posUp;
 					rmNrg -= posUp;		// Always subtract the energy it takes to surmount highest obstacle
 				}
-				updateMinMaxPath(idx, maxPos, minMv, --rmNrg);
+				if (--rmNrg < 0) {
+					break;
+				}
+				updateMinMaxPath(idx, maxPos, minMv, rmNrg);
 				if (rmNrg <= 0) {
 					break;
 				}
@@ -635,7 +638,8 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 	{
 		dbgs("++++++++++++++++++++++++++++++++++++ update: idxPre %d, pos %d,  minMv %d, rmNrg %d\n"
 			, idxPre, pos, minMv, rmNrg);
-		if (mMinHops[pos] > minMv && rmNrg >= 0) {
+		assert(rmNrg >= 0);
+		if (mMinHops[pos] > minMv) {
 			mMinHops[pos] = minMv;
 			mMaxErgs[pos] = rmNrg;
 			mPredecs[pos] = idxPre;
