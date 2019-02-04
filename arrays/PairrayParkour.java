@@ -393,8 +393,8 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 
 	@Override
 	public void showCounts() {
-		Sx.debug(mDebug+2, "Moves %4d: ", mMoves);
-		Sx.debugArray(mDebug+2, mMinPath);
+		Sx.debug(mDebug+2, "Greedy Moves %4d: ", mMoves);
+		Sx.debugArray(mDebug+22, mMinPath);
 	}
 
 	int countHopsGreedyRecurse(int idx, int xse, int hops, ArrayList<Integer> path)
@@ -537,6 +537,12 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 		mAssigns = 0;
 		mDebug = 2;
 
+		mMinPath.add(0);
+		if (mLength < 2) {
+			mMoves = SUPER_MAX;
+			return mMoves;
+		}
+
 		// init aux array
 		for (int j = 1; j < mMinHops.length; j++) { // mMinHops[0] remains 0
 			mMinHops[j] = SUPER_MAX;
@@ -544,7 +550,6 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			mPredecs[j] = -1;
 		}
 
-		mMinPath.add(0);
 		
 		// init conditions: first hop is special
 //		mAssigns = mLength * 3; // worst case is "expected" usual case
@@ -565,10 +570,10 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 
 			// How far can we move from here?
 			int rmNrg = mMaxErgs[idx] + boost;
-			if (rmNrg <= 0) {
-				dbgs("STOP because rmNrg %d <= 0 at idx %dn\n", rmNrg, idx);
-				break;
-			}
+//			if (rmNrg <= 0) {
+//				dbgs("STOP because rmNrg %d <= 0 at idx %d\n", rmNrg, idx);
+//				break;
+//			}
 
 			dbgs(mDebug+1, "BEG ITER: idx %d, rmNrg %d,  boost %d, hoist %d, WHAT %d, minMv %d\n"
 					, idx, rmNrg, boost, hoist, mHoists[idx], minMv);
@@ -709,8 +714,8 @@ class PairrayParkourTest
 		int expectP[] = { mInf, 1, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 1, 2, 3, 1, 1, 2, 0,  0 };
 
-		int begTrial = 0;					// expectP.length - 1;
-		int endTrial = expectP.length; 		// begTrial + 2; //
+		int begTrial = expectP.length - 1;					// expectP.length - 1;
+		int endTrial = expectP.length - 0; 		// begTrial + 2; //
 		for (int j = begTrial; j < endTrial; j++) {
 			int hoists[] = hobos[2 * j];
 			int boosts[] = hobos[2 * j + 1];
