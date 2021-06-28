@@ -11,40 +11,42 @@ import sprax.sprout.Sx;
  * Breadth-first search from a single vertex. Given a graph G and a source vertex v, visit all
  * vertices reachable from v in BFS order and map the resulting set of marked vertices to their
  * distance from the source vertex.
- * 
+ *
  * @author sprax
  *
  * @param <T>
  */
 public class GraphBfs<T extends Vertex>
 {
-    Graph<T>        mGraph;
-    T               mSource;
+    Graph<T> mGraph;
+    T mSource;
     Map<T, Integer> mVertToDistance;
-    Map<T, T>       mVertToPrev;
-    
+    Map<T, T> mVertToPrev;
+
     public GraphBfs(Graph<T> graph, T source)
     {
-        if (graph == null || source == null)
+        if (graph == null || source == null) {
             throw new IllegalArgumentException("null graph or source");
-        
-        mGraph = graph;
-        mSource = source;
+        }
+
+        mGraph          = graph;
+        mSource         = source;
         mVertToDistance = new HashMap<T, Integer>();
-        mVertToPrev = new HashMap<T, T>();
+        mVertToPrev     = new HashMap<T, T>();
         bfs();
     }
-    
+
     /**
      * recursive breadth-first search from a single vertex, mapping distance.
      */
     protected void bfs()
     {
-        int dist = 0;
+        int           dist  = 0;
         LinkedList<T> queue = new LinkedList<T>();
         queue.add(mSource);
         queue.add(null); // null is used as the depth-change marker
-        do {
+        do
+        {
             T vert = queue.remove();
             if (vert == null) {
                 dist++;
@@ -60,24 +62,25 @@ public class GraphBfs<T extends Vertex>
             }
         } while (queue.size() > 1);
     }
-    
+
     public boolean isConnected(T vert)
     { // If this vertex was marked, it is connected to mSource
         return mVertToDistance.containsKey(vert);
     }
-    
+
     /**
-     * Return the distance from the source to this vertex, if they are connected, or -1 if they are
-     * not connected.
+     * Return the distance from the source to this vertex,
+     * if they are connected, or -1 if they are not connected.
      */
     public int distance(T vert)
     {
         Integer dist = mVertToDistance.get(vert);
-        if (dist != null)
+        if (dist != null) {
             return dist;
+        }
         return -1;
     }
-    
+
     /**
      * Number of vertices connected to the source vertex, including the vertex itself.
      */
@@ -85,18 +88,18 @@ public class GraphBfs<T extends Vertex>
     {
         return mVertToDistance.size();
     }
-    
+
     Iterable<T> pathFromSource(T dest)
     {
         return null; // TODO
     }
-    
+
     static int test_GraphBfs()
     {
         Sx.puts("test_GraphBfs:");
-        
+
         ArrayList<Vertex> vertArray = new ArrayList<Vertex>();
-        Vertex vexA = new Vertex(0);
+        Vertex            vexA      = new Vertex(0);
         vertArray.add(vexA);
         Vertex vexB = new Vertex(2);
         vertArray.add(vexB);
@@ -125,32 +128,32 @@ public class GraphBfs<T extends Vertex>
         bvg.findAndShowVertPath(vexB, vexF);
         bvg.findAndShowVertPath(vexD, vexA);
         bvg.findAndShowVertPath(vexA, vexE);
-        
+
         Sx.puts("BFS search in the presence of cycles?");
         boolean bMarking = true;
         bvg.addEdge(vexC, vexA);
         bvg.findAndShowVertPath(vexA, vexE, bMarking);
         bvg.findAndShowVertPath(vexB, vexF, bMarking);
-        
+
         GraphBfs<Vertex> gbfs = new GraphBfs<Vertex>(bvg, vexA);
         Sx.puts(gbfs.distance(vexB));
         Sx.puts(gbfs.distance(vexC));
         Sx.puts(gbfs.distance(vexD));
-        
+
         return 0;
     }
-    
+
     public static int unit_test()
     {
         String testName = GraphBfs.class.getName() + ".unit_test";
         Sx.puts(testName + " BEGIN");
-        
+
         GraphBfs.test_GraphBfs();
-        
+
         Sx.puts(testName + " END");
         return 0;
     }
-    
+
     public static void main(String[] args)
     {
         unit_test();
