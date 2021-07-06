@@ -1,3 +1,7 @@
+// @file: GraphBfsPath.java
+// @auth: Sprax Lines
+// @date: 2016-05-28 09:38:51 Sat 28 May
+
 package sprax.graphs;
 
 import java.util.ArrayList;
@@ -12,29 +16,30 @@ import sprax.sprout.Sx;
 
 public class GraphBfsPath<T extends Vertex>
 {
-    Graph<T>  mGraph;
-    T         mSource;
-    Set<T>    mMarked;
+    Graph<T> mGraph;
+    T mSource;
+    Set<T> mMarked;
     Map<T, T> mInVert;
-    
+
     public GraphBfsPath(Graph<T> graph, T source)
     {
-        mGraph = graph;
+        mGraph  = graph;
         mSource = source;
         mMarked = new HashSet<T>();
         mInVert = new HashMap<T, T>();
         bfs();
     }
-    
+
     /**
      * recursive depth-first search from a single vertex
-     */
+    */
     protected void bfs()
     {
         LinkedList<T> queue = new LinkedList<T>();
         mMarked.add(mSource);
         queue.add(mSource);
-        do {
+        do
+        {
             T vert = queue.remove();
             for (T neighbor : mGraph.getEdges(vert)) {
                 Boolean marked = mMarked.contains(neighbor);
@@ -46,41 +51,42 @@ public class GraphBfsPath<T extends Vertex>
             }
         } while (!queue.isEmpty());
     }
-    
+
     public boolean isConnected(T vert)
     { // If this vertex was marked, it is connected to mSource
         return mMarked.contains(vert);
     }
-    
+
     public int numConnected()
     {
         return mMarked.size();
     }
-    
+
     /**
      * Get shortest path length (number of edges) from source to this vert.
-     * 
+     *
      * @param vert
      * @return
-     */
+    */
     public Iterable<T> getPath(T vert)
     {
         if (isConnected(vert)) {
             Stack<T> path = new Stack<T>();
-            for (T step = vert; step != mSource; step = mInVert.get(step))
+            for (T step = vert; step != mSource; step = mInVert.get(step)) {
                 path.push(step);
+            }
             path.push(mSource);
             return path;
         }
         return null;
     }
-    
+
     static int unit_test(int level)
     {
         Sx.puts("test_BVGraph:");
-        
+
         ArrayList<Vertex> vertArray = new ArrayList<Vertex>();
-        Vertex vexA = new Vertex(0);
+        Vertex            vexA      = new Vertex(0);
         vertArray.add(vexA);
         Vertex vexB = new Vertex(2);
         vertArray.add(vexB);
@@ -108,16 +114,16 @@ public class GraphBfsPath<T extends Vertex>
         bvg.findAndShowVertPath(vexB, vexD);
         bvg.findAndShowVertPath(vexB, vexF);
         bvg.findAndShowVertPath(vexD, vexA);
-        
+
         Sx.puts("BFS search in the presence of cycles?");
         boolean bMarking = true;
         bvg.addEdge(vexC, vexA);
         bvg.findAndShowVertPath(vexA, vexE, bMarking);
         bvg.findAndShowVertPath(vexB, vexF, bMarking);
-        
+
         return 0;
     }
-    
+
     public static void main(String[] args)
     {
         unit_test(1);
