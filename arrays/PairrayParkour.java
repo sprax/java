@@ -1,3 +1,7 @@
+// @file: PairrayParkour.java
+// @auth: Sprax Lines
+// @date: 2016-05-27 16:06:01 Fri 27 May
+
 package sprax.arrays;
 
 import java.util.ArrayList;
@@ -8,59 +12,72 @@ import sprax.sprout.Sx;
 import sprax.test.Sz;
 
 /**
- * Context: Parkour over an arbitrary line-up of obstacles. Confronted by a
+ * Context: Parkour over an arbitrary line-up of obstacles.  Confronted by a
  * series of walls, you try to compute how to run, climb, or jump over all of
  * them, in the order they appear, in the most efficient series of moves
  * possible.
  *
  * Question: Find the minimum number of parkour moves needed to traverse to the
- * end of a series of wall-like obstacles. We can model such an obstacle course
- * using lists or arrays, one obstacle at each index. Each obstacle has two
- * properties, so we can use an array of pairs or a pair of arrays. Either way,
- * at each array index, you get a pair of values. Let's call them "height" and
+ * end of a series of wall-like obstacles.  We can model such an obstacle
+ course
+ * using lists or arrays, one obstacle at each index.  Each obstacle has two
+ * properties, so we can use an array of pairs or a pair of arrays.
+ Either way,
+ * at each array index, you get a pair of values.  Let's call them "height" and
  * "boost." It takes a fixed amount of energy to jump or climb to the top of a
- * wall, which is proportional to its height. If you have more energy, you can
- * jump or dynamically climb *over* a wall and keep going, but you still have to
+ * wall, which is proportional to its height.  If you have more energy, you can
+ * jump or dynamically climb *over* a wall and keep going, but you still have
+ to
  * expend the same amount of energy as you would to get to the top and stop
  * there, Once on top, though, you find a spring-board, zip-line, catapult, jet
  * pack, or whatever, and it gives you some additional amount of energy --
- * that's the boost. You can use this boost to go forward and upward to get to
+ * that's the boost.  You can use this boost to go forward and upward to get to
  * the top of the next wall -- or, if you have enough energy, to jump over it
  * and get to the top or the near side of a later wall.
- * 
- * So height and boost are both measured in units of energy. Horizontal distance
- * can also be converted to energy as one unit per index. It takes one unit of
+ *
+ * So height and boost are both measured in units of energy.
+ Horizontal distance
+ * can also be converted to energy as one unit per index.  It takes one unit of
  * energy to go forward or backward one array index, and one unit to go up one
- * height unit, but zero units to jump downward. So it takes 2 units to go up
+ * height unit, but zero units to jump downward.  So it takes 2 units to go up
  * one step (1 forward, 1 upward), but only one unit to go down a step (1
  * forward, 0 downward).
  *
  * You can keep or use any excess energy from previous moves ("momentum") until
- * it is used up. The boost that you get at the top of each wall can be used
- * repeatedly until you have moved to the top of a later wall. In short, "boost"
+ * it is used up.  The boost that you get at the top of each wall can be used
+ * repeatedly until you have moved to the top of a later wall.
+ In short, "boost"
  * is re-usable; "momentum" is not.
  *
  * Furthermore, you can stick to walls like Spider-Man, which means that if you
  * have current energy M, you can jump across a trough of any width < M and
  * begin climbing the wall you at the same height from which you jumped, plus
- * any excess energy you had at the start of the jump. But you only pick up
- * boost energy from the top of a wall, not from the sides. So the boost that
- * you can re-use for climbing the side of a wall comes from the top of the wall
+ * any excess energy you had at the start of the jump.  But you only pick up
+ * boost energy from the top of a wall, not from the sides.  So the boost that
+ * you can re-use for climbing the side of a wall comes from the top of the
+ wall
  * where you jumped, not where you are now, if they are different.  It does not
- * come from the top of the wall you are trying to surmount, nor necessarily 
+ * come from the top of the wall you are trying to surmount, nor necessarily
  * from the flat just before the wall you are climbing.
  *
- * Sometimes you will be forced to climb, not just run or jump. If your remaining
- * energy at your current location is positive but less than the relative height
- * of the next, and your current location's boost is positive, then you can (and
+ * Sometimes you will be forced to climb, not just run or jump.
+ If your remaining
+ * energy at your current location is positive but less than the relative
+ height
+ * of the next, and your current location's boost is positive,
+ then you can (and
  * must) re-use that boost in more than one move to surmount that next wall.
- * But if the local boost is zero or less, then you are stuck and cannot progress.
+ * But if the local boost is zero or less, then you are stuck and cannot
+ progress.
  * That's game over -- you lose.
  *
  * For example, let's say you bring excess energy 3 to the top of some wall at
- * index K, which then gives you boost energy 4. Your current energy becomes 3 +
- * 4 = 7. If this wall's height is 20 and the next wall's is 30, you are 3 units
- * short of 10 = 30 - 20, so it will take you two boosted moves to surmount wall
+ * index K, which then gives you boost energy 4.  Your current energy becomes 3
+ +
+ * 4 = 7.  If this wall's height is 20 and the next wall's is 30,
+ you are 3 units
+ * short of 10 = 30 - 20, so it will take you two boosted moves to surmount
+ wall
  * K+1.
  *
  * In general, the boost always comes from where you started the move.
@@ -68,27 +85,34 @@ import sprax.test.Sz;
  * where you jump and/or start climbing.  If you have enough remaining energy
  * to to jump to a wall, as in energy >= 1 on the space before it, you can jump
  * and climb.  If your energy is (or would be) 0 just before the wall, then you
- * cannot jump start the climb, but must stop at the space before and climb using
+ * cannot jump start the climb, but must stop at the space before and climb
+ using
  * boost alone.
- * 
+ *
  * ALTERNATIVE A (implemented for reference): You *MUST* stop there with an
- * excess of 1 unit (3 + 2*4 - 10), and add to that 1 to whatever boost you find
- * there. In other words, if you are climbing a vertical wall, you cannot change
+ * excess of 1 unit (3 + 2*4 - 10), and add to that 1 to whatever boost you
+ find
+ * there.  In other words, if you are climbing a vertical wall,
+ you cannot change
  * your direction to an angle low enough to cross a whole horizontal unit of
- * distance and get past the top of the wall to the next one. Instead, you must
+ * distance and get past the top of the wall to the next one.
+ Instead, you must
  * land on the top before you can redirect your momentum forward instead of
  * downward.
  *
  * ALTERNATIVE B (not in effect, not implemented, seemingly harder to code, and
- * less physically realistic, because it implies climbing/leaping *through* walls):
+ * less physically realistic, because it implies climbing/leaping *through*
+ walls):
  * You *could* stop there with an excess of 1 unit (3 + 2*4 - 10), and add to
- * that 1 to whatever boost you find there. BUT, if the height of the *next*
+ * that 1 to whatever boost you find there.  BUT, if the height of the *next*
  * wall after that, at index K+2, is <= 30, you could choose to use your 1 unit
  * excess to go one *more* unit of distance, and land on top of wall K+2 with 0
- * excess. You would then start your next move from K+2 with only the boost
- * energy you find there. In other words, instead of just climbing to the top of
+ * excess.  You would then start your next move from K+2 with only the boost
+ * energy you find there.  In other words, instead of just climbing to the top
+ of
  * the wall K+1 and stopping there, you can use your last move's momentum to
- * jump over K+1 and land on wall K+2. If boost(K+2) - boost(K+2) > 1, the extra
+ * jump over K+1 and land on wall K+2.  If boost(K+2) - boost(K+2) > 1,
+ the extra
  * energy you would get by choosing to land on wall K+2 would work to your
  * advantage.
  *
@@ -106,26 +130,40 @@ import sprax.test.Sz;
  * Up stairs, 4 moves: [(0, 2), (1, 2), (2, 2), (3, 2), (4, 0)]
  * Step down, 4 moves: [(4, 1), (3, 1), (2, 1), (1, 1), (0, 0)]
  * Jump down, 2 moves: [(4, 2), (3, 0), (2, 2), (2, 0), (0, 0)] (skip 1 & 3)
- * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1,2,3)
+ * Leap down, 1 moves: [(4, 4), (3, 0), (2, 0), (2, 0), (1, 0)] (skip 1, 2, 3)
  * Up & down, 3 moves: [(0, 4), (3, 5), (6, 0), (4, 1), (0, 0)] (skip K = 2)
- * 
- * Height   0   1   0   3   8   2   1   7   3   4   8   5   0   4   7   7   3   8  10   5   8
- * 10                                                                             _____
- * 9                                              _____                           |   |
- * 8                      _____                   |   |                       ____|   |   _____
- * 7                      |   |       _____       |   |           _________   |       |   |   |
- * 6                      |   |       |   |       |   |____       |       |   |       |   |   |
- * 5                      |   |       |   |       |       |       |       |   |       |___|   |
- * 4                      |   |       |   |   ____|       |   ____|       |   |               |
- * 3                  ____|   |       |   |___|           |   |           |___|               |
- * 2                  |       |___    |                   |   |                               |
- * 1          _____   |           |___|                   |   |                               |
- * 0       ___|   |___|                                   |___|                               |
- * H/Boost  3   2   4   2   2   1   0   3   2   6   3   3   9   1   7   1   8   3   1   3   0
- *   Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20
+ *
+ * Height   0   1   0   3   8   2   1   7   3   4   8   5   0   4   7   7   3
+ 8  10   5   8
+ * 10
+ _____
+ * 9                                              _____
+ |   |
+ * 8                      _____                   |   |
+ ____|   |   _____
+ * 7                      |   |       _____       |   |           _________   |
+ |   |   |
+ * 6                      |   |       |   |       |   |____       |       |   |
+ |   |   |
+ * 5                      |   |       |   |       |       |       |       |   |
+ |___|   |
+ * 4                      |   |       |   |   ____|       |   ____|       |   |
+ |
+ * 3                  ____|   |       |   |___|           |   |           |___|
+ |
+ * 2                  |       |___    |                   |   |
+ |
+ * 1          _____   |           |___|                   |   |
+ |
+ * 0       ___|   |___|                                   |___|
+ |
+ * H/Boost  3   2   4   2   2   1   0   3   2   6   3   3   9   1   7   1   8
+ 3   1   3   0
+ *   Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16
+ 17  18  19  20
  * }
  * </pre>
- */
+*/
 public abstract class PairrayParkour
 {
 	public static final int SUPER_MAX = Integer.MAX_VALUE;
@@ -227,12 +265,13 @@ abstract class PairrayParkourWithAuxArrays extends PairrayParkour
 
 /**
  * Naive: Repeats many steps
- * Means: For each reachable wall top, try to complete a path forward to the end
+ * Means: For each reachable wall top, try to complete a path forward to the
+ end
  * of the course from each further reachable wall top.  Prune only by comparing
- * the current number of moves with the instance-wide minimum found so far.  
+ * the current number of moves with the instance-wide minimum found so far.
  * Order: Always try the nearest neighbor first.
  * Optimizations: climbing moves are computed in-place, not by recursion.
- */
+*/
 class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 	protected PairrayParkourRecurseBreadthFirst(int[] heights, int[] boosts) {
 		super(heights, boosts);
@@ -295,7 +334,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
 				if (mMoves > hopsBeg) {
 					mMoves = hopsBeg; // save the new minimum
 				}
-				return hopsBeg; // arrived at the end! Return how many moves it took.
+				return hopsBeg; // arrived at the end!  Return how many moves it took.
 			}
 			int posUp = mHoists[pos] - maxUp;
 			if (posUp > 0) {
@@ -363,7 +402,7 @@ class PairrayParkourRecurseBreadthFirst extends PairrayParkourRecursive {
  * Can the main step be made tail-recursive?
  * Go are far as you can with recursing, recurse, then back up and
  * recurse again from there.
- */
+*/
 class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 {
 	////protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
@@ -438,7 +477,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 				if (mMoves > hopsBeg) {
 					mMoves = hopsBeg; // save the new minimum
 				}
-				return hopsBeg; // arrived at the end! Return how many moves it took.
+				return hopsBeg; // arrived at the end!  Return how many moves it took.
 			}
 			int posUp = mHoists[maxPos] - maxUp;
 			if (posUp > 0) {
@@ -456,7 +495,7 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 		int startPos = maxPos;
 		int relHoist = mNbXse[maxPos];	// Need local copy of member array value
 		if (relHoist < 0) {
-			startPos = maxPos - 1;	// The last move to try will be a climb 
+			startPos = maxPos - 1;	// The last move to try will be a climb
 		}
 		mLoops++;
 		int j = 0;
@@ -520,7 +559,6 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 {
@@ -550,7 +588,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 			mPredecs[j] = -1;
 		}
 
-		
+
 		// init conditions: first hop is special
 //		mAssigns = mLength * 3; // worst case is "expected" usual case
 //		for (int pos = mHoists[0]; pos > 0; pos--) { // mMinHops[0] remains 0
@@ -666,7 +704,7 @@ class PairrayParkourDynamicProgrammingFwd extends PairrayParkourWithAuxArrays
 class PairrayParkourTest
 {
 	public static final int mInf = PairrayParkour.SUPER_MAX;
-	
+
 	public static int test_PairrayParkour(PairrayParkour arrayParkour, int heights[], int boosts[],
 			int expectedMinNumHops) {
 		String className = arrayParkour.getClass().getSimpleName();
@@ -689,12 +727,12 @@ class PairrayParkourTest
 		String testName = PairrayParkour.class.getName() + ".unit_test";
 		Sz.begin(testName);
 		int numWrong = 0;
-		
+
 		int hobos[][] = {
 				{ 0 }, 				// expected Parkour answer: NONE
 				{ 0 },				// expected Ahopper answer: NONE
 				{ 9 }, 				// expected Parkour answer: 1, only one way
-				{ 1 },				// expected Ahopper answer: 1 
+				{ 1 },				// expected Ahopper answer: 1
 				{ 1,  2, 3 }, 		// expected Parkour answer: 3, only one way
 				{ 2,  2, 2 },		// expected Ahopper answer: 2 (first move 1, not 2)
 				{ 1,  2, 2, 1 },	// expected Parkour answer: 3 (2 ways, via index 2 or 3)
@@ -710,7 +748,7 @@ class PairrayParkourTest
 				{ 0,  1, 0, 3, 8, 2, 1, 7, 3, 4, 8, 5, 0, 4, 7, 7, 3, 8, 10, 5, 8, },
 				{ 3,  2, 4, 2, 2, 1, 0, 3, 2, 6, 3, 3, 9, 1, 7, 1, 8, 3,  1, 3, 0, },
 		};
-		
+
 		int expectP[] = { mInf, 1, 3, 3, 5, 6, 6, 6, 12 };
 		int expectH[] = { mInf, 1, 2, 3, 1, 1, 2, 0,  0 };
 

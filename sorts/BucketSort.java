@@ -1,7 +1,7 @@
-package sprax.sorts;
+package sorts;
 
-import sprax.sprout.Sx;
-import sprax.test.Sz;
+import sprout.Sx;
+import test.Sz;
 
 public class BucketSort implements SortInt
 {
