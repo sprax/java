@@ -162,7 +162,23 @@ import sprax.test.Sz;
  *   Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16
  17  18  19  20
  * }
- * </pre>
+ *
+ Height   0   1   0   3   8   2   1   7   3   4   8   5   0   4   7   7   3   8
+  10
+ 9                                              _____
+ 8                      _____                   |   |
+ ____
+ 7                      |   |       _____       |   |           _________   |
+ 6                      |   |       |   |       |   |____       |       |   |
+ 5                      |   |       |   |       |       |       |       |   |
+ 4                      |   |       |   |   ____|       |   ____|       |   |
+ 3                  ____|   |       |   |___|           |   |           |___|
+ 2                  |       |___    |                   |   |
+ 1          _____   |           |___|                   |   |
+ 0       ___|   |___|                                   |___|
+ H/Boost  3   2   4   2   2   1   0   3   2   6   3   3   9   1   7   1   8   3
+   Index  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
+ </pre>
 */
 public abstract class PairrayParkour
 {
@@ -408,12 +424,10 @@ class PairrayParkourGreedyRecurseForward extends PairrayParkourRecursive
 	////protected int[] mIntPath;	// TODO: move this to base class; final answer should be immutable
 	protected int[] mNbXse;		// Allocate once; bigger than needed, but no GC.
 
-
 	protected PairrayParkourGreedyRecurseForward(int[] heights, int[] boosts) {
 		super(heights, boosts);
 		mNbXse = new int[mLength];
 	}
-
 
 	@Override
 	public int countHops() {
